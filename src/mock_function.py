@@ -41,17 +41,34 @@ from ete3 import Tree
 
 import copy
 from evolve_event import EvolEvent
+from itertools import permutations
+from ete3 import PhyloTree
+
+def generator_(species, n):
+    for perm in permutations(species, n):
+        yield tuple([tuple(perm), tuple(s for s in species if s not in perm)])
 
 
-def get_reconciled_tree(node, sptree, events):
+
+
+
+def return_perbutation(species):
+    newicks= []
+    for n in range(1, len(species)):
+        for p in generator_(species, n):
+            newicks.append('((' + ', '.join('{})'.format(', '.join(k)) for k in p)+');'.format(''))
+    
+    return newicks
+
+def get_reconciled_tree(node, sptree, events,cost,visited):
     """ Returns the recoliation gene tree with a provided species
     topology """
-
+    len_= len(set(sptree))
     if len(node.children) == 2:
         # First visit childs
         morphed_childs = []
         for ch in node.children:
-            mc, ev = get_reconciled_tree(ch, sptree, events)
+            mc, ev,cost = get_reconciled_tree(ch, sptree, events,cost,visited)
             morphed_childs.append(mc)
 
         # morphed childs are the reconciled children. I trust its
@@ -59,7 +76,7 @@ def get_reconciled_tree(node, sptree, events):
         sp_child_0 = morphed_childs[0].get_species()
         sp_child_1 = morphed_childs[1].get_species()
         all_species = sp_child_1 | sp_child_0
-        print(all_species)
+
         # If childs represents a duplication (duplicated species)
         # Check that both are reconciliated to the same species
         if len(sp_child_0 & sp_child_1) > 0:
@@ -73,17 +90,37 @@ def get_reconciled_tree(node, sptree, events):
             newmorphed1, matchnode = _replace_on_template(template, morphed_childs[1])
             newnode.add_child(newmorphed0)
             newnode.add_child(newmorphed1)
-            newnode.add_feature("evoltype", "D")
-            node.add_feature("evoltype", "D")
-            e = EvolEvent()
-            e.etype = "D"
-            e.inparalogs = node.children[0].get_leaf_names()
-            e.outparalogs = node.children[1].get_leaf_names()
-            e.NNI = node.children[1].get_leaf_names()
-            e.in_seqs  = node.children[0].get_leaf_names()
-            e.out_seqs = node.children[1].get_leaf_names()
-            events.append(e)
-            return newnode, events
+            gene_tree_nw1 = '((A,B),C);'
+            genetree = PhyloTree(gene_tree_nw1)
+            if(gene_tree_nw1 in visited.keys()):
+                return 1
+            else:
+                visited[gene_tree_nw1]=1
+                cost['NNI']+= get_reconciled_tree(genetree, sptree, events,cost,visited)
+                if(cost['D']<cost['NNI']):
+                    newnode.add_feature("evoltype", "D")
+                    node.add_feature("evoltype", "D")
+                    e = EvolEvent()
+                    e.etype = "D"
+                    e.inparalogs = node.children[0].get_leaf_names()
+                    e.outparalogs = node.children[1].get_leaf_names()
+                    e.NNI = node.children[1].get_leaf_names()
+                    e.in_seqs  = node.children[0].get_leaf_names()
+                    e.out_seqs = node.children[1].get_leaf_names()
+                    events.append(e)
+                else:
+                    newnode.add_feature("evoltype", "NNI")
+                    node.add_feature("evoltype", "NNI")
+                    e = EvolEvent()
+                    e.etype = "NNI"
+                    e.inparalogs = node.children[0].get_leaf_names()
+                    e.outparalogs = node.children[1].get_leaf_names()
+                    e.NNI = node.children[1].get_leaf_names()
+                    e.in_seqs  = node.children[0].get_leaf_names()
+                    e.out_seqs = node.children[1].get_leaf_names()
+                    events.append(e)
+                    
+                return newnode, events,cost
 
         # Otherwise, we need to reconciliate species at both sides
         # into a single partition.
@@ -104,9 +141,9 @@ def get_reconciled_tree(node, sptree, events):
             e.in_seqs  = node.children[0].get_leaf_names()
             e.out_seqs = node.children[1].get_leaf_names()
             events.append(e)
-            return template, events
+            return template, events,cost
     elif len(node.children)==0:
-        return copy.deepcopy(node), events
+        return copy.deepcopy(node), events,cost
     else:
         raise ValueError("Algorithm can only work with binary trees.")
 
@@ -137,26 +174,26 @@ def _get_expected_topology(t, species):
         raise KeyError("* The following species are not contained in the species tree: "+ ','.join(missing_sp) )
 
     node = t.search_nodes(children=[], name=list(species)[0])[0]
-    print("NODE")
-    print(node.up)
-    print(node.get_leaf_names())
-    print("NODE1")
+    #print("NODE")
+    #print(node.up)
+    #print(node.get_leaf_names())
+    #print("NODE1")
     sps = set(species)
-    print(sps)
-    print("NODE2")
+    #print(sps)
+    #print("NODE2")
     while sps-set(node.get_leaf_names()) != set([]):
         node = node.up
     template = copy.deepcopy(node)
-    print(template)
-    print("NODE3")
+    #print(template)
+    #print("NODE3")
     # make get_species() to work
     #template._speciesFunction = _get_species_on_TOL
     template.set_species_naming_function(_get_species_on_TOL)
-    print(template)
-    print('NODE4')
+    #print(template)
+    #print('NODE4')
     template.detach()
-    print(template)
-    print('NODE5')
+    #print(template)
+    #print('NODE5')
     for n in [template]+template.get_descendants():
         n.add_feature("evoltype","L")
         n.dist = 1
