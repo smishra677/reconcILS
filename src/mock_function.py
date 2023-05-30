@@ -49,9 +49,22 @@ def generator_(species, n):
         yield tuple([tuple(perm), tuple(s for s in species if s not in perm)])
 
 
+'''
+   def _get_species(self):
+        if self.props.get('_speciesFunction'):
+            try:
+                return self.props.get('_speciesFunction')(self.name)
+            except:
+                return self.props.get('_speciesFunction')(self)
+        else:
+            return self.props.get('_species')
 
-
-
+    def _set_species(self, value):
+        if self.props.get('_speciesFunction'):
+            pass
+        else:
+            self.add_prop('_species', value)
+'''
 def return_perbutation(species):
     newicks= []
     for n in range(1, len(species)):
@@ -60,7 +73,7 @@ def return_perbutation(species):
     
     return newicks
 
-def get_reconciled_tree(node, sptree, events,cost,visited):
+def get_reconciled_tree(node, sptree, events,visited):
     """ Returns the recoliation gene tree with a provided species
     topology """
     len_= len(set(sptree))
@@ -68,7 +81,7 @@ def get_reconciled_tree(node, sptree, events,cost,visited):
         # First visit childs
         morphed_childs = []
         for ch in node.children:
-            mc, ev,cost = get_reconciled_tree(ch, sptree, events,cost,visited)
+            mc, ev = get_reconciled_tree(ch, sptree, events,visited)
             morphed_childs.append(mc)
 
         # morphed childs are the reconciled children. I trust its
@@ -90,14 +103,14 @@ def get_reconciled_tree(node, sptree, events,cost,visited):
             newmorphed1, matchnode = _replace_on_template(template, morphed_childs[1])
             newnode.add_child(newmorphed0)
             newnode.add_child(newmorphed1)
-            gene_tree_nw1 = '((A,B),C);'
-            genetree = PhyloTree(gene_tree_nw1)
-            if(gene_tree_nw1 in visited.keys()):
+
+            if 3<2:
                 return 1
+            #genetree = PhyloTree(gene_tree_nw1)
+            #if(gene_tree_nw1 in visited.keys()):
+                #return 1
             else:
-                visited[gene_tree_nw1]=1
-                cost['NNI']+= get_reconciled_tree(genetree, sptree, events,cost,visited)
-                if(cost['D']<cost['NNI']):
+                if(2<3):
                     newnode.add_feature("evoltype", "D")
                     node.add_feature("evoltype", "D")
                     e = EvolEvent()
@@ -120,7 +133,7 @@ def get_reconciled_tree(node, sptree, events,cost,visited):
                     e.out_seqs = node.children[1].get_leaf_names()
                     events.append(e)
                     
-                return newnode, events,cost
+                return newnode, events
 
         # Otherwise, we need to reconciliate species at both sides
         # into a single partition.
@@ -141,9 +154,9 @@ def get_reconciled_tree(node, sptree, events,cost,visited):
             e.in_seqs  = node.children[0].get_leaf_names()
             e.out_seqs = node.children[1].get_leaf_names()
             events.append(e)
-            return template, events,cost
+            return template, events
     elif len(node.children)==0:
-        return copy.deepcopy(node), events,cost
+        return copy.deepcopy(node), events
     else:
         raise ValueError("Algorithm can only work with binary trees.")
 
