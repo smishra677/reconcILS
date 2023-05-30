@@ -1,10 +1,11 @@
 
 import Tree
-
+import re
 
 a= Tree.Tree()
 
 tr= '((A,B),(D,C));'
+sp ='((A,B),(D,C));'
 
 
 def printInorder(root):
@@ -12,17 +13,20 @@ def printInorder(root):
     if root:
         printInorder(root.leftChild)
         print(root.taxa),
+        #print(root.isLeaf),
         printInorder(root.rightChild)
 
 def printorder(root):
  
     if root:
-        print(root.taxa),
-        printorder(root.leftChild)
-        printorder(root.rightChild)
+            print(root.tag),
+            print(root.taxa),
+            print('###################'),
+            printorder(root.leftChild)
+            printorder(root.rightChild)
  
 
-import re
+
 def parse(newick):
     tokens = re.finditer(r"([^:;,()\s]*)(?:\s*:\s*([\d.]+)\s*)?([,);])|(\S)", newick+";")
 
@@ -33,6 +37,8 @@ def parse(newick):
 
         name, length, delim, ch = next(tokens).groups(0)
         tre.taxa= name
+        if name!=0:
+            tre.isLeaf= True
         if ch == "(":
             while ch in "(,":
                 new_tre= Tree.Tree()
@@ -52,8 +58,29 @@ def parse(newick):
     return val[-1]
 
 tr=parse(tr)
+sp=parse(sp)
+
+'''
+print('Inoder Traversal Gene tree')
+print(printInorder(tr))
+print('$$$$$$$$$$$$$$$')
+
+print('Inoder Traversal Species tree')
+
+print(printInorder(sp))
+'''
+
+print('###################################')
+print('Mapping Leaf nodes from Gene to Species')
+tr.printorder_gene(sp)
 
 
-print(printorder(tr))
+
+print('##################################')
+print(tr.label_internal())
+print(sp.label_internal())
 
 
+printorder(tr)
+print('###############################@22222222222222222222222222')
+printorder(sp)
