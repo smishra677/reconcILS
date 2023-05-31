@@ -4,9 +4,43 @@ import re
 
 a= Tree.Tree()
 
-tr= '((A,B),(D,C));'
-sp ='((A,B),(D,C));'
+tr= '((A,B),C);'
+sp ='((A,C),B);'
 
+
+def tag(root):
+ 
+    if root:
+        tag(root.leftChild)
+        print(root.taxa),
+        print(root.event),
+        if root.event !=None:
+            print(root.event.refTo)
+            print(root.event.taxa)
+        #print(root.isLeaf),
+        tag(root.rightChild)
+
+
+def sp_tag(root):
+ 
+    if root:
+        sp_tag(root.leftChild)
+        print(root.taxa),
+        print(root.refTo),
+        #print(root.isLeaf),
+        sp_tag(root.rightChild)
+
+
+
+def sp_event(root):
+ 
+    if root:
+        sp_event(root.leftChild)
+        print(root.taxa),
+        print(root.event),
+        print(root.refTo),
+        #print(root.isLeaf),
+        sp_event(root.rightChild)
 
 def printInorder(root):
  
@@ -26,13 +60,32 @@ def printorder(root):
             printorder(root.rightChild)
  
 
+def to_newick(tree):
+    newick = ""
+    newick = traverse(tree, newick)
+    newick = f"{newick};"
+    return newick
+
+def traverse(tree, newick):
+    if tree.leftChild and not tree.rightChild:
+        newick = f"(,{traverse(tree.leftChild, newick)}){tree.taxa if tree.isLeaf else ''}"
+    elif not tree.leftChild and tree.rightChild:
+        newick = f"({traverse(tree.rightChild, newick)},){tree.taxa if tree.isLeaf else ''}"
+    elif tree.leftChild and tree.rightChild:
+        newick = f"({traverse(tree.rightChild, newick)},{traverse(tree.leftChild, newick)}){tree.taxa if tree.isLeaf else ''}"
+    elif not tree.leftChild and not tree.rightChild :
+        newick = f"{tree.taxa if tree.isLeaf else ''}"
+    else:
+        pass
+    return newick
+
 
 def parse(newick):
     tokens = re.finditer(r"([^:;,()\s]*)(?:\s*:\s*([\d.]+)\s*)?([,);])|(\S)", newick+";")
 
     def recurse(tre,nextid = 0, parentid = -1): # one node
         thisid = nextid
-        tre.id= nextid
+        #tre.id= nextid
         children = []
 
         name, length, delim, ch = next(tokens).groups(0)
@@ -81,6 +134,24 @@ print(tr.label_internal())
 print(sp.label_internal())
 
 
-printorder(tr)
+#printorder(tr)
 print('###############################@22222222222222222222222222')
-printorder(sp)
+#printorder(sp)
+
+
+print('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$')
+tr.map_gene(sp)
+#print(tag(tr))
+#print(sp_tag(sp))
+
+print('#####################55555555555555555555555555555555####')
+recon=Tree.Tree()
+recon=sp
+recon.tag_species()
+
+print(sp_event(sp))
+
+print('#######################3')
+
+printInorder(recon)
+print(to_newick(recon))

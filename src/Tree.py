@@ -1,6 +1,9 @@
+from itertools import count
+import copy
 class Tree:
+    new_id = count()
     def __init__(self):
-        self.id=None
+        self.id= next(Tree.new_id)
         self.taxa=None
         self.event=None
         self.tag = None
@@ -9,6 +12,7 @@ class Tree:
         self.leftChild=None
         self.rightChild=None
         self.children=[]
+        self.refTo=[]
 
     
     def __setNewick__(self,newick):
@@ -35,6 +39,7 @@ class Tree:
                 print(root.taxa)
                 print(self.taxa)
                 self.tag= root
+                root.refTo.append(self)
             else:
                 self.printorder_species(root.leftChild)
                 self.printorder_species(root.rightChild)
@@ -74,10 +79,60 @@ class Tree:
     
 
 
+    def map_species(self,root):
+        if root and  self.isLeaf==None:
+            self.map_species(root.leftChild)
+            self.map_species(root.rightChild)
 
-    def map(self,species_tree):
-        
+            if len(self.taxa.difference(root.taxa))==0 and self.event == None:
+                self.event= root
+                root.refTo.append(self)
+
+                
+
+    def search_spMap(self,species_tree):
+        self.map_species(species_tree)
         pass
+    
+
+    def map_gene(self,species_tree):
+        if self != None:
+            self.search_spMap(species_tree),
+            if self.leftChild:
+                self.leftChild.map_gene(species_tree)
+            if  self.rightChild:
+                self.rightChild.map_gene(species_tree)
+    
+
+        pass
+
+
+    def tag_species(self):
+        print(self)
+        if self != None:
+            if len(self.refTo)>1:
+                self.event='D'
+                print('LeftChild',self.leftChild)
+                self.refTo=[]
+                new_recon=copy.copy(self)
+                if self.leftChild:
+                    self.leftChild=new_recon
+                if self.rightChild:
+                    self.rightChild=new_recon
+                
+
+            if self.leftChild:
+                self.leftChild.tag_species()
+
+            if self.rightChild:
+                self.rightChild.tag_species()
+
+           
+            
+    
+
+        pass
+
 
     def optimize_cost(self):
         pass
