@@ -4,9 +4,9 @@ import re
 
 a= Tree.Tree()
 
-tr= '((A,B),C);'
-sp ='((A,C),B);'
-
+tr= '(((A,D),C),B);'
+sp ='(((A,B),C),D);'
+#tr='((B,C),(D,A));'
 
 def tag(root):
  
@@ -21,6 +21,18 @@ def tag(root):
         tag(root.rightChild)
 
 
+
+def evolve(root):
+ 
+    if root:
+        evolve(root.leftChild)
+        print(root.taxa),
+        print(root.evolve),
+        print(root.tag),
+        #print(root.isLeaf),
+        evolve(root.rightChild)
+
+
 def sp_tag(root):
  
     if root:
@@ -30,7 +42,7 @@ def sp_tag(root):
         #print(root.isLeaf),
         sp_tag(root.rightChild)
 
-
+import copy
 
 def sp_event(root):
  
@@ -55,6 +67,8 @@ def printorder(root):
     if root:
             print(root.tag),
             print(root.taxa),
+            print(root.id),
+            print(root.refTo),
             print('###################'),
             printorder(root.leftChild)
             printorder(root.rightChild)
@@ -112,46 +126,52 @@ def parse(newick):
 
 tr=parse(tr)
 sp=parse(sp)
+sp_copy= copy.deepcopy(sp)
+sp_copy.reset()
 
-'''
-print('Inoder Traversal Gene tree')
-print(printInorder(tr))
-print('$$$$$$$$$$$$$$$')
-
-print('Inoder Traversal Species tree')
-
-print(printInorder(sp))
-'''
-
-print('###################################')
-print('Mapping Leaf nodes from Gene to Species')
 tr.printorder_gene(sp)
 
+tr.label_internal()
+sp.label_internal()
 
 
-print('##################################')
-print(tr.label_internal())
-print(sp.label_internal())
 
-
-#printorder(tr)
-print('###############################@22222222222222222222222222')
-#printorder(sp)
-
-
-print('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$')
 tr.map_gene(sp)
-#print(tag(tr))
-#print(sp_tag(sp))
 
-print('#####################55555555555555555555555555555555####')
-recon=Tree.Tree()
-recon=sp
-recon.tag_species()
 
-print(sp_event(sp))
+print(sp.find_cost(tr))
 
-print('#######################3')
+print('Gene_tree',to_newick(tr))
 
-printInorder(recon)
-print(to_newick(recon))
+
+
+'''
+def po(tr,sp_copy):
+    list_tree=[]
+    if len(tr.refTo)>1:
+        child={}
+        for tre in tr.refTo:
+            child[tre]=[]
+            for tree1 in tr.refTo:
+                if (tree1 in tre.children):
+                    child[tre].append(tree1)
+        for ch1 in child:
+            if len(child[ch1])>0:
+                ch = copy.deepcopy(ch1)
+                ch.reset()
+                list_tree= ch.NNI('left')
+                for i in list_tree:
+                    i.reset()
+                    cop= copy.deepcopy(sp_copy)
+                    cop.reset()
+                    
+                    
+                    print(to_newick(cop))
+                    print(to_newick(i))
+                    cop.optimize_cost(tr,i)
+                    #print(cop.find_cost(tr))
+        
+
+
+po(sp,sp_copy)
+'''
