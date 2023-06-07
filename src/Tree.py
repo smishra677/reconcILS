@@ -1,17 +1,18 @@
 from itertools import count
 import copy
+
 class Tree:
     new_id = count()
     def __init__(self):
         self.id= next(Tree.new_id)
         self.taxa=None
         self.event=None
+        self.evolve=None
         self.tag = None
         self.isRoot= None
         self.isLeaf =None
         self.leftChild=None
         self.rightChild=None
-        self.evolve=None
         self.children=[]
         self.refTo=[]
         self.parent=None
@@ -31,6 +32,19 @@ class Tree:
             
             if self.rightChild:
                 self.rightChild.reset()
+
+
+    def reset_tag(self):
+        if self:
+            self.tag = None
+    
+            if self.leftChild:
+                self.leftChild.reset()
+            
+            if self.rightChild:
+                self.rightChild.reset()
+
+
 
 
     
@@ -101,10 +115,6 @@ class Tree:
         if root and  self.isLeaf==None and root.isLeaf==None:
             self.map_species(root.leftChild)
             self.map_species(root.rightChild)
-            #print(self.taxa)
-            #print(root.taxa)
-            #print(len(self.taxa.difference(root.taxa))==0)
-            #print(self.event)
             if len(self.taxa.difference(root.taxa))==0 and self.event == None:
                 self.event= root
                 root.refTo.append(self)
@@ -144,7 +154,14 @@ class Tree:
     def tag_species(self):
         if self != None:
             if len(self.refTo)>1:
-                self.event='D'
+                self.refTo=[]
+                new_recon_right=copy.deepcopy(self)
+                new_recon_left=copy.deepcopy(self)
+                if self.leftChild:
+                    self.leftChild=new_recon_left
+                if self.rightChild:
+                    self.rightChild=new_recon_right
+                
 
             if self.leftChild:
                 self.leftChild.tag_species()
@@ -159,18 +176,72 @@ class Tree:
         pass
 
 
+
+
+    def search_sp_loss_(self,root):
+        if root:
+            self.search_sp_loss_(root.leftChild)
+            self.search_sp_loss_(root.rightChild)
+            
+
+            print('root_is_leaf',root.isLeaf)
+            print('root_taxa',root.taxa)
+            print('self.taxa',list(self.taxa))
+            print('if self taxa is in root taxa',set(self.taxa).issubset((root.taxa)))
+            print('If there is no',root.taxa not in list(self.taxa))
+            print('evolve',self.evolve)
+            print('root evolve',root.evolve)
+            print('##############################')
+
+            if set(self.taxa).issubset((root.taxa)) and self.evolve == None:
+                    self.evolve = root
+            if root.isLeaf==True:
+                if root.taxa not in list(self.taxa) and self.evolve==None and root.evolve==None:
+                    root.evolve='L'
+
+    
+
+                
+
+    def search_sp_loss(self,recon):
+        self.search_sp_loss_(recon)
+        pass
+    
+
+    def map_recon(self,recon):
+    
+        if self != None:
+            if self.leftChild:
+                self.leftChild.map_recon(recon)
+            if  self.rightChild:
+                self.rightChild.map_recon(recon)
+
+            if self.isLeaf == None:
+                self.search_sp_loss(recon)
+
+
+
+
+
     def tag_gene(self):
         if self != None:
-            if len(self.leftChild.taxa & self.rightChild.taxa  )>1:
-                self.event='D'
-            else:
-                self.event='S'
-
             if self.leftChild:
                 self.leftChild.tag_gene()
 
             if self.rightChild:
                 self.rightChild.tag_gene()
+            left =set()
+            right=set()
+            if self.leftChild:
+                left=set(self.leftChild.taxa)
+
+            if self.rightChild:
+                right = set(self.rightChild.taxa)
+            if len(left & right  )>1:
+                self.evolve='D'
+            else:
+                self.evolve='S'
+
 
            
             
@@ -181,11 +252,7 @@ class Tree:
 
     
 
-    
 
-
-
-    
 
     def sp_tag(self):
     
@@ -202,15 +269,18 @@ class Tree:
 
     def tag_loss(self):
         if self != None:
-            if self.isLeaf:
-                if self.event==None and self.evolve==None:
-                    self.evolve='L'
-            else:
-                if self.leftChild:
-                    self.leftChild.tag_loss()
-                if self.rightChild:
-                    self.rightChild.tag_loss()
+            if self.isLeaf and self.tag==None:
+                self.evolve='L'
+        
+            if self.leftChild:
+                self.leftChild.tag_loss()
+            if self.rightChild:
+                self.rightChild.tag_loss()
         pass
+
+
+
+
 
     def find_loss(self,recon_tree):
         recon_tree.map_gene(self)
@@ -240,34 +310,131 @@ class Tree:
         
 
 
-        print(self.find_cost(node))
+        return self.find_cost(node)
         pass
 
+
+
+    def locate_copy(self,copy_tree,tree):
+        if tree:
+            if tree.taxa==self.taxa:
+                print(tree.taxa)
+                print(self.taxa)
+                if tree.parent.leftChild == tree:
+                    tree.parent.children.remove(tree.parent.leftChild)
+                    tree.parent.leftChild =copy_tree
+                    tree.parent.children.append(copy_tree)
+
+                    print('left_child',tree.children)
+                    return
+                else:
+                    tree.parent.children.remove(tree.parent.rightChild)
+                    tree.parent.rightChild =copy_tree
+                    tree.parent.children.append(copy_tree)
+                    print('right_child',tree.children)
+                    return                  
+            if tree.leftChild:
+                self.locate_copy(copy_tree,tree.leftChild)
+            
+            if tree.rightChild:
+                self.locate_copy(copy_tree,tree.rightChild)
+            
     
-    def NNI(self,flag):
+    def NNI(self,gene_tree,flag):
+
+        geneTree_left =copy.deepcopy(gene_tree)
+        geneTree_left.reset()
+
+
+
+        geneTree_right =copy.deepcopy(gene_tree)
+        geneTree_right.reset()
+
         copy_left = copy.deepcopy(self)
         copy_left.reset()
         copy_right = copy.deepcopy(self)
         copy_right.reset()
-        if flag=='left':
+        if flag=='Left':
             copy_right_child= copy.deepcopy(self.leftChild.rightChild)
+            copy_right_child.reset()
             copy_left_child= copy.deepcopy(self.leftChild.leftChild)
+            copy_left_child.reset()
+
+
             new_tree_left = Tree()
             new_tree_left.leftChild =copy_left_child
             new_tree_left.rightChild=copy_left.rightChild
+            new_tree_left.children =[new_tree_left.leftChild, new_tree_left.rightChild]
+            new_tree_left.leftChild.parent=new_tree_left
+            new_tree_left.rightChild.parent=new_tree_left
 
             copy_left.rightChild=new_tree_left
             copy_left.leftChild=copy_right_child
-
+            copy_left.children = [copy_left.rightChild, copy_left.leftChild]
+            new_tree_left.parent=copy_left
+            copy_right_child.parent=copy_left
 
             new_tree_right = Tree()
             new_tree_right.leftChild=copy_right_child
             new_tree_right.rightChild=copy_right.rightChild
+            new_tree_right.children = [new_tree_right.rightChild, new_tree_right.leftChild]
+            new_tree_right.rightChild.parent=new_tree_right
+            new_tree_right.leftChild.parent=new_tree_right
+
+
+
 
             copy_right.rightChild=new_tree_right
             copy_right.leftChild=copy_left_child
-
-
+            copy_right.children+= [copy_right.rightChild, copy_right.leftChild]
+            copy_right.rightChild.parent=copy_right
+            copy_right.leftChild.parent=copy_right
         
-        return [copy_left,copy_right]
+        else:
+            copy_right_child= copy.deepcopy(self.rightChild.rightChild)
+            copy_right_child.reset()
+            copy_left_child= copy.deepcopy(self.rightChild.leftChild)
+            copy_left_child.reset()
+            
+            new_tree_left = Tree()
+            new_tree_left.rightChild =copy_left_child
+            new_tree_left.leftChild=copy_left.leftChild
+            new_tree_left.children =[new_tree_left.leftChild, new_tree_left.rightChild]
+            new_tree_left.leftChild.parent=new_tree_left
+            new_tree_left.rightChild.parent=new_tree_left
+
+
+            copy_left.rightChild=new_tree_left
+            copy_left.leftChild=copy_right_child
+            copy_left.children+= [copy_left.rightChild, copy_left.leftChild]
+            copy_left.rightChild.parent=copy_left
+            copy_left.leftChild.parent=copy_left
+
+
+            new_tree_right = Tree()
+            new_tree_right.leftChild=copy_right_child
+            new_tree_right.rightChild=copy_right.leftChild
+            new_tree_right.children= [new_tree_right.leftChild, new_tree_right.leftChild]
+            new_tree_right.leftChild.parent=new_tree_right
+            new_tree_right.leftChild.parent=new_tree_right
+
+            copy_right.rightChild=new_tree_right
+            copy_right.leftChild=copy_left_child
+            copy_right.children+= [copy_right.rightChild, copy_right.leftChild]
+            copy_right.rightChild.parent=copy_right
+            copy_right.leftChild.parent=copy_right        
+
+
+        if self.parent==None:
+            return [[copy_left,copy_left],[copy_right,copy_right]]
+        
+        geneTree_left.label_internal()
+        
+        geneTree_right.label_internal()
+
+        copy_left.label_internal()
+        copy_right.label_internal()
+        self.locate_copy(copy_left,geneTree_left)
+        self.locate_copy(copy_right,geneTree_right)
+        return [[copy_left,geneTree_left],[copy_right,geneTree_right]]
 

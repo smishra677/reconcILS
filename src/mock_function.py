@@ -86,6 +86,7 @@ def get_reconciled_tree(node, sptree, events,visited):
 
         # morphed childs are the reconciled children. I trust its
         # topology. Remember tree is visited on recursive post-order
+        print(morphed_childs)
         sp_child_0 = morphed_childs[0].get_species()
   
         sp_child_1 = morphed_childs[1].get_species()
@@ -147,6 +148,7 @@ def get_reconciled_tree(node, sptree, events,visited):
             template, matchnode = _replace_on_template(template, morphed_childs[0] )
             # replaces child1 partition on the template
             template, matchnode = _replace_on_template(template, morphed_childs[1])
+            print(template)
             template.add_feature("evoltype","S")
             node.add_feature("evoltype","S")
             e = EvolEvent()
