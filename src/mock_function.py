@@ -87,9 +87,12 @@ def get_reconciled_tree(node, sptree, events,visited):
         # morphed childs are the reconciled children. I trust its
         # topology. Remember tree is visited on recursive post-order
         sp_child_0 = morphed_childs[0].get_species()
+  
         sp_child_1 = morphed_childs[1].get_species()
         all_species = sp_child_1 | sp_child_0
-
+        print('child_0',sp_child_0)
+        print('child_1',sp_child_1)
+        print(sp_child_0 & sp_child_1)
         # If childs represents a duplication (duplicated species)
         # Check that both are reconciliated to the same species
         if len(sp_child_0 & sp_child_1) > 0:

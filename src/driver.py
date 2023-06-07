@@ -80,7 +80,7 @@ def return_perbutation(species):
 
     return newicks
 
-gene_tree_nw ='((A,C),B);'
+gene_tree_nw ='(((A,C),B),((A,C),B));'
 species_tree_nw = '((A,B),C);'
 
 
