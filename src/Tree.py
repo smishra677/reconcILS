@@ -287,15 +287,37 @@ class Tree:
         recon_tree.tag_loss()
         pass
 
-    def find_cost(self,node):
+    def find_cost(self,node,val):
         if self:
-            if self.taxa==node.taxa:
-                return len(self.refTo)
+                        
+            if self.leftChild:
+                val=self.leftChild.find_cost(node,val)
+            if self.rightChild:
+                val =self.rightChild.find_cost(node,val)
+            if self.taxa==node.taxa and len(self.refTo)>0:
+                val= len(self.refTo)
+                return val
             else:
-                if self.leftChild:
-                    self.leftChild.find_cost(node)
-                if self.rightChild:
-                    self.rightChild.find_cost(node)
+                return val if val<15 else 15
+
+
+        pass
+
+
+
+    def find_total_cost(self,node):
+        if node:
+            val= len(node.refTo)
+            left_val= self.find_total_cost(node.leftChild)
+            right_val= self.find_total_cost(node.rightChild)
+            if left_val>1:
+                val= val+ left_val
+            if right_val>1:
+                val= val + right_val
+            return val
+        else:
+            return 0
+
         pass
 
     def optimize_cost(self,node,tree2):
@@ -306,11 +328,11 @@ class Tree:
         self.label_internal()
         
         tree2.map_gene(self)
+        node.label_internal()
         
-        
-
-
-        return self.find_cost(node)
+        #val=self.find_total_cost(self)
+        #print(self.find_cost(node,0))
+        return self.find_cost(node,0)
         pass
 
 
@@ -318,20 +340,18 @@ class Tree:
     def locate_copy(self,copy_tree,tree):
         if tree:
             if tree.taxa==self.taxa:
-                print(tree.taxa)
-                print(self.taxa)
                 if tree.parent.leftChild == tree:
                     tree.parent.children.remove(tree.parent.leftChild)
                     tree.parent.leftChild =copy_tree
                     tree.parent.children.append(copy_tree)
 
-                    print('left_child',tree.children)
+                    #print('left_child',tree.children)
                     return
                 else:
                     tree.parent.children.remove(tree.parent.rightChild)
                     tree.parent.rightChild =copy_tree
                     tree.parent.children.append(copy_tree)
-                    print('right_child',tree.children)
+                    #print('right_child',tree.children)
                     return                  
             if tree.leftChild:
                 self.locate_copy(copy_tree,tree.leftChild)

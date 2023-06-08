@@ -134,11 +134,7 @@ def find_parent_child(root,child):
     if len(root.refTo)>1:
             for tre in root.refTo:
                 for tree1 in root.refTo:
-                    print('children',tre.children)
-                    print(tree1 in tre.children)
                     if (tree1 in tre.children):
-                        print(tre)
-                        print('parent',tree1.parent)
                         if tree1==tre.leftChild:
                             child.append([tre,tree1,'Left'])
                         else:
@@ -172,7 +168,7 @@ tr.map_gene(sp)
 
 
 
-print(sp.find_cost(tr))
+print(sp.find_cost(tr,0))
 
 print('Gene_tree',to_newick(tr))
 
@@ -195,54 +191,68 @@ def po(gene_tree,tr,sp_copy,cost):
     list_tree=[]
     child=[]
 
-    child =parent_child(tr,child)
-    print(child)
-    for ch1 in child:
-            ch = copy.deepcopy(ch1[0])
-            ch.reset()
+    child =[parent_child(tr,child)[0]]
 
-            geneTree =copy.deepcopy(gene_tree)
-            geneTree.reset()
-            list_tree= ch1[0].NNI(geneTree,ch1[2])
-            best_cost=cost
-            imporvement=False
-            new_topo=copy.deepcopy(geneTree)
-            for i in list_tree:
-                i[0].reset()
-                cop= copy.deepcopy(sp_copy)
-                cop.reset()
+    if len(child)==0 or cost==0:
+        print(1)
+        return gene_tree,cost
+    else:
+        for ch1 in child:
+                ch = copy.deepcopy(ch1[0])
+                ch.reset()
+
+                geneTree =copy.deepcopy(gene_tree)
+                geneTree.reset()
+                list_tree= ch1[0].NNI(geneTree,ch1[2])
+                best_cost=1000
+                imporvement=False
+                new_topo=copy.deepcopy(geneTree)
+                for i in list_tree:
+                    i[1].reset()
+                    i[0].reset()
+                    cop= copy.deepcopy(sp_copy)
+                    cop.reset()
+                        
+                        
+                    print('top_0',to_newick(i[0]))
+                    print('topo_1',to_newick(i[1]))
+                    print('##############################')
                     
-                    
-                print('top_0',to_newick(i[0]))
-                print('topo_1',to_newick(i[1]))
+                    new_cost =cop.optimize_cost(i[0],i[1])
+   
+                    #print(cost)
+                    #print(new_cost,best_cost)
+                    if best_cost>new_cost and cost>0:
+                        best_cost=new_cost
+                        new_topo=copy.deepcopy(i[1])
+                        #print('new_topo',to_newick(new_topo))
+                        imporvement=True
                 
-                new_cost =cop.optimize_cost(tr,i[0])
-                print(new_cost)
-                #print(new_cost,best_cost)
-                if best_cost>new_cost and cost>0:
-                    best_cost=new_cost
-                    new_topo=copy.deepcopy(i[1])
-                    print('new_topo',to_newick(new_topo))
-                    imporvement=True
-            
-            if imporvement:
-                print('new_topo1',to_newick(new_topo))
-                cost=cost-1
-                new_sp = copy.deepcopy(sp_copy)
-                new_sp.reset()
-                new_topo.reset()
-                new_topo.printorder_gene(new_sp)
-            
-                new_topo.label_internal()
-        
-                new_sp.label_internal()
-            
-                new_topo.map_gene(new_sp)
+                if imporvement:
+                        #print('new_topo1',to_newick(new_topo))
 
-                po(new_topo,new_sp,sp_copy,cost)
+                        cost=cost-1
+                        if cost==0:
+                            return new_topo,cost
+                        else:
+                            new_sp = copy.deepcopy(sp_copy)
+                            new_sp.reset()
+                            new_topo.reset()
+                            new_topo.printorder_gene(new_sp)
+                        
+                            new_topo.label_internal()
+                    
+                            new_sp.label_internal()
+                        
+                            new_topo.map_gene(new_sp)
+                            return po(new_topo,new_sp,sp_copy,cost)
 
-                #print(cop.find_cost(tr))
+                        #print(cop.find_cost(tr))
+                else:
+                    return new_topo,cost
         
 
-cost=3
-po(tr,sp,sp_copy,3)
+initial_cost=3
+new_topo,cost =(po(tr,sp,sp_copy,initial_cost))
+print(to_newick(new_topo))
+print(initial_cost-cost)
