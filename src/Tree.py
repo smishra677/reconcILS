@@ -68,13 +68,13 @@ class Tree:
 
     def printorder_species(self,root):
         if root:
+
+            self.printorder_species(root.leftChild)
+            self.printorder_species(root.rightChild)
             if self.isLeaf==True and (self.taxa== root.taxa) and self.tag == None:
                 self.tag= root
                 root.refTo.append(self)
-            else:
-                self.printorder_species(root.leftChild)
-                self.printorder_species(root.rightChild)
-                
+
 
     def search_sp(self,species_tree):
         self.printorder_species(species_tree)
@@ -84,11 +84,11 @@ class Tree:
     def printorder_gene(self,species_tree):
     
         if self != None:
-            self.search_sp(species_tree),
             if self.leftChild:
                 self.leftChild.printorder_gene(species_tree)
             if  self.rightChild:
                 self.rightChild.printorder_gene(species_tree)
+            self.search_sp(species_tree),
     
 
 
@@ -150,24 +150,72 @@ class Tree:
 
         pass
 
+    def find_parent_child(root,child):
 
-    def tag_species(self):
+        if len(root.refTo)>1:
+                for tre in root.refTo:
+                    for tree1 in root.refTo:
+                        if (tree1 in tre.children):
+                            if tree1==tre.leftChild:
+                                child.append([tre,tree1,'Left'])
+                            else:
+                                child.append([tre,tree1,'Right'])
+
+        return child
+            
+
+                
+    def parent_child(root,child):
+        if root:
+            child= find_parent_child(root,child)
+            child=find_parent_child(root.leftChild,child)
+            child= find_parent_child(root.rightChild,child)
+        return child
+
+    def tag_species(self,gene_tree,tr):
         if self != None:
             if len(self.refTo)>1:
+                for i in self.refTo:
+                    print(i)
+                    print(i.taxa)
+                    i.evolve='D'
+                    print(i.evolve)
                 self.refTo=[]
                 new_recon_right=copy.deepcopy(self)
+                #new_recon_right.reset()
                 new_recon_left=copy.deepcopy(self)
+                #new_recon_left.reset()
+
+                gene_tree.reset()
+                gene_tree.printorder_gene(new_recon_right)
+                gene_tree.label_internal()
+                new_recon_right.label_internal()
+                gene_tree.map_gene(new_recon_right)
+
+                gene_tree.reset()
+                gene_tree.printorder_gene(new_recon_left)
+                gene_tree.label_internal()
+                new_recon_left.label_internal()
+                gene_tree.map_gene(new_recon_left)
+
+                gene_tree.reset()
+
                 if self.leftChild:
                     self.leftChild=new_recon_left
                 if self.rightChild:
                     self.rightChild=new_recon_right
-                
-
             if self.leftChild:
-                self.leftChild.tag_species()
+
+                self.leftChild.refTo=[]
+                gene_tree.reset()
+                self.leftChild.tag_species(gene_tree)
 
             if self.rightChild:
-                self.rightChild.tag_species()
+                self.rightChild.refTo=[]
+                gene_tree.reset()
+                self.rightChild.tag_species(gene_tree)
+
+
 
            
             
@@ -182,16 +230,6 @@ class Tree:
         if root:
             self.search_sp_loss_(root.leftChild)
             self.search_sp_loss_(root.rightChild)
-            
-
-            print('root_is_leaf',root.isLeaf)
-            print('root_taxa',root.taxa)
-            print('self.taxa',list(self.taxa))
-            print('if self taxa is in root taxa',set(self.taxa).issubset((root.taxa)))
-            print('If there is no',root.taxa not in list(self.taxa))
-            print('evolve',self.evolve)
-            print('root evolve',root.evolve)
-            print('##############################')
 
             if set(self.taxa).issubset((root.taxa)) and self.evolve == None:
                     self.evolve = root

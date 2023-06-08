@@ -4,7 +4,7 @@ import re
 
 a= Tree.Tree()
 
-tr= '(((A,D),C),B);'
+tr= '((((A,B),C),D),(((A,B),C),D));'
 sp ='(((A,B),C),D);'
 #tr='((B,C),(D,A));'
 
@@ -165,38 +165,32 @@ sp.label_internal()
 
 tr.map_gene(sp)
 
-
-
+new_gene_tree =copy.deepcopy(tr)
+new_gene_tree.reset()
+recon=Tree.Tree()
+recon= copy.deepcopy(sp)
+recon.tag_species(new_gene_tree)
+print(to_newick(recon))
+sp_event(tr)
 
 print(sp.find_cost(tr,0))
 
 print('Gene_tree',to_newick(tr))
 
-'''
-recon=Tree.Tree()
-recon= copy.deepcopy(sp)
-
-recon.tag_species()
-
-tr.map_recon(recon)
-#recon.tag_loss()
-
-sp_event(recon)
-
-'''
 
 
 
-def po(gene_tree,tr,sp_copy,cost):
+
+def ILS(gene_tree,tr,sp_copy,cost):
     list_tree=[]
     child=[]
-
-    child =[parent_child(tr,child)[0]]
-
+    
+   
+    child= parent_child(tr,child)
     if len(child)==0 or cost==0:
-        print(1)
         return gene_tree,cost
     else:
+        child =[child[0]]
         for ch1 in child:
                 ch = copy.deepcopy(ch1[0])
                 ch.reset()
@@ -245,14 +239,26 @@ def po(gene_tree,tr,sp_copy,cost):
                             new_sp.label_internal()
                         
                             new_topo.map_gene(new_sp)
-                            return po(new_topo,new_sp,sp_copy,cost)
+                            return ILS(new_topo,new_sp,sp_copy,cost)
 
                         #print(cop.find_cost(tr))
                 else:
                     return new_topo,cost
         
 
-initial_cost=3
-new_topo,cost =(po(tr,sp,sp_copy,initial_cost))
+initial_cost=5
+new_topo,cost =(ILS(tr,sp,sp_copy,initial_cost))
 print(to_newick(new_topo))
 print(initial_cost-cost)
+
+
+
+
+#tr.map_recon(recon)
+print(to_newick(recon))
+new_tr= copy.deepcopy(tr)
+new_tr.reset()
+print(new_tr.optimize_cost(recon,recon))
+#recon.tag_loss()
+
+print(to_newick(recon))
