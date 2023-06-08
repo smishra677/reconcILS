@@ -4,8 +4,8 @@ import re
 
 a= Tree.Tree()
 
-tr= '((((A,B),C),D),(((A,B),C),D));'
-sp ='(((A,B),C),D);'
+tr= '((A,C),B)'
+sp ='((A,B),C);'
 #tr='((B,C),(D,A));'
 
 def tag(root):
@@ -169,7 +169,9 @@ new_gene_tree =copy.deepcopy(tr)
 new_gene_tree.reset()
 recon=Tree.Tree()
 recon= copy.deepcopy(sp)
-recon.tag_species(new_gene_tree)
+recon.tag_species(new_gene_tree,tr)
+
+
 print(to_newick(recon))
 sp_event(tr)
 

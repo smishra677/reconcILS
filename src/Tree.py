@@ -131,7 +131,7 @@ class Tree:
     
         if self:
                 print(self.taxa),
-                print(self.event),
+                print(self.evolve),
                 print('###################'),
                 if self.leftChild:
                     self.leftChild.printorder()
@@ -149,37 +149,29 @@ class Tree:
     
 
         pass
+    
 
-    def find_parent_child(root,child):
+    def label_duplication_gene(self,tr):
+        if tr:
+            if self.taxa==tr.taxa:
+                tr.evolve='Duplciation'
+            else:
+                self.label_duplication_gene(tr.leftChild)
+                self.label_duplication_gene(tr.rightChild)
 
-        if len(root.refTo)>1:
-                for tre in root.refTo:
-                    for tree1 in root.refTo:
-                        if (tree1 in tre.children):
-                            if tree1==tre.leftChild:
-                                child.append([tre,tree1,'Left'])
-                            else:
-                                child.append([tre,tree1,'Right'])
-
-        return child
-            
-
+    
                 
-    def parent_child(root,child):
-        if root:
-            child= find_parent_child(root,child)
-            child=find_parent_child(root.leftChild,child)
-            child= find_parent_child(root.rightChild,child)
-        return child
+    def label_duplication(self,tr):
+            for tre in self.refTo:
+                    for tree1 in self.refTo:
+                        if (tree1 in tre.children):
+                            tre.label_duplication_gene(tr)
+                        
 
     def tag_species(self,gene_tree,tr):
         if self != None:
             if len(self.refTo)>1:
-                for i in self.refTo:
-                    print(i)
-                    print(i.taxa)
-                    i.evolve='D'
-                    print(i.evolve)
+                self.label_duplication(tr)
                 self.refTo=[]
                 new_recon_right=copy.deepcopy(self)
                 #new_recon_right.reset()
@@ -208,12 +200,12 @@ class Tree:
 
                 self.leftChild.refTo=[]
                 gene_tree.reset()
-                self.leftChild.tag_species(gene_tree)
+                self.leftChild.tag_species(gene_tree,tr)
 
             if self.rightChild:
                 self.rightChild.refTo=[]
                 gene_tree.reset()
-                self.rightChild.tag_species(gene_tree)
+                self.rightChild.tag_species(gene_tree,tr)
 
 
 
