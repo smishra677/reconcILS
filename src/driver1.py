@@ -4,7 +4,7 @@ import re
 
 a= Tree.Tree()
 
-tr= '(A,C);'
+tr= '(A,A);'
 sp ='(((A,B),C),D);'
 #tr='((B,C),(D,A));'
 
@@ -154,6 +154,10 @@ def parent_child(root,child):
 
 tr=parse(tr)
 sp=parse(sp)
+
+
+print(to_newick(tr))
+
 sp_copy= copy.deepcopy(sp)
 sp_copy.reset()
 
@@ -273,41 +277,65 @@ def driver(tr,sp,sp_copy,sp_):
         sp_2 =copy.deepcopy(sp_) 
 
         initial_cost=sp_1.find_cost(tr_copy_1,0)
+        
+        if initial_cost==0:
+            new_gene_tree =copy.deepcopy(tr_copy_2)
+            new_gene_tree.reset()
+            recon=Tree.Tree()
+            recon= copy.deepcopy(sp_2)
+            recon.tag_species(new_gene_tree,tr_copy_2)
 
-        new_topo,cost =(ILS(tr_copy_1,sp_1,sp_copy,initial_cost))
+            if recon.split_list!=None:
+                for i in recon.split_list:
+                    tr_copy_2.map_recon(i)
+            else:
+                tr_copy_2.map_recon(recon)
+            recon.clean_up()
+            recon.total_cost_()
 
-        recon_1 = copy.deepcopy(sp_1)
-
-
-
-        new_gene_tree =copy.deepcopy(tr_copy_2)
-        new_gene_tree.reset()
-
-
-        recon=Tree.Tree()
-        recon= copy.deepcopy(sp_2)
-        recon.tag_species(new_gene_tree,tr_copy_2)
-
-        if recon.split_list!=None:
-            for i in recon.split_list:
-                tr_copy_2.map_recon(i)
-        else:
-            tr_copy_2.map_recon(recon)
-
-
-
-        recon.clean_up()
-        recon.total_cost_()
-
-        recon_1.evolve='NNI'
-        new_topo.map_recon(recon_1)
-        recon_1.clean_up()
-        recon_1.total_cost_()
-
-        if recon_1.cost+(initial_cost-cost)<=recon.cost:
-            return recon_1
-        if recon_1.cost+(initial_cost-cost)>recon.cost:
             return recon
+
+
+
+        else:
+            new_topo,cost =(ILS(tr_copy_1,sp_1,sp_copy,initial_cost))
+
+
+
+            recon_1 = copy.deepcopy(sp_1)
+
+
+
+            new_gene_tree =copy.deepcopy(tr_copy_2)
+            new_gene_tree.reset()
+
+
+            recon=Tree.Tree()
+            recon= copy.deepcopy(sp_2)
+            recon.tag_species(new_gene_tree,tr_copy_2)
+
+            if recon.split_list!=None:
+                for i in recon.split_list:
+                    tr_copy_2.map_recon(i)
+            else:
+                tr_copy_2.map_recon(recon)
+
+
+
+            recon.clean_up()
+            recon.total_cost_()
+
+            recon_1.evolve='NNI'
+            new_topo.map_recon(recon_1)
+            recon_1.clean_up()
+            recon_1.total_cost_()
+
+            print(recon_1.cost)
+            if recon_1.cost+(initial_cost-cost)<recon.cost:
+                return recon_1
+            if recon_1.cost+(initial_cost-cost)>=recon.cost:
+                return recon
+
         
         driver(tr,sp.leftChild,sp_copy,sp_)
         driver(tr,sp.rightChild,sp_copy,sp_)
