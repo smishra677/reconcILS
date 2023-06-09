@@ -4,7 +4,7 @@ import re
 
 a= Tree.Tree()
 
-tr= '((A,C),B);'
+tr= '((A,B),B);'
 sp ='((A,B),C);'
 #tr='((B,C),(D,A));'
 
@@ -148,8 +148,8 @@ def find_parent_child(root,child):
 def parent_child(root,child):
     if root:
         child= find_parent_child(root,child)
-        child=find_parent_child(root.leftChild,child)
-        child= find_parent_child(root.rightChild,child)
+        #child=find_parent_child(root.leftChild,child)
+        #child= find_parent_child(root.rightChild,child)
     return child
 
 tr=parse(tr)
@@ -166,6 +166,7 @@ sp.label_internal()
 
 tr.map_gene(sp)
 
+'''
 new_gene_tree =copy.deepcopy(tr)
 new_gene_tree.reset()
 recon=Tree.Tree()
@@ -190,7 +191,7 @@ sp_event(recon)
 print(sp.find_cost(tr,0))
 
 print('Gene_tree',to_newick(tr))
-
+'''
 
 
 
@@ -205,7 +206,7 @@ def ILS(gene_tree,tr,sp_copy,cost):
     if len(child)==0 or cost==0:
         return gene_tree,cost
     else:
-        child =[child[0]]
+        #child =[child[0]]
         for ch1 in child:
                 ch = copy.deepcopy(ch1[0])
                 ch.reset()
@@ -260,7 +261,54 @@ def ILS(gene_tree,tr,sp_copy,cost):
                 else:
                     return new_topo,cost
         
+def driver(tr,sp,sp_copy):
+    if sp:
+        initial_cost=sp.find_cost(tr,0)
+        new_topo,cost =(ILS(tr,sp,sp_copy,initial_cost))
 
+
+        new_gene_tree =copy.deepcopy(tr)
+        new_gene_tree.reset()
+        recon=Tree.Tree()
+        recon= copy.deepcopy(sp)
+        recon.tag_species(new_gene_tree,tr)
+
+        print(to_newick(recon))
+        if recon.split_list!=None:
+            for i in recon.split_list:
+                tr.map_recon(i)
+        else:
+            tr.map_recon(recon)
+
+        recon_1 =Tree.Tree()
+        recon_1 = copy.deepcopy(sp)
+
+
+        recon.clean_up()
+        recon.total_cost_()
+
+        recon_1.evolve='NNI'
+        new_topo.map_recon(recon_1)
+        recon_1.clean_up()
+        recon_1.total_cost_()
+        
+        
+        if recon_1.cost<recon.cost:
+            return recon_1
+        if recon_1.cost>recon.cost:
+            return recon
+        
+        val= driver(tr,sp.leftChild,sp_copy)
+        val= driver(tr,sp.rightChild,sp_copy)
+        return val
+
+
+val =driver(tr,sp,sp_copy)
+print('######################33')
+sp_event(val)
+
+
+'''
 initial_cost=1
 #sp.find_cost(tr,0)
 new_topo,cost =(ILS(tr,sp,sp_copy,initial_cost))
@@ -278,3 +326,5 @@ print(new_tr.optimize_cost(recon,recon))
 #recon.tag_loss()
 
 print(to_newick(recon))
+
+'''

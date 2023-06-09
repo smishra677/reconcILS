@@ -174,12 +174,13 @@ class Tree:
     def tag_species(self,gene_tree,tr):
         if self != None:
             if len(self.refTo)>1:
+                self.evolve='Duplication'
                 self.label_duplication(tr)
                 self.refTo=[]
                 new_recon_right=copy.deepcopy(self)
-                #new_recon_right.reset()
+                new_recon_right.reset()
                 new_recon_left=copy.deepcopy(self)
-                #new_recon_left.reset()
+                new_recon_left.reset()
 
                 gene_tree.reset()
                 gene_tree.printorder_gene(new_recon_right)
