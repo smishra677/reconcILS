@@ -16,6 +16,9 @@ class Tree:
         self.children=[]
         self.refTo=[]
         self.parent=None
+        self.split_list=None
+        self.to_tag=None
+        self.cost=0
 
 
     def reset(self):
@@ -196,6 +199,7 @@ class Tree:
                     self.leftChild=new_recon_left
                 if self.rightChild:
                     self.rightChild=new_recon_right
+                self.split_list= [new_recon_left,new_recon_right]
             if self.leftChild:
 
                 self.leftChild.refTo=[]
@@ -215,19 +219,60 @@ class Tree:
 
         pass
 
+    
+
+    def tag_loss(self,root):
+        if root:
+            if root.isLeaf and not set(root.taxa).issubset((self.to_tag)) and root.evolve==None:
+                root.evolve='Loss'
+            self.tag_loss(root.leftChild)
+            self.tag_loss(root.rightChild)
+        pass
+    
+
+    def deactivate(self):
+        if self:
+            if self.evolve== None:
+                self.evolve='Speciation'
+            
+            if self.leftChild:
+                self.leftChild.deactivate()
+            if self.rightChild:
+                self.rightChild.deactivate()
 
 
+
+    def clean_up(self):
+        if self:
+            if self.isLeaf and self.evolve==None:
+                self.evolve='Loss'
+            if self.leftChild:
+                self.leftChild.clean_up()
+            if self.rightChild:
+                self.rightChild.clean_up()
 
     def search_sp_loss_(self,root):
         if root:
             self.search_sp_loss_(root.leftChild)
             self.search_sp_loss_(root.rightChild)
-
             if set(self.taxa).issubset((root.taxa)) and self.evolve == None:
-                    self.evolve = root
-            if root.isLeaf==True:
-                if root.taxa not in list(self.taxa) and self.evolve==None and root.evolve==None:
-                    root.evolve='L'
+                    self.evolve=root
+                    if self.to_tag!=None:
+                        self.tag_loss(root)
+                    root.deactivate()
+
+            else:
+                if root.isLeaf==True:
+                    if root.taxa not in list(self.taxa):
+                        if  self.evolve==None and root.evolve==None:
+                            root.evolve='Loss'
+
+                else:
+                    if self.taxa==root.taxa and root.evolve==None:
+                        if self.to_tag!=None:
+                            self.tag_loss(root)
+                            root.deactivate()
+
 
     
 
@@ -236,7 +281,6 @@ class Tree:
     def search_sp_loss(self,recon):
         self.search_sp_loss_(recon)
         pass
-    
 
     def map_recon(self,recon):
     
@@ -247,7 +291,14 @@ class Tree:
                 self.rightChild.map_recon(recon)
 
             if self.isLeaf == None:
+                if self.leftChild.evolve!=None and self.leftChild.isLeaf==None:
+                    self.to_tag=self.taxa.difference(self.leftChild.taxa)
+                if self.rightChild.evolve!=None and self.rightChild.isLeaf==None:
+                    self.to_tag=self.taxa.difference(self.rightChild.taxa)
+
+
                 self.search_sp_loss(recon)
+
 
 
 
@@ -281,6 +332,25 @@ class Tree:
 
 
     
+    def total_cost_(self):
+        if self:
+            if self.leftChild:
+                self.leftChild.total_cost_()
+            if self.rightChild:
+                self.rightChild.total_cost_()
+
+            if self.isLeaf:
+                if self.evolve !='Speciation':
+                    self.cost=1
+            else:
+                self.cost = self.leftChild.cost+self.rightChild.cost
+                if self.evolve =='Duplication':
+                    self.cost = self.cost +1
+
+
+
+
+
 
 
 
@@ -296,17 +366,6 @@ class Tree:
                 self.rightChild.sp_tag()
 
 
-
-    def tag_loss(self):
-        if self != None:
-            if self.isLeaf and self.tag==None:
-                self.evolve='L'
-        
-            if self.leftChild:
-                self.leftChild.tag_loss()
-            if self.rightChild:
-                self.rightChild.tag_loss()
-        pass
 
 
 

@@ -4,7 +4,7 @@ import re
 
 a= Tree.Tree()
 
-tr= '((A,C),B)'
+tr= '((A,C),B);'
 sp ='((A,B),C);'
 #tr='((B,C),(D,A));'
 
@@ -50,6 +50,7 @@ def sp_event(root):
         sp_event(root.leftChild)
         print(root.taxa),
         print('event',root.evolve),
+        print('cost',root.cost)
         #print(root.isLeaf),
         sp_event(root.rightChild)
 
@@ -170,10 +171,18 @@ new_gene_tree.reset()
 recon=Tree.Tree()
 recon= copy.deepcopy(sp)
 recon.tag_species(new_gene_tree,tr)
-
+print(to_newick(recon))
+if recon.split_list!=None:
+    for i in recon.split_list:
+        tr.map_recon(i)
+else:
+    tr.map_recon(recon)
 
 print(to_newick(recon))
-sp_event(tr)
+
+recon.clean_up()
+recon.total_cost_()
+sp_event(recon)
 
 print(sp.find_cost(tr,0))
 
@@ -189,6 +198,7 @@ def ILS(gene_tree,tr,sp_copy,cost):
     
    
     child= parent_child(tr,child)
+
     if len(child)==0 or cost==0:
         return gene_tree,cost
     else:
@@ -248,7 +258,8 @@ def ILS(gene_tree,tr,sp_copy,cost):
                     return new_topo,cost
         
 
-initial_cost=5
+initial_cost=1
+#sp.find_cost(tr,0)
 new_topo,cost =(ILS(tr,sp,sp_copy,initial_cost))
 print(to_newick(new_topo))
 print(initial_cost-cost)
