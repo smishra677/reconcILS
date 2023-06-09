@@ -171,6 +171,7 @@ new_gene_tree.reset()
 recon=Tree.Tree()
 recon= copy.deepcopy(sp)
 recon.tag_species(new_gene_tree,tr)
+
 print(to_newick(recon))
 if recon.split_list!=None:
     for i in recon.split_list:
@@ -183,6 +184,8 @@ print(to_newick(recon))
 recon.clean_up()
 recon.total_cost_()
 sp_event(recon)
+
+
 
 print(sp.find_cost(tr,0))
 
