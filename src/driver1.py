@@ -4,7 +4,7 @@ import re
 
 a= Tree.Tree()
 
-tr= '(A,C),B),D);'
+tr= '((A,C),B);'
 sp ='(((A,B),C),D);'
 #tr='((B,C),(D,A));'
 
@@ -271,83 +271,122 @@ def driver(tr,sp,sp_copy,sp_):
     if sp:
 
         tr_copy_1 = copy.deepcopy(tr)
-        sp_1 =copy.deepcopy(sp_) 
+        sp_1 =copy.deepcopy(sp) 
 
         tr_copy_2 = copy.deepcopy(tr)
-        sp_2 =copy.deepcopy(sp_) 
+        sp_2 =copy.deepcopy(sp) 
 
-        initial_cost=sp_1.find_cost(tr_copy_1,0)
-
+        initial_cost=sp.find_cost(tr_copy_1,0)
         if initial_cost==0:
-            new_gene_tree =copy.deepcopy(tr_copy_2)
-            new_gene_tree.reset()
-            recon=Tree.Tree()
-            recon= copy.deepcopy(sp_2)
-            recon.tag_species(new_gene_tree,tr_copy_2)
+            if sp.isLeaf:
+                print(1)
+                new_gene_tree =copy.deepcopy(tr_copy_2)
+                new_gene_tree.reset()
 
-            if recon.split_list!=None:
-                for i in recon.split_list:
-                    tr_copy_2.map_recon(i)
+
+                recon=Tree.Tree()
+                recon= copy.deepcopy(sp_)
+                recon.tag_species(new_gene_tree,tr_copy_2)
+
+                if recon.split_list!=None:
+                    for i in recon.split_list:
+                        tr_copy_2.map_recon(i)
+                else:
+                    tr_copy_2.map_recon(recon)
+
+
+
+                recon.clean_up()
+                recon.total_cost_()
+                
+                return recon,recon.cost
             else:
-                tr_copy_2.map_recon(recon)
-            recon.clean_up()
-            recon.total_cost_()
+                print(2)
+                val1,cost1=driver(tr,sp.leftChild,sp_copy,sp_) 
+                val2,cost2=driver(tr,sp.rightChild,sp_copy,sp_)
+                if cost2>cost1:
+                    return val1,cost1
+                else:
+                    return val2,cost2
 
-            return recon
 
 
 
         else:
-
-            new_topo,cost =(ILS(tr_copy_1,sp_1,sp_copy,initial_cost))
-
-
-
-            recon_1 = copy.deepcopy(sp_1)
-
+             
+            if sp.isLeaf:
+                print(3)
+                new_gene_tree =copy.deepcopy(tr_copy_2)
+                new_gene_tree.reset()
 
 
-            new_gene_tree =copy.deepcopy(tr_copy_2)
-            new_gene_tree.reset()
+                recon=Tree.Tree()
+                recon= copy.deepcopy(sp_2)
+                recon.tag_species(new_gene_tree,tr_copy_2)
+
+                if recon.split_list!=None:
+                    for i in recon.split_list:
+                        tr_copy_2.map_recon(i)
+                else:
+                    tr_copy_2.map_recon(recon)
 
 
-            recon=Tree.Tree()
-            recon= copy.deepcopy(sp_2)
-            recon.tag_species(new_gene_tree,tr_copy_2)
 
-            if recon.split_list!=None:
-                for i in recon.split_list:
-                    tr_copy_2.map_recon(i)
+                recon.clean_up()
+                recon.total_cost_()
+                return recon              
+
             else:
-                tr_copy_2.map_recon(recon)
+                print(4)
+                new_topo,cost =(ILS(tr_copy_1,sp_1,sp_copy,initial_cost))
+                recon_1 = copy.deepcopy(sp_1)
+
+                
+
+                new_gene_tree =copy.deepcopy(tr_copy_2)
+                new_gene_tree.reset()
+
+
+                recon=Tree.Tree()
+                recon= copy.deepcopy(sp_2)
+                recon.tag_species(new_gene_tree,tr_copy_2)
+
+                if recon.split_list!=None:
+                    for i in recon.split_list:
+                        tr_copy_2.map_recon(i)
+                else:
+                    tr_copy_2.map_recon(recon)
 
 
 
-            recon.clean_up()
-            recon.total_cost_()
+                recon.clean_up()
+                recon.total_cost_()
 
-            recon_1.evolve='NNI'
-            new_topo.map_recon(recon_1)
-            recon_1.clean_up()
-            recon_1.total_cost_()
+                recon_1.evolve='NNI'
+                new_topo.map_recon(recon_1)
+                recon_1.clean_up()
+                recon_1.total_cost_()
 
-            if cost==initial_cost:
-                return recon
-
-            if recon_1.cost+(initial_cost-cost)<recon.cost:
-                return recon_1
-            if recon_1.cost+(initial_cost-cost)>=recon.cost:
-                return recon
-
-        
-        driver(tr,sp.leftChild,sp_copy,sp_)
-        driver(tr,sp.rightChild,sp_copy,sp_)
+                if recon_1.cost+(initial_cost-cost-1)<recon.cost:
+                    return recon_1,recon_1.cost+(initial_cost-cost-1)
+                if recon_1.cost+(initial_cost-cost-1)>=recon.cost:
+                    return recon,recon.cost
 
 
+            val1,cost1=driver(tr,sp.leftChild,sp_copy,sp_) 
+            val2,cost2=driver(tr,sp.rightChild,sp_copy,sp_)
+            if cost2>cost1:
+                return val1
+            else:
+                return val2
 
-val =driver(tr,sp,sp_copy,sp)
+
+
+
+
+val,cost =driver(tr,sp,sp_copy,sp)
 print('######################33')
-
+print(val)
 sp_event(val)
 '''
 

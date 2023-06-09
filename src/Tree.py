@@ -386,9 +386,10 @@ class Tree:
         if self:
                         
             if self.leftChild:
-                val=self.leftChild.find_cost(node,val)
+                self.leftChild.find_cost(node,val)
             if self.rightChild:
-                val =self.rightChild.find_cost(node,val)
+                self.rightChild.find_cost(node,val)
+            
             if self.taxa==node.taxa and len(self.refTo)>0:
                 val= len(self.refTo)
                 return val
