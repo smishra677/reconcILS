@@ -4,8 +4,8 @@ import re
 
 a= Tree.Tree()
 
-tr= '((A,B),B);'
-sp ='((A,B),C);'
+tr= '(A,C);'
+sp ='(((A,B),C),D);'
 #tr='((B,C),(D,A));'
 
 def tag(root):
@@ -166,11 +166,13 @@ sp.label_internal()
 
 tr.map_gene(sp)
 
+
 '''
 new_gene_tree =copy.deepcopy(tr)
 new_gene_tree.reset()
-recon=Tree.Tree()
 recon= copy.deepcopy(sp)
+sp_tag(recon)
+print('#########3')
 recon.tag_species(new_gene_tree,tr)
 
 print(to_newick(recon))
@@ -184,7 +186,7 @@ print(to_newick(recon))
 
 recon.clean_up()
 recon.total_cost_()
-sp_event(recon)
+
 
 
 
@@ -261,27 +263,37 @@ def ILS(gene_tree,tr,sp_copy,cost):
                 else:
                     return new_topo,cost
         
-def driver(tr,sp,sp_copy):
+def driver(tr,sp,sp_copy,sp_):
     if sp:
-        initial_cost=sp.find_cost(tr,0)
-        new_topo,cost =(ILS(tr,sp,sp_copy,initial_cost))
+
+        tr_copy_1 = copy.deepcopy(tr)
+        sp_1 =copy.deepcopy(sp_) 
+
+        tr_copy_2 = copy.deepcopy(tr)
+        sp_2 =copy.deepcopy(sp_) 
+
+        initial_cost=sp_1.find_cost(tr_copy_1,0)
+
+        new_topo,cost =(ILS(tr_copy_1,sp_1,sp_copy,initial_cost))
+
+        recon_1 = copy.deepcopy(sp_1)
 
 
-        new_gene_tree =copy.deepcopy(tr)
+
+        new_gene_tree =copy.deepcopy(tr_copy_2)
         new_gene_tree.reset()
-        recon=Tree.Tree()
-        recon= copy.deepcopy(sp)
-        recon.tag_species(new_gene_tree,tr)
 
-        print(to_newick(recon))
+
+        recon=Tree.Tree()
+        recon= copy.deepcopy(sp_2)
+        recon.tag_species(new_gene_tree,tr_copy_2)
+
         if recon.split_list!=None:
             for i in recon.split_list:
-                tr.map_recon(i)
+                tr_copy_2.map_recon(i)
         else:
-            tr.map_recon(recon)
+            tr_copy_2.map_recon(recon)
 
-        recon_1 =Tree.Tree()
-        recon_1 = copy.deepcopy(sp)
 
 
         recon.clean_up()
@@ -291,24 +303,22 @@ def driver(tr,sp,sp_copy):
         new_topo.map_recon(recon_1)
         recon_1.clean_up()
         recon_1.total_cost_()
-        
-        
-        if recon_1.cost<recon.cost:
+
+        if recon_1.cost+(initial_cost-cost)<=recon.cost:
             return recon_1
-        if recon_1.cost>recon.cost:
+        if recon_1.cost+(initial_cost-cost)>recon.cost:
             return recon
         
-        val= driver(tr,sp.leftChild,sp_copy)
-        val= driver(tr,sp.rightChild,sp_copy)
-        return val
+        driver(tr,sp.leftChild,sp_copy,sp_)
+        driver(tr,sp.rightChild,sp_copy,sp_)
 
 
-val =driver(tr,sp,sp_copy)
+
+val =driver(tr,sp,sp_copy,sp)
 print('######################33')
 sp_event(val)
-
-
 '''
+
 initial_cost=1
 #sp.find_cost(tr,0)
 new_topo,cost =(ILS(tr,sp,sp_copy,initial_cost))

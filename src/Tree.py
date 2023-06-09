@@ -118,7 +118,8 @@ class Tree:
         if root and  self.isLeaf==None and root.isLeaf==None:
             self.map_species(root.leftChild)
             self.map_species(root.rightChild)
-            if len(self.taxa.difference(root.taxa))==0 and self.event == None:
+
+            if set(self.taxa).issubset((root.taxa)) and self.event == None:
                 self.event= root
                 root.refTo.append(self)
 
@@ -144,11 +145,11 @@ class Tree:
 
     def map_gene(self,species_tree):
         if self != None:
-            self.search_spMap(species_tree),
             if self.leftChild:
                 self.leftChild.map_gene(species_tree)
             if  self.rightChild:
                 self.rightChild.map_gene(species_tree)
+            self.search_spMap(species_tree),
     
 
         pass
@@ -172,14 +173,16 @@ class Tree:
                         
 
     def tag_species(self,gene_tree,tr):
-        if self != None:
+        if self:
             if len(self.refTo)>1:
                 self.evolve='Duplication'
                 self.label_duplication(tr)
                 self.refTo=[]
                 new_recon_right=copy.deepcopy(self)
+                
                 new_recon_right.reset()
                 new_recon_left=copy.deepcopy(self)
+                
                 new_recon_left.reset()
 
                 gene_tree.reset()
@@ -188,12 +191,15 @@ class Tree:
                 new_recon_right.label_internal()
                 gene_tree.map_gene(new_recon_right)
 
+
+
                 gene_tree.reset()
                 gene_tree.printorder_gene(new_recon_left)
                 gene_tree.label_internal()
                 new_recon_left.label_internal()
                 gene_tree.map_gene(new_recon_left)
-
+                new_recon_left.refTo=[]
+                new_recon_right.refTo=[]
                 gene_tree.reset()
 
                 if self.leftChild:
@@ -202,15 +208,14 @@ class Tree:
                     self.rightChild=new_recon_right
                 self.split_list= [new_recon_left,new_recon_right]
             if self.leftChild:
-
-                self.leftChild.refTo=[]
                 gene_tree.reset()
                 self.leftChild.tag_species(gene_tree,tr)
+                self.leftChild.refTo=[]
 
             if self.rightChild:
-                self.rightChild.refTo=[]
                 gene_tree.reset()
                 self.rightChild.tag_species(gene_tree,tr)
+                self.rightChild.refTo=[]
 
 
 
