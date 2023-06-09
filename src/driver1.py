@@ -4,7 +4,7 @@ import re
 
 a= Tree.Tree()
 
-tr= '((A,C),B);'
+tr= '(((A,C),D),B);'
 sp ='(((A,B),C),D);'
 #tr='((B,C),(D,A));'
 
@@ -366,10 +366,10 @@ def driver(tr,sp,sp_copy,sp_):
                 new_topo.map_recon(recon_1)
                 recon_1.clean_up()
                 recon_1.total_cost_()
-
-                if recon_1.cost+(initial_cost-cost-1)<recon.cost:
-                    return recon_1,recon_1.cost+(initial_cost-cost-1)
-                if recon_1.cost+(initial_cost-cost-1)>=recon.cost:
+                recon_1.cost= recon_1.cost+(initial_cost-cost)
+                if  recon_1.cost<recon.cost:
+                    return recon_1, recon_1.cost
+                if  recon_1.cost>=recon.cost:
                     return recon,recon.cost
 
 
