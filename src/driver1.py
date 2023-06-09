@@ -4,7 +4,7 @@ import re
 
 a= Tree.Tree()
 
-tr= '(A,A);'
+tr= '(A,C),B),D);'
 sp ='(((A,B),C),D);'
 #tr='((B,C),(D,A));'
 
@@ -277,7 +277,7 @@ def driver(tr,sp,sp_copy,sp_):
         sp_2 =copy.deepcopy(sp_) 
 
         initial_cost=sp_1.find_cost(tr_copy_1,0)
-        
+
         if initial_cost==0:
             new_gene_tree =copy.deepcopy(tr_copy_2)
             new_gene_tree.reset()
@@ -298,6 +298,7 @@ def driver(tr,sp,sp_copy,sp_):
 
 
         else:
+
             new_topo,cost =(ILS(tr_copy_1,sp_1,sp_copy,initial_cost))
 
 
@@ -330,7 +331,9 @@ def driver(tr,sp,sp_copy,sp_):
             recon_1.clean_up()
             recon_1.total_cost_()
 
-            print(recon_1.cost)
+            if cost==initial_cost:
+                return recon
+
             if recon_1.cost+(initial_cost-cost)<recon.cost:
                 return recon_1
             if recon_1.cost+(initial_cost-cost)>=recon.cost:
@@ -344,6 +347,7 @@ def driver(tr,sp,sp_copy,sp_):
 
 val =driver(tr,sp,sp_copy,sp)
 print('######################33')
+
 sp_event(val)
 '''
 
