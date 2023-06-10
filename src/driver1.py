@@ -4,7 +4,7 @@ import re
 
 a= Tree.Tree()
 
-tr= '(((A,C),D),B);'
+tr= '(A,A);'
 sp ='(((A,B),C),D);'
 #tr='((B,C),(D,A));'
 
@@ -147,7 +147,10 @@ def find_parent_child(root,child):
             
 def parent_child(root,child):
     if root:
-        child= find_parent_child(root,child)
+        if root.isLeaf:
+            return []
+        else:
+            child= find_parent_child(root,child)
         #child=find_parent_child(root.leftChild,child)
         #child= find_parent_child(root.rightChild,child)
     return child
@@ -206,11 +209,12 @@ def ILS(gene_tree,tr,sp_copy,cost):
     list_tree=[]
     child=[]
     
-   
+    
+    
     child= parent_child(tr,child)
 
     if len(child)==0 or cost==0:
-        return gene_tree,cost
+        return gene_tree,cost,False
     else:
         #child =[child[0]]
         for ch1 in child:
@@ -220,7 +224,7 @@ def ILS(gene_tree,tr,sp_copy,cost):
                 geneTree =copy.deepcopy(gene_tree)
                 geneTree.reset()
                 list_tree= ch1[0].NNI(geneTree,ch1[2])
-                best_cost=1000
+                best_cost=cost
                 imporvement=False
                 new_topo=copy.deepcopy(geneTree)
                 for i in list_tree:
@@ -243,7 +247,7 @@ def ILS(gene_tree,tr,sp_copy,cost):
                         new_topo=copy.deepcopy(i[1])
                         #print('new_topo',to_newick(new_topo))
                         imporvement=True
-                
+
                 if imporvement:
                         #print('new_topo1',to_newick(new_topo))
 
@@ -261,11 +265,12 @@ def ILS(gene_tree,tr,sp_copy,cost):
                             new_sp.label_internal()
                         
                             new_topo.map_gene(new_sp)
+
                             return ILS(new_topo,new_sp,sp_copy,cost)
 
                         #print(cop.find_cost(tr))
                 else:
-                    return new_topo,cost
+                    return new_topo,cost,imporvement
         
 def driver(tr,sp,sp_copy,sp_):
     if sp:
@@ -277,9 +282,30 @@ def driver(tr,sp,sp_copy,sp_):
         sp_2 =copy.deepcopy(sp) 
 
         initial_cost=sp.find_cost(tr_copy_1,0)
+  
         if initial_cost==0:
             if sp.isLeaf:
-                print(1)
+                new_gene_tree =copy.deepcopy(tr_copy_2)
+                new_gene_tree.reset()
+
+
+                recon=Tree.Tree()
+                recon= copy.deepcopy(sp_)
+                recon.tag_species(new_gene_tree,tr_copy_2)
+
+                if recon.split_list!=None:
+                    for i in recon.split_list:
+                        tr_copy_2.map_recon(i)
+                else:
+                    tr_copy_2.map_recon(recon)
+
+
+
+                recon.clean_up()
+                recon.total_cost_()
+                
+                return recon,recon.cost
+            elif (sp.leftChild.isLeaf and sp.rightChild.isLeaf):
                 new_gene_tree =copy.deepcopy(tr_copy_2)
                 new_gene_tree.reset()
 
@@ -301,7 +327,6 @@ def driver(tr,sp,sp_copy,sp_):
                 
                 return recon,recon.cost
             else:
-                print(2)
                 val1,cost1=driver(tr,sp.leftChild,sp_copy,sp_) 
                 val2,cost2=driver(tr,sp.rightChild,sp_copy,sp_)
                 if cost2>cost1:
@@ -313,9 +338,7 @@ def driver(tr,sp,sp_copy,sp_):
 
 
         else:
-             
             if sp.isLeaf:
-                print(3)
                 new_gene_tree =copy.deepcopy(tr_copy_2)
                 new_gene_tree.reset()
 
@@ -334,11 +357,30 @@ def driver(tr,sp,sp_copy,sp_):
 
                 recon.clean_up()
                 recon.total_cost_()
-                return recon              
+                return recon,recon.cost
+            elif (sp.leftChild.isLeaf and sp.rightChild.isLeaf):
+                new_gene_tree =copy.deepcopy(tr_copy_2)
+                new_gene_tree.reset()
+
+
+                recon=Tree.Tree()
+                recon= copy.deepcopy(sp_2)
+                recon.tag_species(new_gene_tree,tr_copy_2)
+
+                if recon.split_list!=None:
+                    for i in recon.split_list:
+                        tr_copy_2.map_recon(i)
+                else:
+                    tr_copy_2.map_recon(recon)
+
+
+
+                recon.clean_up()
+                recon.total_cost_()
+                return recon,recon.cost
 
             else:
-                print(4)
-                new_topo,cost =(ILS(tr_copy_1,sp_1,sp_copy,initial_cost))
+                new_topo,cost ,improvement=(ILS(tr_copy_1,sp_1,sp_copy,initial_cost))
                 recon_1 = copy.deepcopy(sp_1)
 
                 
@@ -349,6 +391,8 @@ def driver(tr,sp,sp_copy,sp_):
 
                 recon=Tree.Tree()
                 recon= copy.deepcopy(sp_2)
+
+
                 recon.tag_species(new_gene_tree,tr_copy_2)
 
                 if recon.split_list!=None:
@@ -357,16 +401,18 @@ def driver(tr,sp,sp_copy,sp_):
                 else:
                     tr_copy_2.map_recon(recon)
 
-
-
                 recon.clean_up()
                 recon.total_cost_()
 
+                if improvement==False:
+                    return recon,recon.cost
                 recon_1.evolve='NNI'
+
+ 
                 new_topo.map_recon(recon_1)
                 recon_1.clean_up()
                 recon_1.total_cost_()
-                recon_1.cost= recon_1.cost+(initial_cost-cost)
+                recon_1.cost= recon_1.cost+(cost)
                 if  recon_1.cost<recon.cost:
                     return recon_1, recon_1.cost
                 if  recon_1.cost>=recon.cost:
@@ -376,9 +422,9 @@ def driver(tr,sp,sp_copy,sp_):
             val1,cost1=driver(tr,sp.leftChild,sp_copy,sp_) 
             val2,cost2=driver(tr,sp.rightChild,sp_copy,sp_)
             if cost2>cost1:
-                return val1
+                return val1,cost1
             else:
-                return val2
+                return val2,cost2
 
 
 
@@ -386,7 +432,7 @@ def driver(tr,sp,sp_copy,sp_):
 
 val,cost =driver(tr,sp,sp_copy,sp)
 print('######################33')
-print(val)
+print(to_newick(val))
 sp_event(val)
 '''
 
