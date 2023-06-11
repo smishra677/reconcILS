@@ -80,7 +80,7 @@ def return_perbutation(species):
 
     return newicks
 
-gene_tree_nw ='(((A,D),C),B);'
+gene_tree_nw ='(A,A);'
 species_tree_nw = '(((A,B),C),D);'
 
 tr= '(((A,D),C),B);'
@@ -95,7 +95,7 @@ visited={}
 genetree = PhyloTree(gene_tree_nw)
 sptree = PhyloTree(species_tree_nw)
 recon_tree, events = genetree.reconcile(sptree)
-
+recon_tree.show()
 eve_print(events)
 '''
 

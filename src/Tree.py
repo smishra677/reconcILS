@@ -118,10 +118,10 @@ class Tree:
         if root and  self.isLeaf==None and root.isLeaf==None:
             self.map_species(root.leftChild)
             self.map_species(root.rightChild)
-            
-            if set(self.taxa).issubset((root.taxa)) and self.event == None:
-                self.event= root
-                root.refTo.append(self)
+            if len(self.taxa)>1:
+                if set(self.taxa).issubset((root.taxa)) and self.event == None:
+                    self.event= root
+                    root.refTo.append(self)
 
 
 
@@ -174,8 +174,15 @@ class Tree:
 
     def tag_species(self,gene_tree,tr):
         if self:
-            if len(self.refTo)>1:
-                if self.isLeaf:
+            if  len(self.refTo)==0:
+                    if self.leftChild:
+                        self.leftChild.tag_species(gene_tree,tr)
+
+                    if self.rightChild:
+                        self.rightChild.tag_species(gene_tree,tr)
+            if self.isLeaf:
+                if len(self.refTo)>1 and self.parent.evolve not in ['Duplication','Speciation']:
+
                     self.refTo=[]
                     new_recon_right=copy.deepcopy(self)
                     
@@ -188,7 +195,7 @@ class Tree:
                     gene_tree.printorder_gene(new_recon_right)
                     gene_tree.label_internal()
                     new_recon_right.label_internal()
-                    #gene_tree.map_gene(new_recon_right)
+                    gene_tree.map_gene(new_recon_right)
 
 
 
@@ -196,18 +203,34 @@ class Tree:
                     gene_tree.printorder_gene(new_recon_left)
                     gene_tree.label_internal()
                     new_recon_left.label_internal()
+                    gene_tree.map_gene(new_recon_left)
                     
                     new_recon_left.refTo=[]
                     new_recon_right.refTo=[]
                     self.evolve='Duplication'
 
+                    
                     if self.leftChild:
+                        #self.leftChild.evolve='Speciation'
                         self.leftChild=new_recon_left
                     if self.rightChild:
+                        #self.rightChild.evolve='Speciation'
                         self.rightChild=new_recon_right
                     self.split_list= [new_recon_left,new_recon_right]
-                
+            
                 else:
+                    
+                    if self.leftChild:
+                        self.leftChild.tag_species(gene_tree,tr)
+
+
+                    if self.rightChild:
+                        self.rightChild.tag_species(gene_tree,tr)
+
+                
+            else:
+                
+                if len(self.refTo)>1:
                     self.refTo=[]
                     new_recon_right=copy.deepcopy(self)
                     
@@ -215,29 +238,14 @@ class Tree:
                     new_recon_left=copy.deepcopy(self)
                     
                     new_recon_left.reset()
-                    '''
-                    gene_tree.reset()
-                    gene_tree.printorder_gene(new_recon_right)
-                    gene_tree.label_internal()
-                    new_recon_right.label_internal()
-                    #gene_tree.map_gene(new_recon_right)
-
-
-
-                    gene_tree.reset()
-                    gene_tree.printorder_gene(new_recon_left)
-                    gene_tree.label_internal()
-                    new_recon_left.label_internal()
-                    
-                    new_recon_left.refTo=[]
-                    new_recon_right.refTo=[]
-                    '''
 
                     if self.leftChild:
                         self.leftChild=new_recon_left
                     if self.rightChild:
                         self.rightChild=new_recon_right
                     self.split_list= [new_recon_left,new_recon_right]
+
+
                     self.reset()
                     gene_tree.printorder_gene(self)
                     self.label_internal()
@@ -251,26 +259,19 @@ class Tree:
                     self.evolve='Duplication'
                     self.label_duplication(tr)
 
-                    self.tag_species(gene_tree,tr)
+                    
 
+                    new_recon_left.tag_species(gene_tree,tr)
+                    new_recon_right.tag_species(gene_tree,tr)
 
+                else:
+                    
 
-     
+                    if self.leftChild:
+                        self.leftChild.tag_species(gene_tree,tr)
 
-            if self.leftChild:
-                self.leftChild.tag_species(gene_tree,tr)
-
-
-            if self.rightChild:
-                self.rightChild.tag_species(gene_tree,tr)
-
-
-
-
-           
-            
-    
-
+                    if self.rightChild:
+                        self.rightChild.tag_species(gene_tree,tr)
         pass
 
     

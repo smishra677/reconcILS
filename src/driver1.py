@@ -4,7 +4,7 @@ import re
 
 a= Tree.Tree()
 
-tr= '(A,A);'
+tr= '((((A,C),B),D),((((A,B),(A,B)),C),D));'
 sp ='(((A,B),C),D);'
 #tr='((B,C),(D,A));'
 
@@ -214,7 +214,7 @@ def ILS(gene_tree,tr,sp_copy,cost):
     child= parent_child(tr,child)
 
     if len(child)==0 or cost==0:
-        return gene_tree,cost,False
+        return gene_tree,cost
     else:
         #child =[child[0]]
         for ch1 in child:
@@ -224,7 +224,7 @@ def ILS(gene_tree,tr,sp_copy,cost):
                 geneTree =copy.deepcopy(gene_tree)
                 geneTree.reset()
                 list_tree= ch1[0].NNI(geneTree,ch1[2])
-                best_cost=cost
+                best_cost=1000
                 imporvement=False
                 new_topo=copy.deepcopy(geneTree)
                 for i in list_tree:
@@ -236,20 +236,23 @@ def ILS(gene_tree,tr,sp_copy,cost):
                         
                     print('top_0',to_newick(i[0]))
                     print('topo_1',to_newick(i[1]))
+                    print('Species',to_newick(cop))
                     print('##############################')
                     
                     new_cost =cop.optimize_cost(i[0],i[1])
-   
+                    print(best_cost)
+                    print(cost)
+                    print(new_cost)
                     #print(cost)
                     #print(new_cost,best_cost)
                     if best_cost>new_cost and cost>0:
                         best_cost=new_cost
-                        new_topo=copy.deepcopy(i[1])
+                        new_topo=copy.deepcopy(i[0])
                         #print('new_topo',to_newick(new_topo))
                         imporvement=True
 
                 if imporvement:
-                        #print('new_topo1',to_newick(new_topo))
+                        print('new_topo1',to_newick(new_topo))
 
                         cost=cost-1
                         if cost==0:
@@ -270,117 +273,114 @@ def ILS(gene_tree,tr,sp_copy,cost):
 
                         #print(cop.find_cost(tr))
                 else:
-                    return new_topo,cost,imporvement
+                    return new_topo,cost
         
 def driver(tr,sp,sp_copy,sp_):
-    if sp:
+    if sp: 
+        print(sp.taxa)
+        print(sp.parent)
+        print(to_newick(tr))
 
         tr_copy_1 = copy.deepcopy(tr)
         sp_1 =copy.deepcopy(sp) 
 
         tr_copy_2 = copy.deepcopy(tr)
         sp_2 =copy.deepcopy(sp) 
-
-        initial_cost=sp.find_cost(tr_copy_1,0)
+        
+        if tr==None or tr.isLeaf:
+            print('x')
+            return sp
   
-        if initial_cost==0:
+        initial_cost=len(sp.refTo)
+        print('cost',initial_cost)
+        if initial_cost in [0,1]:
+            
             if sp.isLeaf:
-                new_gene_tree =copy.deepcopy(tr_copy_2)
-                new_gene_tree.reset()
-
-
-                recon=Tree.Tree()
-                recon= copy.deepcopy(sp_)
-                recon.tag_species(new_gene_tree,tr_copy_2)
-
-                if recon.split_list!=None:
-                    for i in recon.split_list:
-                        tr_copy_2.map_recon(i)
+                if len(sp.refTo)!=0:
+                    print(1)
+                    sp.evolve='Speciation'
+                    
+                    return sp
                 else:
-                    tr_copy_2.map_recon(recon)
-
-
-
-                recon.clean_up()
-                recon.total_cost_()
+                    print(23)
+                    sp.evolve='Loss'
+                    sp.cost=1
+                    return sp
+            elif (sp.leftChild.isLeaf and sp.rightChild.isLeaf)  and len(sp.refTo)!=0 :
+                sp.leftChild.evolve= 'Speciation'
+                sp.rightChild.evolve= 'Speciation'
                 
-                return recon,recon.cost
-            elif (sp.leftChild.isLeaf and sp.rightChild.isLeaf):
-                new_gene_tree =copy.deepcopy(tr_copy_2)
-                new_gene_tree.reset()
-
-
-                recon=Tree.Tree()
-                recon= copy.deepcopy(sp_)
-                recon.tag_species(new_gene_tree,tr_copy_2)
-
-                if recon.split_list!=None:
-                    for i in recon.split_list:
-                        tr_copy_2.map_recon(i)
-                else:
-                    tr_copy_2.map_recon(recon)
-
-
-
-                recon.clean_up()
-                recon.total_cost_()
-                
-                return recon,recon.cost
+                return sp
             else:
-                val1,cost1=driver(tr,sp.leftChild,sp_copy,sp_) 
-                val2,cost2=driver(tr,sp.rightChild,sp_copy,sp_)
-                if cost2>cost1:
-                    return val1,cost1
-                else:
-                    return val2,cost2
+                print(2)
+                
+                if len(sp.refTo)==0:
+                    print(to_newick(sp))
 
+                    sp.leftChild= driver(tr,sp.leftChild,sp_copy,sp_)
+                    sp.rightChild =driver(tr,sp.rightChild,sp_copy,sp_)
+                    
+                    return sp
+
+                else:
+                    print('1283')
+                    sp.leftChild= driver(tr.leftChild,sp.leftChild,sp_copy,sp_)
+                    sp.rightChild=driver(tr.rightChild,sp.rightChild,sp_copy,sp_)
+                    
+                    return sp
+           
 
 
 
         else:
+            
             if sp.isLeaf:
-                new_gene_tree =copy.deepcopy(tr_copy_2)
-                new_gene_tree.reset()
+                        print(4)
+                        print(44)
+                        print('Duplication')
+                        sp.refTo=[]
 
+                        recon_left = copy.deepcopy(sp)
+                        recon_right = copy.deepcopy(sp)
+                        recon_left.reset()
+                        recon_right.reset()
+                        tr.leftChild.reset()
+                        tr.rightChild.reset()
+                        recon_left.optimize_cost(recon_left,tr.leftChild)
+                        recon_right.optimize_cost(recon_right,tr.rightChild)
+                        sp.leftChild = driver(tr.leftChild,recon_left,sp_copy,sp_) 
+                        sp.rightChild = driver(tr.rightChild,recon_right,sp_copy,sp_)
+                        sp.evolve='Duplication'
 
-                recon=Tree.Tree()
-                recon= copy.deepcopy(sp_2)
-                recon.tag_species(new_gene_tree,tr_copy_2)
-
-                if recon.split_list!=None:
-                    for i in recon.split_list:
-                        tr_copy_2.map_recon(i)
-                else:
-                    tr_copy_2.map_recon(recon)
-
-
-
-                recon.clean_up()
-                recon.total_cost_()
-                return recon,recon.cost
+                        sp.leftChild.evolve='Speciation'
+                        sp.rightChild.evolve='Speciation'
+                        sp.cost=1
+                        return sp
             elif (sp.leftChild.isLeaf and sp.rightChild.isLeaf):
-                new_gene_tree =copy.deepcopy(tr_copy_2)
-                new_gene_tree.reset()
+                        print(44)
+                        print('Duplication')
+                        sp.refTo=[]
 
+                        recon_left = copy.deepcopy(sp)
+                        recon_right = copy.deepcopy(sp)
+                        recon_left.reset()
+                        recon_right.reset()
+                        tr.leftChild.reset()
+                        tr.rightChild.reset()
+                        recon_left.optimize_cost(recon_left,tr.leftChild)
+                        recon_right.optimize_cost(recon_right,tr.rightChild)
+                        sp.leftChild = driver(tr.leftChild,recon_left,sp_copy,sp_) 
+                        sp.rightChild = driver(tr.rightChild,recon_right,sp_copy,sp_)
+                        sp.evolve='Duplication'
 
-                recon=Tree.Tree()
-                recon= copy.deepcopy(sp_2)
-                recon.tag_species(new_gene_tree,tr_copy_2)
-
-                if recon.split_list!=None:
-                    for i in recon.split_list:
-                        tr_copy_2.map_recon(i)
-                else:
-                    tr_copy_2.map_recon(recon)
-
-
-
-                recon.clean_up()
-                recon.total_cost_()
-                return recon,recon.cost
+                        sp.leftChild.evolve='Speciation'
+                        sp.rightChild.evolve='Speciation'
+                        sp.cost=1
+                        return sp
 
             else:
-                new_topo,cost ,improvement=(ILS(tr_copy_1,sp_1,sp_copy,initial_cost))
+                print(5)
+                new_topo,cost =(ILS(tr_copy_1,sp_1,sp_1,initial_cost))
                 recon_1 = copy.deepcopy(sp_1)
 
                 
@@ -391,49 +391,104 @@ def driver(tr,sp,sp_copy,sp_):
 
                 recon=Tree.Tree()
                 recon= copy.deepcopy(sp_2)
-
+                
 
                 recon.tag_species(new_gene_tree,tr_copy_2)
 
+
+    
                 if recon.split_list!=None:
                     for i in recon.split_list:
                         tr_copy_2.map_recon(i)
                 else:
                     tr_copy_2.map_recon(recon)
 
+
                 recon.clean_up()
                 recon.total_cost_()
+    
+               
 
-                if improvement==False:
-                    return recon,recon.cost
                 recon_1.evolve='NNI'
 
- 
+               
+                new_topo.label_internal()
                 new_topo.map_recon(recon_1)
                 recon_1.clean_up()
                 recon_1.total_cost_()
-                recon_1.cost= recon_1.cost+(cost)
-                if  recon_1.cost<recon.cost:
-                    return recon_1, recon_1.cost
-                if  recon_1.cost>=recon.cost:
-                    return recon,recon.cost
+                recon_1.cost= recon_1.cost+(initial_cost- cost)
+                
+                recon_left = copy.deepcopy(sp)
+                recon_right = copy.deepcopy(sp)
+                new_sp = copy.deepcopy(sp)
+                new_sp.leftChild=recon_left
+                new_sp.rightChild=recon_right
+                new_sp.reset()
+                tr_copy_2.reset()
+
+                recon_left.label_internal()
+                tr_copy_2.label_internal()
+                tr_copy_2.map_recon(recon_left)
+                recon_left.clean_up()
+                recon_left.total_cost_()
+                tr_copy_2.reset()
+
+                tr_copy_2.label_internal()
+                recon_right.label_internal()
+                tr_copy_2.map_recon(recon_right)
+                recon_right.total_cost_()
+                recon_1_cost =recon_right.cost +recon_left.cost 
+                recon_left.reset()
+                recon_right.reset()
+
+                
+                if  recon_1.cost<recon_1_cost:
+                        print('NNI')
+                        print(to_newick(recon_1))
+                        sp.leftChild = driver(tr,recon_1.leftChild,sp_copy,sp_) 
+                        sp.rightChild = driver(tr,recon_1.rightChild,sp_copy,sp_)
+                        sp.evolve='NNI'
+                        sp.cost=recon_1.cost
+                        return sp
+
+                if  recon_1.cost>=recon_1_cost:
+                        print('Duplication')
+                        sp.refTo=[]
+
+                        recon_left = copy.deepcopy(sp)
+                        recon_right = copy.deepcopy(sp)
+                        recon_left.reset()
+                        recon_right.reset()
+                        tr.leftChild.reset()
+                        tr.rightChild.reset()
+                        recon_left.optimize_cost(recon_left,tr.leftChild)
+                        recon_right.optimize_cost(recon_right,tr.rightChild)
+                        sp.leftChild = driver(tr.leftChild,recon_left,sp_copy,sp_) 
+                        sp.rightChild = driver(tr.rightChild,recon_right,sp_copy,sp_)
+                        sp.evolve='Duplication'
+
+                        sp.leftChild.evolve='Speciation'
+                        sp.rightChild.evolve='Speciation'
+                        sp.cost=recon_1_cost
+                        return sp
+
+            if sp.leftChild:
+                print('le')
+                sp.leftChild =driver(tr,sp.leftChild,sp_copy,sp_)
+            if sp.rightChild:
+                print('rt')
+                sp.rightChild = driver(tr,sp.rightChild,sp_copy,sp_)
+            return sp
+            
+           
 
 
-            val1,cost1=driver(tr,sp.leftChild,sp_copy,sp_) 
-            val2,cost2=driver(tr,sp.rightChild,sp_copy,sp_)
-            if cost2>cost1:
-                return val1,cost1
-            else:
-                return val2,cost2
 
-
-
-
-
-val,cost =driver(tr,sp,sp_copy,sp)
+driver(tr,sp,sp_copy,sp)
 print('######################33')
-print(to_newick(val))
-sp_event(val)
+print(to_newick(sp))
+sp.total_cost_()
+sp_event(sp)
 '''
 
 initial_cost=1
