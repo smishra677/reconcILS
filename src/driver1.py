@@ -4,7 +4,7 @@ import re
 
 a= Tree.Tree()
 
-tr= '((((A,C),B),D),((((A,B),(A,B)),C),D));'
+tr= '(((((A,C),B),D),(((A,B),C),D)),((((A,C),B),D),(((A,B),C),D)));'
 sp ='(((A,B),C),D);'
 #tr='((B,C),(D,A));'
 
@@ -287,8 +287,9 @@ def driver(tr,sp,sp_copy,sp_):
         tr_copy_2 = copy.deepcopy(tr)
         sp_2 =copy.deepcopy(sp) 
         
-        if tr==None or tr.isLeaf:
+        if tr==None:
             print('x')
+
             return sp
   
         initial_cost=len(sp.refTo)
@@ -299,7 +300,7 @@ def driver(tr,sp,sp_copy,sp_):
                 if len(sp.refTo)!=0:
                     print(1)
                     sp.evolve='Speciation'
-                    
+                    sp.cost=0
                     return sp
                 else:
                     print(23)
@@ -319,14 +320,16 @@ def driver(tr,sp,sp_copy,sp_):
 
                     sp.leftChild= driver(tr,sp.leftChild,sp_copy,sp_)
                     sp.rightChild =driver(tr,sp.rightChild,sp_copy,sp_)
-                    
+                    sp.cost=0
+                    sp.evolve='Speciation'
                     return sp
 
                 else:
                     print('1283')
                     sp.leftChild= driver(tr.leftChild,sp.leftChild,sp_copy,sp_)
                     sp.rightChild=driver(tr.rightChild,sp.rightChild,sp_copy,sp_)
-                    
+                    sp.cost=0
+                    sp.evolve='Speciation'
                     return sp
            
 
@@ -336,24 +339,13 @@ def driver(tr,sp,sp_copy,sp_):
             
             if sp.isLeaf:
                         print(4)
-                        print(44)
+                        print(48)
                         print('Duplication')
                         sp.refTo=[]
 
-                        recon_left = copy.deepcopy(sp)
-                        recon_right = copy.deepcopy(sp)
-                        recon_left.reset()
-                        recon_right.reset()
-                        tr.leftChild.reset()
-                        tr.rightChild.reset()
-                        recon_left.optimize_cost(recon_left,tr.leftChild)
-                        recon_right.optimize_cost(recon_right,tr.rightChild)
-                        sp.leftChild = driver(tr.leftChild,recon_left,sp_copy,sp_) 
-                        sp.rightChild = driver(tr.rightChild,recon_right,sp_copy,sp_)
                         sp.evolve='Duplication'
 
-                        sp.leftChild.evolve='Speciation'
-                        sp.rightChild.evolve='Speciation'
+
                         sp.cost=1
                         return sp
             elif (sp.leftChild.isLeaf and sp.rightChild.isLeaf):
@@ -409,7 +401,7 @@ def driver(tr,sp,sp_copy,sp_):
     
                
 
-                recon_1.evolve='NNI'
+                
 
                
                 new_topo.label_internal()
@@ -440,7 +432,7 @@ def driver(tr,sp,sp_copy,sp_):
                 recon_1_cost =recon_right.cost +recon_left.cost 
                 recon_left.reset()
                 recon_right.reset()
-
+                print(recon_1.cost)
                 
                 if  recon_1.cost<recon_1_cost:
                         print('NNI')
@@ -448,7 +440,8 @@ def driver(tr,sp,sp_copy,sp_):
                         sp.leftChild = driver(tr,recon_1.leftChild,sp_copy,sp_) 
                         sp.rightChild = driver(tr,recon_1.rightChild,sp_copy,sp_)
                         sp.evolve='NNI'
-                        sp.cost=recon_1.cost
+                        sp.cost=1
+                        
                         return sp
 
                 if  recon_1.cost>=recon_1_cost:
@@ -467,9 +460,7 @@ def driver(tr,sp,sp_copy,sp_):
                         sp.rightChild = driver(tr.rightChild,recon_right,sp_copy,sp_)
                         sp.evolve='Duplication'
 
-                        sp.leftChild.evolve='Speciation'
-                        sp.rightChild.evolve='Speciation'
-                        sp.cost=recon_1_cost
+                        sp.cost=1
                         return sp
 
             if sp.leftChild:
@@ -487,7 +478,8 @@ def driver(tr,sp,sp_copy,sp_):
 driver(tr,sp,sp_copy,sp)
 print('######################33')
 print(to_newick(sp))
-sp.total_cost_()
+
+sp.sum_cost()
 sp_event(sp)
 '''
 

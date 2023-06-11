@@ -1,0 +1,369 @@
+(((D,(C,(B,A))),(D,(B,(C,A)))),((D,(C,(B,A))),(D,(B,(C,A)))));
+{'B', 'A', 'C', 'D'}
+None
+(((D,(C,(B,A))),(D,(B,(C,A)))),((D,(C,(B,A))),(D,(B,(C,A)))));
+cost 7
+5
+top_0 (((D,(C,(B,A))),(B,(C,A))),D);
+topo_1 (((D,(C,(B,A))),(D,(B,(C,A)))),((D,(C,(B,A))),(D,(B,(C,A)))));
+Species (D,(C,(B,A)));
+##############################
+1000
+7
+7
+top_0 (((D,(C,(B,A))),D),(B,(C,A)));
+topo_1 (((D,(C,(B,A))),(D,(B,(C,A)))),((D,(C,(B,A))),(D,(B,(C,A)))));
+Species (D,(C,(B,A)));
+##############################
+7
+7
+7
+new_topo1 (((D,(C,(B,A))),(B,(C,A))),D);
+top_0 (((C,(B,A)),(B,(C,A))),D);
+topo_1 (((D,(C,(B,A))),(B,(C,A))),D);
+Species (D,(C,(B,A)));
+##############################
+1000
+6
+3
+top_0 (((B,(C,A)),D),(C,(B,A)));
+topo_1 (((D,(C,(B,A))),(B,(C,A))),D);
+Species (D,(C,(B,A)));
+##############################
+3
+6
+3
+new_topo1 (((C,(B,A)),(B,(C,A))),D);
+3
+Duplication
+{'B', 'A', 'C', 'D'}
+None
+((D,(C,(B,A))),(D,(B,(C,A))));
+cost 3
+5
+top_0 (((D,(C,(B,A))),(B,(C,A))),D);
+topo_1 ((D,(C,(B,A))),(D,(B,(C,A))));
+Species (D,(C,(B,A)));
+##############################
+1000
+3
+3
+top_0 (((D,(C,(B,A))),D),(B,(C,A)));
+topo_1 ((D,(C,(B,A))),(D,(B,(C,A))));
+Species (D,(C,(B,A)));
+##############################
+3
+3
+3
+new_topo1 (((D,(C,(B,A))),(B,(C,A))),D);
+top_0 (((C,(B,A)),(B,(C,A))),D);
+topo_1 (((D,(C,(B,A))),(B,(C,A))),D);
+Species (D,(C,(B,A)));
+##############################
+1000
+2
+3
+top_0 (((B,(C,A)),D),(C,(B,A)));
+topo_1 (((D,(C,(B,A))),(B,(C,A))),D);
+Species (D,(C,(B,A)));
+##############################
+3
+2
+3
+new_topo1 (((C,(B,A)),(B,(C,A))),D);
+3
+Duplication
+{'B', 'A', 'C', 'D'}
+None
+(D,(B,(C,A)));
+cost 1
+2
+1283
+{'B', 'A', 'C'}
+<Tree.Tree object at 0x7f0266f05760>
+(B,(C,A));
+cost 2
+5
+top_0 ((B,A),C);
+topo_1 (B,(C,A));
+Species (C,(B,A));
+##############################
+1000
+2
+2
+top_0 ((B,C),A);
+topo_1 (B,(C,A));
+Species (C,(B,A));
+##############################
+2
+2
+2
+new_topo1 ((B,A),C);
+1
+NNI
+(C,(B,A));
+{'B', 'A'}
+<Tree.Tree object at 0x7f0266c906a0>
+(B,(C,A));
+cost 0
+2
+(B,A);
+A
+<Tree.Tree object at 0x7f0266c8a490>
+(B,(C,A));
+cost 1
+1
+B
+<Tree.Tree object at 0x7f0266c8a490>
+(B,(C,A));
+cost 1
+1
+C
+<Tree.Tree object at 0x7f0266c906a0>
+(B,(C,A));
+cost 1
+1
+D
+<Tree.Tree object at 0x7f0266f05760>
+D;
+cost 1
+1
+{'B', 'A', 'C', 'D'}
+None
+(D,(C,(B,A)));
+cost 1
+2
+1283
+{'B', 'A', 'C'}
+<Tree.Tree object at 0x7f02675c19a0>
+(C,(B,A));
+cost 1
+2
+1283
+{'B', 'A'}
+<Tree.Tree object at 0x7f0266ce8340>
+(B,A);
+cost 1
+C
+<Tree.Tree object at 0x7f0266ce8340>
+C;
+cost 1
+1
+D
+<Tree.Tree object at 0x7f02675c19a0>
+D;
+cost 1
+1
+{'B', 'A', 'C', 'D'}
+None
+((D,(C,(B,A))),(D,(B,(C,A))));
+cost 3
+5
+top_0 (((D,(C,(B,A))),(B,(C,A))),D);
+topo_1 ((D,(C,(B,A))),(D,(B,(C,A))));
+Species (D,(C,(B,A)));
+##############################
+1000
+3
+3
+top_0 (((D,(C,(B,A))),D),(B,(C,A)));
+topo_1 ((D,(C,(B,A))),(D,(B,(C,A))));
+Species (D,(C,(B,A)));
+##############################
+3
+3
+3
+new_topo1 (((D,(C,(B,A))),(B,(C,A))),D);
+top_0 (((C,(B,A)),(B,(C,A))),D);
+topo_1 (((D,(C,(B,A))),(B,(C,A))),D);
+Species (D,(C,(B,A)));
+##############################
+1000
+2
+3
+top_0 (((B,(C,A)),D),(C,(B,A)));
+topo_1 (((D,(C,(B,A))),(B,(C,A))),D);
+Species (D,(C,(B,A)));
+##############################
+3
+2
+3
+new_topo1 (((C,(B,A)),(B,(C,A))),D);
+3
+Duplication
+{'B', 'A', 'C', 'D'}
+None
+(D,(B,(C,A)));
+cost 1
+2
+1283
+{'B', 'A', 'C'}
+<Tree.Tree object at 0x7f026662e880>
+(B,(C,A));
+cost 2
+5
+top_0 ((B,A),C);
+topo_1 (B,(C,A));
+Species (C,(B,A));
+##############################
+1000
+2
+2
+top_0 ((B,C),A);
+topo_1 (B,(C,A));
+Species (C,(B,A));
+##############################
+2
+2
+2
+new_topo1 ((B,A),C);
+1
+NNI
+(C,(B,A));
+{'B', 'A'}
+<Tree.Tree object at 0x7f02668c5700>
+(B,(C,A));
+cost 0
+2
+(B,A);
+A
+<Tree.Tree object at 0x7f0266c7bcd0>
+(B,(C,A));
+cost 1
+1
+B
+<Tree.Tree object at 0x7f0266c7bcd0>
+(B,(C,A));
+cost 1
+1
+C
+<Tree.Tree object at 0x7f02668c5700>
+(B,(C,A));
+cost 1
+1
+D
+<Tree.Tree object at 0x7f026662e880>
+D;
+cost 1
+1
+{'B', 'A', 'C', 'D'}
+None
+(D,(C,(B,A)));
+cost 1
+2
+1283
+{'B', 'A', 'C'}
+<Tree.Tree object at 0x7f0266381cd0>
+(C,(B,A));
+cost 1
+2
+1283
+{'B', 'A'}
+<Tree.Tree object at 0x7f026632c760>
+(B,A);
+cost 1
+C
+<Tree.Tree object at 0x7f026632c760>
+C;
+cost 1
+1
+D
+<Tree.Tree object at 0x7f0266381cd0>
+D;
+cost 1
+1
+######################33
+(((D,(C,(B,A))),(D,(C,(B,A)))),((D,(C,(B,A))),(D,(C,(B,A)))));
+A
+event Speciation
+cost 0
+{'B', 'A'}
+event Speciation
+cost 0
+B
+event Speciation
+cost 0
+{'B', 'A', 'C'}
+event NNI
+cost 1
+C
+event Speciation
+cost 0
+{'B', 'A', 'C', 'D'}
+event Speciation
+cost 1
+D
+event Speciation
+cost 0
+{'B', 'A', 'C', 'D'}
+event Duplication
+cost 2
+A
+event Speciation
+cost 0
+{'B', 'A'}
+event None
+cost 0
+B
+event Speciation
+cost 0
+{'B', 'A', 'C'}
+event Speciation
+cost 0
+C
+event Speciation
+cost 0
+{'B', 'A', 'C', 'D'}
+event Speciation
+cost 0
+D
+event Speciation
+cost 0
+{'B', 'A', 'C', 'D'}
+event Duplication
+cost 4
+A
+event Speciation
+cost 0
+{'B', 'A'}
+event Speciation
+cost 0
+B
+event Speciation
+cost 0
+{'B', 'A', 'C'}
+event NNI
+cost 1
+C
+event Speciation
+cost 0
+{'B', 'A', 'C', 'D'}
+event Speciation
+cost 1
+D
+event Speciation
+cost 0
+{'B', 'A', 'C', 'D'}
+event Duplication
+cost 2
+A
+event Speciation
+cost 0
+{'B', 'A'}
+event None
+cost 0
+B
+event Speciation
+cost 0
+{'B', 'A', 'C'}
+event Speciation
+cost 0
+C
+event Speciation
+cost 0
+{'B', 'A', 'C', 'D'}
+event Speciation
+cost 0
+D
+event Speciation
+cost 0

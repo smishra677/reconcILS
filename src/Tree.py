@@ -400,9 +400,22 @@ class Tree:
                     self.cost=1
             else:
                 self.cost = self.leftChild.cost+self.rightChild.cost
-                if self.evolve =='Duplication':
+                if self.evolve in ['Duplication','NNI']:
                     self.cost = self.cost +1
+                
 
+
+    def sum_cost(self):
+        if self:
+            if self.leftChild:
+                self.leftChild.total_cost_()
+            if self.rightChild:
+                self.rightChild.total_cost_()
+
+            if not self.isLeaf:
+                self.cost = self.leftChild.cost+self.rightChild.cost
+                
+                
 
 
 
