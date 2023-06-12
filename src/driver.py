@@ -8,7 +8,7 @@ from mock_function import get_reconciled_tree,get_reconciled_tree_zmasek
 from itertools import permutations
 from ete3 import NCBITaxa
 import budgitree
-from collections import deque
+from collections import Counter
 import Bio
 #trees = Phylo.read("example.dnd", "newick")
 
@@ -49,7 +49,9 @@ def permute(recon_tree,genetree):
 
 
 def eve_print(events):
+    li=[]
     for ev in events:
+        li.append(ev.etype)
         if ev.etype == "S":
             print('ORTHOLOGY RELATIONSHIP:', ','.join(ev.inparalogs), "<====>", ','.join(ev.orthologs))
         elif ev.etype == "L":
@@ -70,6 +72,7 @@ def eve_print(events):
                     else:
                         print('PARALOGY RELATIONSHIP:', ','.join(ev1.inparalogs), "<====>", ','.join(ev1.outparalogs))
             '''
+    return li
 
 
 def return_perbutation(species):
@@ -80,8 +83,8 @@ def return_perbutation(species):
 
     return newicks
 
-gene_tree_nw ='(A,A);'
-species_tree_nw = '(((A,B),C),D);'
+gene_tree_nw ='(((((A,A),A),B),C),A);'
+species_tree_nw = '(A:2,(B:1,C:1):1);'
 
 tr= '(((A,D),C),B);'
 sp ='(((A,B),C),D);'
@@ -93,10 +96,15 @@ species = ["A","B","C"]
 visited={}
 
 genetree = PhyloTree(gene_tree_nw)
+
+
 sptree = PhyloTree(species_tree_nw)
+
 recon_tree, events = genetree.reconcile(sptree)
 recon_tree.show()
-eve_print(events)
+li =eve_print(events)
+
+print(Counter(li))
 '''
 
 #print(genetree.robinson_foulds(sptree))

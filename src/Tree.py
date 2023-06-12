@@ -50,6 +50,21 @@ class Tree:
 
 
 
+
+    def reset_evolve(self):
+        if self:
+            if self.evolve=='Loss':
+                self.evolve = None
+    
+            if self.leftChild:
+                self.leftChild.reset()
+            
+            if self.rightChild:
+                self.rightChild.reset()
+
+
+
+
     
     def __setNewick__(self,newick):
         self.taxa=None
@@ -498,6 +513,11 @@ class Tree:
 
     def locate_copy(self,copy_tree,tree):
         if tree:
+            if tree.leftChild:
+                self.locate_copy(copy_tree,tree.leftChild)
+            
+            if tree.rightChild:
+                self.locate_copy(copy_tree,tree.rightChild)
             if tree.taxa==self.taxa:
                 if tree.parent==None:
                     return
@@ -514,11 +534,7 @@ class Tree:
                     tree.parent.children.append(copy_tree)
                     #print('right_child',tree.children)
                     return                  
-            if tree.leftChild:
-                self.locate_copy(copy_tree,tree.leftChild)
-            
-            if tree.rightChild:
-                self.locate_copy(copy_tree,tree.rightChild)
+
             
     
     def NNI(self,gene_tree,flag):
