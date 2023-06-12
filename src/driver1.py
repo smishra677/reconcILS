@@ -8,7 +8,7 @@ import dendropy
 
 
 #sp ='(((A,B),C),D);'
-tr='(A_1:2.6411283443347853,((C_2:1.7675140087366326,(B_1:1.6479215572104247,C_1:1.6479215572104247):0.1195924515262079):0.8736143355981526):0.0):0.0;'
+tr='((B_1:1.541112560833257,(((C_4:1.4097421054344692,(C_2:1.0439038695355096,((C_5:0.33983295955088516,C_3:0.33983295955088516):0.7040709099846245):0.0):0.3658382358989596):0.13137045539878778):0.0):0.0):1.690646090711352);'
 sp='(A,(B,C));'
 def tag(root):
  
@@ -324,6 +324,7 @@ def driver(tr,sp,sp_copy,sp_):
         if initial_cost==2:
             
             if sp.isLeaf:
+                print(12455)
                 if sp.parent.evolve!='Duplication':
                     sp.evolve='Duplication'
                 else:
@@ -456,9 +457,10 @@ def driver(tr,sp,sp_copy,sp_):
                          sp.evolve='Speciation'
                          return sp
             elif (sp.leftChild.isLeaf and sp.rightChild.isLeaf)  and len(sp.refTo)!=0 :
-                sp.leftChild.evolve= 'Speciation'
-                sp.rightChild.evolve= 'Speciation'
+
                 sp.evolve= 'Speciation'
+                sp.leftChild= driver(tr,sp.leftChild,sp_copy,sp_)
+                sp.rightChild =driver(tr,sp.rightChild,sp_copy,sp_)
                 return sp
             else:
                 print(2)
