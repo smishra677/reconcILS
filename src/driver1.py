@@ -8,7 +8,7 @@ import dendropy
 
 
 #sp ='(((A,B),C),D);'
-tr='(A,A);'
+tr='(A_1:2.6411283443347853,((C_2:1.7675140087366326,(B_1:1.6479215572104247,C_1:1.6479215572104247):0.1195924515262079):0.8736143355981526):0.0):0.0;'
 sp='(A,(B,C));'
 def tag(root):
  
@@ -322,9 +322,122 @@ def driver(tr,sp,sp_copy,sp_):
         print('cost',initial_cost)
 
         if initial_cost==2:
-            sp.evolve='Duplication'
             
-            return sp
+            if sp.isLeaf:
+                if sp.parent.evolve!='Duplication':
+                    sp.evolve='Duplication'
+                else:
+                     sp.evolve='Speciation'
+                return sp
+            else:
+                 
+                new_topo,cost =(ILS(tr_copy_1,sp_1,sp_1,initial_cost))
+                recon_1 = copy.deepcopy(sp_1)
+
+                
+
+                new_gene_tree =copy.deepcopy(tr_copy_2)
+                new_gene_tree.reset()
+
+
+                recon=Tree.Tree()
+                recon= copy.deepcopy(sp_2)
+                
+
+                recon.tag_species(new_gene_tree,tr_copy_2)
+
+
+    
+                if recon.split_list!=None:
+                    for i in recon.split_list:
+                        tr_copy_2.map_recon(i)
+                else:
+                    tr_copy_2.map_recon(recon)
+
+
+                #recon.clean_up()
+                recon.total_cost_()
+    
+               
+
+                
+
+               
+                new_topo.label_internal()
+                new_topo.map_recon(recon_1)
+                #recon_1.clean_up()
+                recon_1.total_cost_()
+                recon_1.cost= recon_1.cost
+                
+                recon_left = copy.deepcopy(sp)
+                recon_right = copy.deepcopy(sp)
+                new_sp = copy.deepcopy(sp)
+                new_sp.leftChild=recon_left
+                new_sp.rightChild=recon_right
+                new_sp.reset()
+                tr_copy_2.reset()
+
+                recon_left.label_internal()
+                tr_copy_2.label_internal()
+                tr_copy_2.map_recon(recon_left)
+                recon_left.clean_up()
+                recon_left.total_cost_()
+                tr_copy_2.reset()
+
+                tr_copy_2.label_internal()
+                recon_right.label_internal()
+                tr_copy_2.map_recon(recon_right)
+                recon_right.total_cost_()
+                recon_1_cost =recon_right.cost +recon_left.cost+1
+                recon_left.reset()
+                recon_right.reset()
+                print(recon_1_cost)
+                print(recon_1.cost)
+ 
+                if  recon_1.cost<=recon_1_cost:
+                        print('NNI')
+                        print(to_newick(new_topo))
+                        print(to_newick(tr))
+                        sp.refTo=[]
+                        sp.evolve='NNI'
+                        sp.leftChild = driver(new_topo,recon_1.leftChild,sp_copy,sp_) 
+                        sp.rightChild = driver(new_topo,recon_1.rightChild,sp_copy,sp_)
+                        
+                        sp.cost=1
+                        
+                        return sp
+
+                if  recon_1.cost>recon_1_cost:
+                        print('Duplication')
+                        sp.refTo=[]
+
+                        recon_left = copy.deepcopy(sp)
+                        recon_right = copy.deepcopy(sp)
+                        recon_left.reset()
+                        recon_right.reset()
+                        tr.leftChild.reset()
+                        tr.rightChild.reset()
+
+                        recon_left.parent=sp
+                        recon_right.parent=sp
+
+                        sp.evolve='Duplication'
+                        recon_left.parent=sp
+                        recon_right.parent=sp
+                        recon_left.evolve='Speciation'
+                        recon_right.evolve='Speciation'
+
+                        recon_left.optimize_cost(recon_left,tr.leftChild)
+                        recon_right.optimize_cost(recon_right,tr.rightChild)
+                        sp.leftChild = driver(tr.leftChild,recon_left,sp_copy,sp_) 
+                        sp.rightChild = driver(tr.rightChild,recon_right,sp_copy,sp_)
+                        
+                        sp.cost=1
+                        return sp
+
+        
+            
+           
         if initial_cost in [0,1]:
             
             if sp.isLeaf:
