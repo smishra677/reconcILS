@@ -83,29 +83,37 @@ def return_perbutation(species):
 
     return newicks
 
-gene_tree_nw ='(((((A,A),A),B),C),A);'
+gene_tree_nw ='(A,B);'
 species_tree_nw = '(A:2,(B:1,C:1):1);'
 
 tr= '(((A,D),C),B);'
 sp ='(((A,B),C),D);'
 species = ["A","B","C"]
+def sp_event(root,li):
+    li.append(root.evoltype)
+    for node in root.traverse(strategy="postorder"):
+        if len(node.children) != 0:
+        #print(dir(root))
 
+            
+            li.append(node.evoltype)
+        #print(root.isLeaf),
+    return li
 
-
-
-visited={}
 
 genetree = PhyloTree(gene_tree_nw)
-
-
 sptree = PhyloTree(species_tree_nw)
 
 recon_tree, events = genetree.reconcile(sptree)
-recon_tree.show()
-li =eve_print(events)
 
-print(Counter(li))
-'''
+sp_event(recon_tree,[])
+
+
+    #print(i.etype)
+#print(events)
+
+#print(Counter(li))
+'''clea
 
 #print(genetree.robinson_foulds(sptree))
 
