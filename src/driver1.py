@@ -1,15 +1,28 @@
 
 import Tree
 import re
+import os
+
+
+from ete3 import TreeNode
+from  ete3 import phylo
+from ete3 import PhyloTree
+
+from ete3 import NCBITaxa
 
 a= Tree.Tree()
 import dendropy
 
 
+def read_trees(i):
+     gene_tre= open('./output_gene/rep_'+str(i)+'.tre')
+     tr =gene_tre.read()
+     gene_tre.close()
+     return tr
 
-#sp ='(((A,B),C),D);'
-tr='((B_1:1.541112560833257,(((C_4:1.4097421054344692,(C_2:1.0439038695355096,((C_5:0.33983295955088516,C_3:0.33983295955088516):0.7040709099846245):0.0):0.3658382358989596):0.13137045539878778):0.0):0.0):1.690646090711352);'
-sp='(A,(B,C));'
+     
+
+
 def tag(root):
  
     if root:
@@ -171,27 +184,6 @@ def parent_child(root,child):
         #child=find_parent_child(root.leftChild,child)
         #child= find_parent_child(root.rightChild,child)
     return child
-
-
-tr=parse(tr)
-print(to_newick(tr))
-
-sp=parse(sp)
-
-
-print(to_newick(sp))
-
-sp_copy= copy.deepcopy(sp)
-sp_copy.reset()
-
-tr.printorder_gene(sp)
-
-tr.label_internal()
-sp.label_internal()
-
-
-
-tr.map_gene(sp)
 
 
 '''
@@ -659,20 +651,153 @@ def driver(tr,sp,sp_copy,sp_):
             sp.leftChild =driver(tr,sp.leftChild,sp_copy,sp_)
             sp.rightChild = driver(tr,sp.rightChild,sp_copy,sp_)
             return sp
+
+
+
+import pandas as pd          
+def read_log(flag,i,dic):
+    o= open('./output_gene/rep_'+str(i)+'.log').read()
+    dic['Process']+=[flag]
+    dic['Replicate']+=[i]
+    
+    for i in o.split('\n'):
+        val= (i.split(':'))
+        if val[0]=='Total duplications':
+            dic['Duplication']+=[int(val[1])]
+        elif val[0]=='Total ILS':
+            dic['NNI']+=[int(val[1])]
+        elif val[0]=='Total losses':
+            dic['Loss']+=[int(val[1])]
+        else:
+            continue
+   
+    return dic
+
+
+def Create_pd(flag,i,o,dic):
+    
+    dic['Process']+=[flag]
+    dic['Replicate']+=[i]
+    dic['Duplication'].append(0)
+    dic['NNI'].append(0)
+    dic['Loss'].append(0)
+
+
+    for i in o:
+         if i in ['Duplication','NNI','Loss']:
+              dic[i][-1]=o[i]
+              
+         
+    
+
+    return dic
+
+def Create_pd_ete3(flag,i,o,dic):
+    
+    dic['Process']+=[flag]
+    dic['Replicate']+=[i]
+    dic['Duplication'].append(0)
+    dic['NNI'].append(0)
+    dic['Loss'].append(0)
+
+
+    for i in o:
+         if i in ['D','L']:
+                if i =='D':
+                   dic['Duplication'][-1]=o[i]
+                elif i=='L':
+                    dic['Loss'][-1]=o[i]
+                else:
+                    continue
+
+    return dic
+                     
             
-           
+              
+         
 
+
+def sp_event_ete3(root):
+    li=[]
+    for node in root.traverse(strategy="postorder"):
+        if len(node.children) != 0:
+        #print(dir(root))
+
+            print(li)
+            
+            li.append(node.evoltype)
+        #print(root.isLeaf),
+    return li
+
+dic={'Process':[],'Replicate':[],'Gene_tree':[],'Species_Tree':[],'Duplication':[],'NNI':[],'Loss':[]}
+    
 from collections import Counter
-sp.isRoot=True
-tr.isRoot=True
-sp_copy.isRoot=True
-driver(tr,sp,sp_copy,sp)
-print('######################33')
-print(to_newick(sp))
 
-li =sp_event(sp,[])
 
-print(Counter(li))
+
+
+sp_string='(A,(B,C));'
+#sp ='(((A,B),C),D);'
+for i in range(100):
+    print()
+
+
+
+    tree=read_trees(i)
+    tr=parse(tree)
+    print(to_newick(tr))
+
+    
+    sp=parse(sp_string)
+
+    dic['Gene_tree']+=[to_newick(tr)]
+    dic['Species_Tree']+=[to_newick(sp)]
+    
+    dic= read_log('True Process',i,dic)
+
+
+    dic['Gene_tree']+=[to_newick(tr)]
+    dic['Species_Tree']+=[to_newick(sp)]
+    sp_copy= copy.deepcopy(sp)
+    sp_copy.reset()
+
+    tr.printorder_gene(sp)
+
+    tr.label_internal()
+    sp.label_internal()
+
+
+
+    tr.map_gene(sp)
+
+
+    sp.isRoot=True
+    tr.isRoot=True
+    sp_copy.isRoot=True
+    driver(tr,sp,sp_copy,sp)
+    print('######################33')
+    print(to_newick(sp))
+
+    li =sp_event(sp,[])
+
+    dic= Create_pd('Our_algorithm',i,dict(Counter(li)),dic)
+
+    dic['Gene_tree']+=[to_newick(tr)]
+    dic['Species_Tree']+=[sp_string]
+
+
+    genetree = PhyloTree(to_newick(tr))
+    sptree = PhyloTree(sp_string)
+
+    recon_tree_ete, events = genetree.reconcile(sptree)
+
+    dic= Create_pd_ete3('ETE3',i,dict(Counter(sp_event_ete3(recon_tree_ete))),dic)
+
+
+df = pd.DataFrame(dic)
+
+df.to_csv('result.csv', index=False)
+
 '''
 
 initial_cost=1
