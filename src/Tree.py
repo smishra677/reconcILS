@@ -19,6 +19,7 @@ class Tree:
         self.split_list=None
         self.to_tag=None
         self.cost=0
+        self.inital_ref=0
 
 
     def reset(self):

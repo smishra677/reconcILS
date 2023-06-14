@@ -213,6 +213,24 @@ print(sp.find_cost(tr,0))
 
 print('Gene_tree',to_newick(tr))
 '''
+def clearcost(sp):
+    if sp:
+        sp.refTo =sp.refTo[1:]
+
+        clearcost(sp.leftChild)
+        
+        clearcost(sp.rightChild)  
+
+
+
+def setCost(sp):
+    if sp:
+        sp.inital_ref= len(sp.refTo)
+    
+
+        setCost(sp.leftChild)
+        
+        setCost(sp.rightChild)  
 
 
 
@@ -297,6 +315,8 @@ def driver(tr,sp,sp_copy,sp_):
         print(sp.taxa)
         print(sp.parent)
         print(to_newick(tr))
+        print(sp.evolve)
+
 
         tr_copy_1 = copy.deepcopy(tr)
         sp_1 =copy.deepcopy(sp) 
@@ -309,7 +329,7 @@ def driver(tr,sp,sp_copy,sp_):
             sp.evolve= 'Speciation'
             return sp
 
-  
+
         initial_cost=len(sp.refTo)
         print('cost',initial_cost)
 
@@ -318,6 +338,7 @@ def driver(tr,sp,sp_copy,sp_):
             if sp.isLeaf:
                 print(12455)
                 if sp.parent.evolve!='Duplication':
+                    print(12455)
                     sp.evolve='Duplication'
                 else:
                      sp.evolve='Speciation'
@@ -350,6 +371,7 @@ def driver(tr,sp,sp_copy,sp_):
 
                 #recon.clean_up()
                 recon.total_cost_()
+               
     
                
 
@@ -360,8 +382,8 @@ def driver(tr,sp,sp_copy,sp_):
                 new_topo.map_recon(recon_1)
                 #recon_1.clean_up()
                 recon_1.total_cost_()
-                recon_1.cost= recon_1.cost
-                
+                recon_1.cost= recon_1.cost+initial_cost-(initial_cost-cost)
+
                 recon_left = copy.deepcopy(sp)
                 recon_right = copy.deepcopy(sp)
                 new_sp = copy.deepcopy(sp)
@@ -373,7 +395,7 @@ def driver(tr,sp,sp_copy,sp_):
                 recon_left.label_internal()
                 tr_copy_2.label_internal()
                 tr_copy_2.map_recon(recon_left)
-                recon_left.clean_up()
+                #recon_left.clean_up()
                 recon_left.total_cost_()
                 tr_copy_2.reset()
 
@@ -381,11 +403,16 @@ def driver(tr,sp,sp_copy,sp_):
                 recon_right.label_internal()
                 tr_copy_2.map_recon(recon_right)
                 recon_right.total_cost_()
-                recon_1_cost =recon_right.cost +recon_left.cost+1
+                recon_1_cost =recon_left.cost+1+recon_right.cost
                 recon_left.reset()
                 recon_right.reset()
                 print(recon_1_cost)
                 print(recon_1.cost)
+                print(to_newick(recon_right))
+                print(to_newick(recon_1))
+                print(to_newick(new_topo))
+                print(to_newick(recon_left))
+                
  
                 if  recon_1.cost<=recon_1_cost:
                         print('NNI')
@@ -393,8 +420,10 @@ def driver(tr,sp,sp_copy,sp_):
                         print(to_newick(tr))
                         sp.refTo=[]
                         sp.evolve='NNI'
-                        sp.leftChild = driver(new_topo,recon_1.leftChild,sp_copy,sp_) 
-                        sp.rightChild = driver(new_topo,recon_1.rightChild,sp_copy,sp_)
+
+    
+                        sp.leftChild = driver(new_topo.leftChild,recon_1.leftChild,sp_copy,sp_) 
+                        sp.rightChild = driver(new_topo.rightChild,recon_1.rightChild,sp_copy,sp_)
                         
                         sp.cost=1
                         
@@ -417,14 +446,25 @@ def driver(tr,sp,sp_copy,sp_):
                         sp.evolve='Duplication'
                         recon_left.parent=sp
                         recon_right.parent=sp
-                        recon_left.evolve='Speciation'
-                        recon_right.evolve='Speciation'
 
+
+                        print(to_newick(tr.leftChild))
                         recon_left.optimize_cost(recon_left,tr.leftChild)
                         recon_right.optimize_cost(recon_right,tr.rightChild)
+
+
+                        recon_left.refTo=recon_left.refTo[2:]
+
+                        recon_right.refTo=recon_right.refTo[2:]
+
+                        clearcost(recon_left)
+
+                        clearcost(recon_right)
+                        
                         sp.leftChild = driver(tr.leftChild,recon_left,sp_copy,sp_) 
                         sp.rightChild = driver(tr.rightChild,recon_right,sp_copy,sp_)
-                        
+                        recon_left.evolve='Speciation'
+                        recon_right.evolve='Speciation'
                         sp.cost=1
                         return sp
 
@@ -441,7 +481,7 @@ def driver(tr,sp,sp_copy,sp_):
                     return sp
                 else:
                     print(23)
-                    if sp.parent.evolve not in ['Duplication']:
+                    if sp.parent.evolve not in ['Duplication'] and sp.inital_ref == initial_cost:
                         sp.evolve='Loss'
                         sp.cost=1
                         return sp
@@ -506,7 +546,13 @@ def driver(tr,sp,sp_copy,sp_):
                         recon_left.parent=sp
                         recon_right.parent=sp
 
+                        recon_left.refTo=recon_left.refTo[2:]
 
+                        recon_right.refTo=recon_right.refTo[2:]
+
+                        clearcost(recon_left)
+
+                        clearcost(recon_right)
 
 
                         sp.leftChild = driver(tr.leftChild,recon_left,sp_copy,sp_) 
@@ -533,6 +579,15 @@ def driver(tr,sp,sp_copy,sp_):
 
                         recon_left.parent=sp
                         recon_right.parent=sp
+
+                        recon_left.refTo=recon_left.refTo[2:]
+
+                        recon_right.refTo=recon_right.refTo[2:]
+
+
+                        clearcost(recon_left)
+
+                        clearcost(recon_right)
 
                         sp.evolve='Duplication'
 
@@ -583,7 +638,7 @@ def driver(tr,sp,sp_copy,sp_):
                 new_topo.map_recon(recon_1)
                 #recon_1.clean_up()
                 recon_1.total_cost_()
-                recon_1.cost= recon_1.cost+(initial_cost- cost)
+                recon_1.cost= recon_1.cost+initial_cost-(initial_cost-cost)
                 
                 recon_left = copy.deepcopy(sp)
                 recon_right = copy.deepcopy(sp)
@@ -596,7 +651,7 @@ def driver(tr,sp,sp_copy,sp_):
                 recon_left.label_internal()
                 tr_copy_2.label_internal()
                 tr_copy_2.map_recon(recon_left)
-                recon_left.clean_up()
+                #recon_left.clean_up()
                 recon_left.total_cost_()
                 tr_copy_2.reset()
 
@@ -604,7 +659,7 @@ def driver(tr,sp,sp_copy,sp_):
                 recon_right.label_internal()
                 tr_copy_2.map_recon(recon_right)
                 recon_right.total_cost_()
-                recon_1_cost =recon_right.cost +recon_left.cost+1
+                recon_1_cost =recon_right.cost +recon_left.cost
                 recon_left.reset()
                 recon_right.reset()
                 print(recon_1_cost)
@@ -616,8 +671,8 @@ def driver(tr,sp,sp_copy,sp_):
                         print(to_newick(tr))
                         sp.refTo=[]
                         sp.evolve='NNI'
-                        sp.leftChild = driver(new_topo,recon_1.leftChild,sp_copy,sp_) 
-                        sp.rightChild = driver(new_topo,recon_1.rightChild,sp_copy,sp_)
+                        sp.leftChild = driver(new_topo.leftChild,recon_1.leftChild,sp_copy,sp_) 
+                        sp.rightChild = driver(new_topo.rightChild,recon_1.rightChild,sp_copy,sp_)
                         
                         sp.cost=1
                         
@@ -641,8 +696,20 @@ def driver(tr,sp,sp_copy,sp_):
 
                         recon_left.optimize_cost(recon_left,tr.leftChild)
                         recon_right.optimize_cost(recon_right,tr.rightChild)
+
+                        recon_left.refTo=recon_left.refTo[2:]
+
+                        recon_right.refTo=recon_right.refTo[2:]
+
+                        clearcost(recon_left)
+
+                        clearcost(recon_right)
+
                         sp.leftChild = driver(tr.leftChild,recon_left,sp_copy,sp_) 
                         sp.rightChild = driver(tr.rightChild,recon_right,sp_copy,sp_)
+
+                        recon_left.evolve='Speciation'
+                        recon_right.evolve='Speciation'
                         
                         sp.cost=1
                         return sp
@@ -737,6 +804,34 @@ from collections import Counter
 
 
 sp_string='(A,(B,C));'
+
+tree='((A,B),(C,(B,C));'
+tr=parse(tree)
+sp=parse(sp_string)
+sp_copy= copy.deepcopy(sp)
+sp_copy.reset()
+
+tr.printorder_gene(sp)
+
+tr.label_internal()
+sp.label_internal()
+
+
+
+tr.map_gene(sp)
+
+setCost(sp)
+sp.isRoot=True
+tr.isRoot=True
+sp_copy.isRoot=True
+driver(tr,sp,sp_copy,sp)
+print('######################33')
+print(to_newick(sp))
+
+li =sp_event(sp,[])
+
+
+exit()
 #sp ='(((A,B),C),D);'
 for i in range(100):
     print()
