@@ -416,7 +416,7 @@ class Tree:
                     self.cost=1
             else:
                 self.cost = self.leftChild.cost+self.rightChild.cost
-                if self.evolve in ['Duplication','NNI']:
+                if self.evolve in ['Duplication','NNI','Loss']:
                     self.cost = self.cost +1
                 
 
@@ -514,12 +514,9 @@ class Tree:
 
     def locate_copy(self,copy_tree,tree):
         if tree:
-            if tree.leftChild:
-                self.locate_copy(copy_tree,tree.leftChild)
-            
-            if tree.rightChild:
-                self.locate_copy(copy_tree,tree.rightChild)
+
             if tree.taxa==self.taxa:
+ 
                 if tree.parent==None:
                     return
                 if tree.parent.leftChild == tree:
@@ -535,7 +532,8 @@ class Tree:
                     tree.parent.children.append(copy_tree)
                     #print('right_child',tree.children)
                     return                  
-
+            self.locate_copy(copy_tree,tree.leftChild)
+            self.locate_copy(copy_tree,tree.rightChild)
             
     
     def NNI(self,gene_tree,flag):

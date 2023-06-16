@@ -1,162 +1,758 @@
-from Bio import Phylo
-from io import StringIO
-from Bio.Phylo.TreeConstruction import *
-from ete3 import Tree,TreeNode
+
+import Tree
+import re
+import os
+
+
+from ete3 import TreeNode
 from  ete3 import phylo
 from ete3 import PhyloTree
-from mock_function import get_reconciled_tree,get_reconciled_tree_zmasek
-from itertools import permutations
+
 from ete3 import NCBITaxa
-import budgitree
-from collections import Counter
-import Bio
-#trees = Phylo.read("example.dnd", "newick")
 
-def read_tree():
-    trees = Tree("(A, (B, C));")
-    return trees
-
-def generator_(species, n):
-    for perm in permutations(species, n):
-        yield tuple([tuple(perm), tuple(s for s in species if s not in perm)])
-
-def permute(recon_tree,genetree):
-    recon_tree_dict={}
-    eve_dic={}
-    aa = (genetree.get_leaves())
-    li=[]
-    for j in aa:
-        li.append(str(j)[3:])
-
-    
-
-    ge_list =return_perbutation(li)
-
-    for ge in ge_list:
-        try:
-            genetree1 = PhyloTree(ge)
-            
-            
-            genetree1.resolve_polytomy(recursive=False)
-            if len(genetree1.get_leaves())>2:
-
-                recon_tree1, events1 = get_reconciled_tree(genetree1,sptree,[],visited)
-                recon_tree_dict[ge]= recon_tree1
-                eve_dic[ge]=events1
-        except:
-            continue
-    return recon_tree_dict,eve_dic
+a= Tree.Tree()
+import dendropy
 
 
-def eve_print(events):
-    li=[]
-    for ev in events:
-        li.append(ev.etype)
-        if ev.etype == "S":
-            print('ORTHOLOGY RELATIONSHIP:', ','.join(ev.inparalogs), "<====>", ','.join(ev.orthologs))
-        elif ev.etype == "L":
-            print('Loss RELATIONSHIP:', ','.join(ev.inparalogs), "<====>", ','.join(ev.outparalogs))
+def read_trees(i):
+     gene_tre= open('./more_ILS/rep_'+str(i)+'.tre')
+     tr =gene_tre.read().strip().split('\n')
+     gene_tre.close()
+     return str(tr[0])
+
+     
+
+
+def tag(root):
+ 
+    if root:
+        tag(root.leftChild)
+        print(root.taxa),
+        print(root.event),
+        if root.event !=None:
+            print(root.event.refTo)
+            print(root.event.taxa)
+        #print(root.isLeaf),
+        tag(root.rightChild)
+
+
+
+def evolve(root):
+ 
+    if root:
+        evolve(root.leftChild)
+        print(root.taxa),
+        print(root.evolve),
+        print(root.tag),
+        #print(root.isLeaf),
+        evolve(root.rightChild)
+
+
+def sp_tag(root):
+ 
+    if root:
+        sp_tag(root.leftChild)
+        print(root.taxa),
+        print(root.refTo),
+        #print(root.isLeaf),
+        sp_tag(root.rightChild)
+
+import copy
+
+def sp_event(root,li):
+ 
+    if root:
+        sp_event(root.leftChild,li)
+        sp_event(root.rightChild,li)
+        print(root.taxa),
+        print('event',root.evolve),
+        print('cost',root.cost)
+        if (root.evolve=='NNI'):
+            if root.cost==0:
+                 li.append(root.evolve)
+            else:
+                li+= ['NNI' for i in range(root.cost)]
         else:
-            print('PARALOGY RELATIONSHIP:', ','.join(ev.inparalogs), "<====>", ','.join(ev.outparalogs))
-            '''
-            print('OR')
-            aru= [ '((A,C),B);', '((A,B),C);', '((B,C),A);']
-            for  i in aru:
-                genetree1 = PhyloTree(i)
-                recon_tree1, events1 = get_reconciled_tree(genetree1,sptree,[],visited)
-                for ev1 in events1:
-                    if ev1.etype == "S":
-                        print('ORTHOLOGY RELATIONSHIP:', ','.join(ev1.inparalogs), "<====>", ','.join(ev1.orthologs))
-                    elif ev.etype == "L":
-                        print('Loss RELATIONSHIP:', ','.join(ev1.inparalogs), "<====>", ','.join(ev1.outparalogs))
-                    else:
-                        print('PARALOGY RELATIONSHIP:', ','.join(ev1.inparalogs), "<====>", ','.join(ev1.outparalogs))
-            '''
+            li.append(root.evolve)
+        #print(root.isLeaf),
     return li
 
 
-def return_perbutation(species):
-    newicks= []
-    for n in range(1, len(species)):
-        for p in generator_(species, n):
-            newicks.append('((' + ', '.join('{})'.format(', '.join(k)) for k in p)+';'.format(''))
+def printInorder(root):
+ 
+    if root:
+        printInorder(root.leftChild)
+        print(root.taxa),
+        print(root.isLeaf),
+        printInorder(root.rightChild)
 
-    return newicks
+def printorder(root):
+ 
+    if root:
+            print(root.tag),
+            print(root.taxa),
+            print(root.id),
+            print(root.parent),
+            print(root.refTo),
+            print('###################'),
+            printorder(root.leftChild)
+            printorder(root.rightChild)
+ 
 
-gene_tree_nw ='(A,B);'
-species_tree_nw = '(A:2,(B:1,C:1):1);'
+def to_newick(tree):
+    newick = ""
+    newick = traverse(tree, newick)
+    newick = f"{newick};"
+    return newick
 
-tr= '(((A,D),C),B);'
-sp ='(((A,B),C),D);'
-species = ["A","B","C"]
-def sp_event(root,li):
-    li.append(root.evoltype)
+def traverse(tree, newick):
+    if tree.leftChild and not tree.rightChild:
+        newick = f"(,{traverse(tree.leftChild, newick)}){tree.taxa if tree.isLeaf else ''}"
+    elif not tree.leftChild and tree.rightChild:
+        newick = f"({traverse(tree.rightChild, newick)},){tree.taxa if tree.isLeaf else ''}"
+    elif tree.leftChild and tree.rightChild:
+        newick = f"({traverse(tree.rightChild, newick)},{traverse(tree.leftChild, newick)}){tree.taxa if tree.isLeaf else ''}"
+    elif not tree.leftChild and not tree.rightChild :
+        newick = f"{tree.taxa if tree.isLeaf else ''}"
+    else:
+        pass
+    return newick
+
+
+def parse(newick):
+
+
+    tokens = re.finditer(r"([^:;,()\s]*)(?:\s*:\s*([\d.]+)\s*)?([,);])|(\S)", newick+";")
+
+    def recurse(tre,nextid = 0, parentid = -1): # one node
+        thisid = nextid
+        #tre.id= nextid
+        children = []
+
+        name, length, delim, ch = next(tokens).groups(0)
+        tre.taxa= name
+        if name!=0:
+            tre.taxa= name.split('_')[0]
+            tre.isLeaf= True
+        if ch == "(":
+            while ch in "(,":
+                new_tre= Tree.Tree()
+                node, ch, nextid,tre1 = recurse(new_tre,nextid+1, thisid)
+                children.append(node)
+                tre.children.append(tre1)
+
+
+
+            if len(tre.children)==1:
+                 tre.children =[]
+                 tre =tre1
+            else:
+                tre.leftChild= tre.children[0]
+                tre.children[0].parent =tre
+                tre.children[1].parent =tre
+                tre.rightChild=tre.children[1]
+            
+
+
+
+                
+            name, length, delim, ch = next(tokens).groups(0)
+        return {"id": thisid, "name": name, "length": length if length else None, 
+                "parentid": parentid, "children": children}, delim, nextid,tre
+
+    tre= Tree.Tree()
+    val =recurse(tre)
+
+    return val[-1]
+
+
+def find_parent_child(root,child):
+
+    if len(root.refTo)>1:
+            for tre in root.refTo:
+                for tree1 in root.refTo:
+                    if (tree1 in tre.children):
+                        if tree1==tre.leftChild:
+                            child.append([tre,tree1,'Left'])
+                        else:
+                            child.append([tre,tree1,'Right'])
+
+    return child
+        
+
+            
+def parent_child(root,child):
+    if root:
+        if root.isLeaf:
+            return []
+        else:
+            child= find_parent_child(root,child)
+        #child=find_parent_child(root.leftChild,child)
+        #child= find_parent_child(root.rightChild,child)
+    return child
+
+
+'''
+new_gene_tree =copy.deepcopy(tr)
+new_gene_tree.reset()
+recon= copy.deepcopy(sp)
+sp_tag(recon)
+print('#########3')
+recon.tag_species(new_gene_tree,tr)
+
+print(to_newick(recon))
+if recon.split_list!=None:
+    for i in recon.split_list:
+        tr.map_recon(i)
+else:
+    tr.map_recon(recon)
+
+print(to_newick(recon))
+
+recon.clean_up()
+recon.total_cost_()
+
+
+
+
+print(sp.find_cost(tr,0))
+
+print('Gene_tree',to_newick(tr))
+'''
+def clearcost(sp):
+    if sp:
+        sp.refTo =sp.refTo[2:]
+
+        clearcost(sp.leftChild)
+        
+        clearcost(sp.rightChild)  
+
+
+
+def setCost(sp):
+    if sp:
+        sp.inital_ref= len(sp.refTo)
+    
+
+        setCost(sp.leftChild)
+        
+        setCost(sp.rightChild)  
+
+
+
+
+def ILS(gene_tree,tr,sp_copy,cost):
+    list_tree=[]
+    child=[]
+    
+    
+    
+    child= parent_child(tr,child)
+
+    print(gene_tree.parent)
+    if len(child)==0 or cost==0:
+        return gene_tree,cost
+    else:
+        #child =[child[0]]
+        for ch1 in child:
+                ch = copy.deepcopy(ch1[0])
+                ch.reset()
+
+                geneTree =copy.deepcopy(gene_tree)
+                geneTree.reset()
+                list_tree= ch1[0].NNI(geneTree,ch1[2])
+                best_cost=cost
+                imporvement=False
+                new_topo=copy.deepcopy(geneTree)
+                for i in list_tree:
+                    i[1].reset()
+                    i[0].reset()
+                    cop= copy.deepcopy(sp_copy)
+                    cop.reset()
+                        
+                        
+                    print('top_0',to_newick(i[0]))
+                    print('topo_1',to_newick(i[1]))
+                    print('Species',to_newick(cop))
+                    print('##############################')
+                    
+                    new_cost =cop.optimize_cost(i[0],i[1])
+                    print(best_cost)
+                    print(cost)
+                    print(new_cost)
+                    #print(cost)
+                    #print(new_cost,best_cost)
+                    if best_cost>new_cost and cost>0:
+                        best_cost=new_cost
+                        if tr.parent==None:
+                             
+                            new_topo=copy.deepcopy(i[1])
+                        else:
+                             new_topo=copy.deepcopy(i[0])
+                        #print('new_topo',to_newick(new_topo))
+                        imporvement=True
+                cost=cost-1
+                if cost==0:
+                    return new_topo,cost
+                else:
+                        new_sp = copy.deepcopy(sp_copy)
+                        new_sp.reset()
+                        new_topo.reset()
+                        new_topo.printorder_gene(new_sp)
+                        
+                        new_topo.label_internal()
+                    
+                        new_sp.label_internal()
+                        
+                        new_topo.map_gene(new_sp)
+
+                        return ILS(new_topo,new_sp,sp_copy,cost)
+
+                if imporvement:
+                        print('new_topo1',to_newick(new_topo))
+                else:
+                    return new_topo,cost
+        
+def driver(tr,sp,sp_copy,sp_):
+    if sp: 
+        print(sp.taxa)
+        print(sp.parent)
+
+        sp_copy = copy.deepcopy(sp_copy)
+
+        print(sp.evolve)
+
+
+        tr_copy_1 = copy.deepcopy(tr)
+        sp_1 =copy.deepcopy(sp) 
+
+        tr_copy_2 = copy.deepcopy(tr)
+        sp_2 =copy.deepcopy(sp) 
+
+
+        initial_cost=len(sp.refTo)
+        print('cost',initial_cost)
+
+        if tr==None:
+            print('x')
+            if sp.isLeaf:
+
+                if initial_cost==0:
+                    sp.evolve='Loss'
+                else:
+                   
+                    sp.evolve='Speciation'
+                return sp
+            else:
+                sp.evolve= 'Speciation'
+
+                sp.leftChild= driver(None,sp.leftChild,sp_copy,sp_)
+                sp.rightChild =driver(None,sp.rightChild,sp_copy,sp_)
+                return sp
+
+          
+        if initial_cost in [0,1]:
+            
+            if sp.isLeaf:
+                print(34)
+                if sp.inital_ref==0:
+                    print(1)
+                    sp.evolve='Loss'
+
+                    sp.cost=0
+                    return sp
+                else:
+                    print(23)
+                    sp.evolve='Speciation'
+                    return sp
+               
+            elif (sp.leftChild.isLeaf and sp.rightChild.isLeaf) :
+                if  initial_cost!=0:
+
+                    sp.evolve= 'Speciation'
+                    
+
+                    sp.leftChild= driver(tr,sp.leftChild,sp_copy,sp_)
+                    sp.rightChild =driver(tr,sp.rightChild,sp_copy,sp_)
+                    return sp
+                else:
+                    sp.evolve= 'Speciation'
+
+                    sp.leftChild= driver(tr,sp.leftChild,sp_copy,sp_)
+                    sp.rightChild =driver(tr,sp.rightChild,sp_copy,sp_)
+                    return sp
+            else:
+                print(2)
+                
+                if initial_cost==0:
+                    print(to_newick(sp))
+                    sp.evolve='Speciation'
+                    sp.leftChild= driver(tr.leftChild,sp.leftChild,sp_copy,sp_)
+                    sp.rightChild =driver(tr.rightChild,sp.rightChild,sp_copy,sp_)
+                    sp.cost=0
+                    
+                    return sp
+
+                else:
+                    print('1283')
+                    sp.evolve='Speciation'
+
+                    sp.leftChild= driver(tr.leftChild,sp.leftChild,sp_copy,sp_)
+                    sp.rightChild=driver(tr.rightChild,sp.rightChild,sp_copy,sp_)
+                    
+                    sp.cost=0
+
+                    return sp
+           
+
+
+
+        else:
+
+                print(5)
+                new_topo,cost =(ILS(tr_copy_1,sp_1,sp_1,initial_cost))
+                recon_1 = copy.deepcopy(sp_1)
+
+                
+
+                new_gene_tree =copy.deepcopy(tr_copy_2)
+                new_gene_tree.reset()
+
+
+                recon=Tree.Tree()
+                recon= copy.deepcopy(sp_2)
+                
+
+                recon.tag_species(new_gene_tree,tr_copy_2)
+
+
+    
+                if recon.split_list!=None:
+                    for i in recon.split_list:
+                        tr_copy_2.map_recon(i)
+                else:
+                    tr_copy_2.map_recon(recon)
+
+
+                #recon.clean_up()
+                recon.total_cost_()
+    
+               
+
+                
+
+               
+                new_topo.label_internal()
+                new_topo.map_recon(recon_1)
+                #recon_1.clean_up()
+                recon_1.total_cost_()
+                recon_1.cost= recon_1.cost+(initial_cost- cost)
+
+                recon_left = copy.deepcopy(sp)
+                recon_right = copy.deepcopy(sp)
+                new_sp = copy.deepcopy(sp)
+                new_sp.leftChild=recon_left
+                new_sp.rightChild=recon_right
+                new_sp.reset()
+                tr_copy_2.reset()
+
+                recon_left.label_internal()
+                tr_copy_2.label_internal()
+                tr_copy_2.map_recon(recon_left)
+                #recon_left.clean_up()
+                recon_left.total_cost_()
+                tr_copy_2.reset()
+
+                tr_copy_2.label_internal()
+                recon_right.label_internal()
+                tr_copy_2.map_recon(recon_right)
+                recon_right.total_cost_()
+                recon_1_cost =recon_right.cost +recon_left.cost
+                recon_left.reset()
+                recon_right.reset()
+                print(recon_1_cost)
+
+                print(recon_1.cost)
+ 
+                if  recon_1.cost<=recon_1_cost and  sp.isLeaf==None:
+                        print('NNI')
+                        print(to_newick(new_topo))
+                        print(to_newick(tr))
+                        sp.refTo=[]
+                        sp.evolve='NNI'
+                        
+                        if len(set(new_topo.leftChild.taxa).intersection(set(sp.leftChild.taxa)))> len(set(new_topo.rightChild.taxa).intersection(set(sp.leftChild.taxa))):
+                            sp.leftChild = driver(new_topo.leftChild,sp.leftChild,sp_copy,sp_) 
+                            sp.rightChild = driver(new_topo.rightChild,sp.rightChild,sp_copy,sp_)
+                        else:           
+                            sp.leftChild = driver(new_topo.rightChild,sp.leftChild,sp_copy,sp_) 
+                            sp.rightChild = driver(new_topo.leftChild,sp.rightChild,sp_copy,sp_)
+                            
+                        sp.cost=initial_cost- cost
+                        
+                        return sp
+
+                if  recon_1.cost>recon_1_cost or  sp.isLeaf:
+                        print('Duplication')
+                        sp.refTo=[]
+
+                        recon_left = copy.deepcopy(sp)
+                        recon_right = copy.deepcopy(sp)
+                        recon_left.reset()
+                        recon_right.reset()
+                        recon_left.parent=sp
+                        recon_right.parent=sp
+                        sp.evolve='Duplication'
+                        if  tr.isLeaf:
+                            tr.reset()
+                            tr.reset()
+
+                            
+                            clearcost(recon_left)
+
+                            clearcost(recon_right)
+
+                            recon_left.optimize_cost(recon_left,tr)
+                            recon_right.optimize_cost(recon_right,tr)
+
+                            
+   
+
+                            sp.leftChild = driver(tr,recon_left,sp_copy,sp_) 
+                            sp.rightChild = driver(tr,recon_right,sp_copy,sp_)
+
+                        else:
+                            tr.leftChild.reset()
+                            tr.rightChild.reset()
+                            clearcost(recon_left)
+
+                            clearcost(recon_right)
+
+
+                            recon_left.optimize_cost(recon_left,tr.leftChild)
+                            recon_right.optimize_cost(recon_right,tr.rightChild)
+
+
+
+                            sp.leftChild = driver(tr.leftChild,recon_left,sp_copy,sp_) 
+                            sp.rightChild = driver(tr.rightChild,recon_right,sp_copy,sp_)
+
+
+
+                        sp.cost=1
+                        return sp
+                else:
+
+                        sp.evolve='Speciation'
+                        sp.leftChild =driver(tr,sp.leftChild,sp_copy,sp_)
+                        sp.rightChild = driver(tr,sp.rightChild,sp_copy,sp_)
+                        return sp
+
+
+
+import pandas as pd          
+def read_log(flag,i,dic):
+    o= open('./more_ILS/rep_'+str(i)+'.log').read()
+    dic['Process']+=[flag]
+    dic['Replicate']+=[i]
+    
+    for i in o.split('\n'):
+        val= (i.split(':'))
+        if val[0]=='Total duplications':
+            dic['Duplication']+=[int(val[1])]
+        elif val[0]=='Total ILS':
+            dic['NNI']+=[int(val[1])]
+        elif val[0]=='Total losses':
+            dic['Loss']+=[int(val[1])]
+        else:
+            continue
+   
+    return dic
+
+
+def Create_pd(flag,i,o,dic):
+    
+    dic['Process']+=[flag]
+    dic['Replicate']+=[i]
+    dic['Duplication'].append(0)
+    dic['NNI'].append(0)
+    dic['Loss'].append(0)
+
+
+    for i in o:
+         if i in ['Duplication','NNI','Loss']:
+              dic[i][-1]=o[i]
+              
+         
+    
+
+    return dic
+
+def Create_pd_ete3(flag,i,o,dic):
+    
+    dic['Process']+=[flag]
+    dic['Replicate']+=[i]
+    dic['Duplication'].append(0)
+    dic['NNI'].append(0)
+    dic['Loss'].append(0)
+
+
+    for i in o:
+         if i in ['D','L']:
+                if i =='D':
+                   dic['Duplication'][-1]=o[i]
+                elif i=='L':
+                    dic['Loss'][-1]=o[i]
+                else:
+                    continue
+
+    return dic
+                     
+            
+              
+         
+
+
+def sp_event_ete3(root):
+    li=[]
     for node in root.traverse(strategy="postorder"):
         if len(node.children) != 0:
         #print(dir(root))
 
+            print(li)
             
             li.append(node.evoltype)
         #print(root.isLeaf),
     return li
 
-
-genetree = PhyloTree(gene_tree_nw)
-sptree = PhyloTree(species_tree_nw)
-
-recon_tree, events = genetree.reconcile(sptree)
-
-sp_event(recon_tree,[])
+dic={'Process':[],'Replicate':[],'Gene_tree':[],'Species_Tree':[],'Duplication':[],'NNI':[],'Loss':[]}
+    
+from collections import Counter
 
 
-    #print(i.etype)
-#print(events)
-
-#print(Counter(li))
-'''clea
-
-#print(genetree.robinson_foulds(sptree))
 
 
-cost ={'D':2,'NNI':1}
-recon_tree, events = get_reconciled_tree(genetree,sptree,[],visited)
-eve_print(events)
+sp_string='(A,(B,C));'
+'''
+tree='(A,(C,((C,(C,(B,B))),(B,B))));'
+tr=parse(tree)
+sp=parse(sp_string)
+sp_copy= copy.deepcopy(sp)
+sp_copy.reset()
 
-recon_tree.show()
+tr.printorder_gene(sp)
 
+tr.label_internal()
+sp.label_internal()
+
+
+
+tr.map_gene(sp)
+
+setCost(sp)
+sp.isRoot=True
+tr.isRoot=True
+sp_copy.isRoot=True
+driver(tr,sp,sp_copy,sp)
+print('######################33')
+print(to_newick(sp))
+
+li =sp_event(sp,[])
+
+print(Counter(li))
 exit()
-print(cost)
+'''
+gene_tre= open('./output_gene/gene_tree.txt')
+trees =gene_tre.read().strip().split('\n')
+gene_tre.close()
+
+value=0
+#sp ='(((A,B),C),D);'
+for i in range(100):
 
 
-print(recon_tree.evoltype)
-recon_tree_dict ={}
-eve_dic= {}
-if recon_tree.evoltype=='D':
-    recon_tree_dict,eve_dic=permute(recon_tree,genetree)
-
-eve={}
-
-if len(recon_tree_dict)>1:
-    for r in recon_tree_dict:
-        eve_l=[]
-        for node in recon_tree_dict[r].traverse(strategy="postorder"):
-            for i in node.children:
-                if len(i.get_leaves())>1:
-                    eve_l.append(i.evoltype)
-                        
-
-        eve[r]=eve_l
+    sp=parse(sp_string)
 
 
-for i in eve:
-    print(i)
-    print(species_tree_nw )
-    eve_print(eve_dic[i])
-    print(eve[i])
-    #recon_tree_dict[i].show()
-    print('###############################################################')
+    try:
+        tree= str(read_trees(i))
+        print('tree',tree)
+        tr=parse(tree)
 
-#genetree.show()
 
-#recon_tree.show()
+
+        
+
+
+        dic['Gene_tree']+=[to_newick(tr)]
+        dic['Species_Tree']+=[to_newick(sp)]
+        
+        dic= read_log('True Process',i,dic)
+
+
+        dic['Gene_tree']+=[to_newick(tr)]
+        dic['Species_Tree']+=[to_newick(sp)]
+        sp_copy= copy.deepcopy(sp)
+        sp_copy.reset()
+
+        tr.printorder_gene(sp)
+
+        tr.label_internal()
+        sp.label_internal()
+
+
+
+        tr.map_gene(sp)
+        setCost(sp)
+
+        sp.isRoot=True
+        tr.isRoot=True
+        sp_copy.isRoot=True
+        driver(tr,sp,sp_copy,sp)
+        print('######################33')
+        print(to_newick(sp))
+
+        li =sp_event(sp,[])
+        print(Counter(li))
+
+        dic= Create_pd('Our_algorithm',i,dict(Counter(li)),dic)
+
+        dic['Gene_tree']+=[to_newick(tr)]
+        dic['Species_Tree']+=[sp_string]
+
+
+        genetree = PhyloTree(to_newick(tr))
+        sptree = PhyloTree(sp_string)
+
+        recon_tree_ete, events = genetree.reconcile(sptree)
+
+        dic= Create_pd_ete3('ETE3',i,dict(Counter(sp_event_ete3(recon_tree_ete))),dic)
+    except:
+        continue
+
+
+df = pd.DataFrame(dic)
+
+df.to_csv('result.csv', index=False)
+
+'''
+
+initial_cost=1
+#sp.find_cost(tr,0)
+new_topo,cost =(ILS(tr,sp,sp_copy,initial_cost))
+print(to_newick(new_topo))
+print(initial_cost-cost)
+
+
+
+
+#tr.map_recon(recon)
+print(to_newick(recon))
+new_tr= copy.deepcopy(tr)
+new_tr.reset()
+print(new_tr.optimize_cost(recon,recon))
+#recon.tag_loss()
+
+print(to_newick(recon))
+
 '''
