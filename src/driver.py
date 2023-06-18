@@ -192,36 +192,11 @@ def parent_child(root,child):
     return child
 
 
-'''
-new_gene_tree =copy.deepcopy(tr)
-new_gene_tree.reset()
-recon= copy.deepcopy(sp)
-sp_tag(recon)
-print('#########3')
-recon.tag_species(new_gene_tree,tr)
 
-print(to_newick(recon))
-if recon.split_list!=None:
-    for i in recon.split_list:
-        tr.map_recon(i)
-else:
-    tr.map_recon(recon)
-
-print(to_newick(recon))
-
-recon.clean_up()
-recon.total_cost_()
-
-
-
-
-print(sp.find_cost(tr,0))
-
-print('Gene_tree',to_newick(tr))
-'''
 def clearcost(sp):
     if sp:
-        sp.refTo =sp.refTo[2:]
+        if sp.isLeaf:
+            sp.refTo =sp.refTo[1:]
 
         clearcost(sp.leftChild)
         
@@ -239,7 +214,11 @@ def setCost(sp):
         setCost(sp.rightChild)  
 
 
-
+def swap(tree):
+    new_tree= tree.leftChild
+    tree.leftChild= tree.righChild
+    tree.rightChild= new_tree
+    return tree
 
 def ILS(gene_tree,tr,sp_copy,cost):
     list_tree=[]
@@ -292,7 +271,7 @@ def ILS(gene_tree,tr,sp_copy,cost):
                         #print('new_topo',to_newick(new_topo))
                         imporvement=True
                 cost=cost-1
-                if cost==0:
+                if cost==0 or imporvement==False:
                     return new_topo,cost
                 else:
                         new_sp = copy.deepcopy(sp_copy)
@@ -318,7 +297,7 @@ def driver(tr,sp,sp_copy,sp_):
         print(sp.taxa)
         print(sp.parent)
 
-        sp_copy = copy.deepcopy(sp_copy)
+        sp_copy = copy.deepcopy(sp)
 
         print(sp.evolve)
 
@@ -332,19 +311,30 @@ def driver(tr,sp,sp_copy,sp_):
 
         initial_cost=len(sp.refTo)
         print('cost',initial_cost)
+        
+
 
         if tr==None:
             print('x')
             if sp.isLeaf:
-
-                if initial_cost==0:
+                print(23)
+                if sp.inital_ref==0:
+                    print(24)
                     sp.evolve='Loss'
-                else:
-                   
-                    sp.evolve='Speciation'
-                return sp
+                    sp = parse(to_newick(sp))
+                    sp.evolve='Loss'
+                elif initial_cost>=2:
+                    print(25)
+                    sp.evolve='Duplication'
+                    sp = parse(to_newick(sp))
+
+                return sp 
             else:
-                sp.evolve= 'Speciation'
+                print(26)
+                if initial_cost>=2:
+                    sp.evolve= 'Duplication'
+                else:
+                    sp.evolve='Speciation'
 
                 sp.leftChild= driver(None,sp.leftChild,sp_copy,sp_)
                 sp.rightChild =driver(None,sp.rightChild,sp_copy,sp_)
@@ -360,60 +350,49 @@ def driver(tr,sp,sp_copy,sp_):
                     sp.evolve='Loss'
 
                     sp.cost=0
+                    sp = parse(to_newick(sp))
+                    sp.evolve='Loss'
                     return sp
                 else:
                     print(23)
                     sp.evolve='Speciation'
-                    return sp
-               
-            elif (sp.leftChild.isLeaf and sp.rightChild.isLeaf) :
-                if  initial_cost!=0:
-
-                    sp.evolve= 'Speciation'
                     
-
-                    sp.leftChild= driver(tr,sp.leftChild,sp_copy,sp_)
-                    sp.rightChild =driver(tr,sp.rightChild,sp_copy,sp_)
+                   
+                   
+                    print('23',to_newick(sp))
+                    sp = parse(to_newick(sp))
+                    sp.evolve='Speciation'
                     return sp
-                else:
+            elif (sp.leftChild.isLeaf and sp.rightChild.isLeaf) :
+
+                    print(22)
                     sp.evolve= 'Speciation'
 
                     sp.leftChild= driver(tr,sp.leftChild,sp_copy,sp_)
                     sp.rightChild =driver(tr,sp.rightChild,sp_copy,sp_)
+                    print('22',to_newick(sp))
+                    
                     return sp
             else:
-                print(2)
-                
-                if initial_cost==0:
-                    print(to_newick(sp))
-                    sp.evolve='Speciation'
-                    sp.leftChild= driver(tr.leftChild,sp.leftChild,sp_copy,sp_)
-                    sp.rightChild =driver(tr.rightChild,sp.rightChild,sp_copy,sp_)
-                    sp.cost=0
-                    
-                    return sp
-
-                else:
-                    print('1283')
-                    sp.evolve='Speciation'
-
+                    sp.evolve= 'Speciation'
                     sp.leftChild= driver(tr.leftChild,sp.leftChild,sp_copy,sp_)
                     sp.rightChild=driver(tr.rightChild,sp.rightChild,sp_copy,sp_)
                     
                     sp.cost=0
-
+                    print('1283',to_newick(sp))
+                    
                     return sp
            
 
 
 
         else:
+                
 
                 print(5)
                 new_topo,cost =(ILS(tr_copy_1,sp_1,sp_1,initial_cost))
                 recon_1 = copy.deepcopy(sp_1)
 
-                
 
                 new_gene_tree =copy.deepcopy(tr_copy_2)
                 new_gene_tree.reset()
@@ -434,17 +413,16 @@ def driver(tr,sp,sp_copy,sp_):
                     tr_copy_2.map_recon(recon)
 
 
-                #recon.clean_up()
+                recon.clean_up()
                 recon.total_cost_()
-    
-               
+
 
                 
 
                
                 new_topo.label_internal()
                 new_topo.map_recon(recon_1)
-                #recon_1.clean_up()
+                recon_1.clean_up()
                 recon_1.total_cost_()
                 recon_1.cost= recon_1.cost+(initial_cost- cost)
 
@@ -467,21 +445,22 @@ def driver(tr,sp,sp_copy,sp_):
                 recon_right.label_internal()
                 tr_copy_2.map_recon(recon_right)
                 recon_right.total_cost_()
-                recon_1_cost =recon_right.cost +recon_left.cost
+                recon_1_cost =recon.cost
                 recon_left.reset()
                 recon_right.reset()
                 print(recon_1_cost)
 
                 print(recon_1.cost)
  
-                if  recon_1.cost<=recon_1_cost and  sp.isLeaf==None:
+                if  recon_1.cost<recon_1_cost and  sp.isLeaf==None:
                         print('NNI')
                         print(to_newick(new_topo))
                         print(to_newick(tr))
                         sp.refTo=[]
                         sp.evolve='NNI'
                         
-                        if len(set(new_topo.leftChild.taxa).intersection(set(sp.leftChild.taxa)))> len(set(new_topo.rightChild.taxa).intersection(set(sp.leftChild.taxa))):
+                        if len(set(new_topo.leftChild.taxa).intersection(set(sp.leftChild.taxa)))>len(set(new_topo.rightChild.taxa).intersection(set(sp.leftChild.taxa))):
+                           
                             sp.leftChild = driver(new_topo.leftChild,sp.leftChild,sp_copy,sp_) 
                             sp.rightChild = driver(new_topo.rightChild,sp.rightChild,sp_copy,sp_)
                         else:           
@@ -489,11 +468,14 @@ def driver(tr,sp,sp_copy,sp_):
                             sp.rightChild = driver(new_topo.leftChild,sp.rightChild,sp_copy,sp_)
                             
                         sp.cost=initial_cost- cost
-                        
+                        print('NNI',to_newick(sp))
+                    
                         return sp
 
-                if  recon_1.cost>recon_1_cost or  sp.isLeaf:
+                if  recon_1.cost>=recon_1_cost or  sp.isLeaf:
+
                         print('Duplication')
+                        
                         sp.refTo=[]
 
                         recon_left = copy.deepcopy(sp)
@@ -503,44 +485,100 @@ def driver(tr,sp,sp_copy,sp_):
                         recon_left.parent=sp
                         recon_right.parent=sp
                         sp.evolve='Duplication'
-                        if  tr.isLeaf:
-                            tr.reset()
-                            tr.reset()
+                        sp.refTo=sp.refTo[1:]
 
+                        if sp.isLeaf:
+                            print(1)
+                            if initial_cost==2:
+                                recon_left.isLeaf=True
+                                recon_right.isLeaf=True
+                                recon_left.evolve='Speciation'
+
+                                recon_right.evolve='Speciation'
+                                sp.leftChild=recon_left
+                                sp.rightChild=recon_right
+                                return sp
+                            print(12455)
                             
-                            clearcost(recon_left)
 
-                            clearcost(recon_right)
 
-                            recon_left.optimize_cost(recon_left,tr)
-                            recon_right.optimize_cost(recon_right,tr)
-
-                            
-   
-
-                            sp.leftChild = driver(tr,recon_left,sp_copy,sp_) 
-                            sp.rightChild = driver(tr,recon_right,sp_copy,sp_)
-
-                        else:
                             tr.leftChild.reset()
                             tr.rightChild.reset()
+                            recon_left.isLeaf=True
+                            recon_right.isLeaf=True
                             clearcost(recon_left)
+                            print('11',to_newick(recon_left))
+
+                            print('11',to_newick(recon_right))
 
                             clearcost(recon_right)
-
+                                                    
 
                             recon_left.optimize_cost(recon_left,tr.leftChild)
                             recon_right.optimize_cost(recon_right,tr.rightChild)
 
+  
+                                                          
 
-
+                                                  
                             sp.leftChild = driver(tr.leftChild,recon_left,sp_copy,sp_) 
                             sp.rightChild = driver(tr.rightChild,recon_right,sp_copy,sp_)
 
 
 
-                        sp.cost=1
-                        return sp
+ 
+                            return sp
+                        if initial_cost==2:
+                  
+                            tr.leftChild.reset()
+                            tr.rightChild.reset()
+
+     
+                            recon_left.optimize_cost(recon_left,tr.leftChild)
+                            recon_right.optimize_cost(recon_right,tr.rightChild)
+
+                            clearcost(recon_left)
+
+                            clearcost(recon_right)
+                            print('12',to_newick(recon_left))
+
+                            print('12',to_newick(recon_right))
+                                                  
+                            sp.leftChild = driver(tr.leftChild,recon_left,sp_copy,sp_) 
+                            sp.rightChild = driver(tr.rightChild,recon_right,sp_copy,sp_)
+
+                            clearcost(sp)
+                            print('dups 22',to_newick(sp))
+                            return sp
+
+                        else:
+                            tr.leftChild.reset()
+                            tr.rightChild.reset()
+
+                              
+  
+                                                        
+   
+                            recon_left.optimize_cost(recon_left,tr.leftChild)
+                            recon_right.optimize_cost(recon_right,tr.rightChild)
+
+                            print('12',to_newick(recon_left))
+
+                            print('12',to_newick(recon_right))
+                      
+                            clearcost(recon_left)
+
+                            clearcost(recon_right)
+
+                            sp.leftChild = driver(tr.leftChild,recon_left,sp_copy,sp_) 
+                            sp.rightChild = driver(tr.rightChild,recon_right,sp_copy,sp_)
+
+                            clearcost(sp)
+    
+                            sp.cost=1
+                            print('dups 23',to_newick(sp))
+                    
+                            return sp
                 else:
 
                         sp.evolve='Speciation'
@@ -633,9 +671,9 @@ from collections import Counter
 
 
 sp_string='(A,(B,C));'
-'''
-tree='(A,(C,((C,(C,(B,B))),(B,B))));'
+tree='((((B,B),B),C),A);'
 tr=parse(tree)
+#tr=parse(to_newick(tr))
 sp=parse(sp_string)
 sp_copy= copy.deepcopy(sp)
 sp_copy.reset()
@@ -661,37 +699,35 @@ li =sp_event(sp,[])
 
 print(Counter(li))
 exit()
-'''
+
+
 gene_tre= open('./output_gene/gene_tree.txt')
 trees =gene_tre.read().strip().split('\n')
 gene_tre.close()
 
 value=0
+previous_dict={}
+erro=0
 #sp ='(((A,B),C),D);'
 for i in range(100):
 
 
     sp=parse(sp_string)
+    if erro==1:
+        dic=previous_dict
 
+    previous_dict=dic
 
     try:
         tree= str(read_trees(i))
         print('tree',tree)
         tr=parse(tree)
-
+        #tr=parse(to_newick(tr))
 
 
         
 
 
-        dic['Gene_tree']+=[to_newick(tr)]
-        dic['Species_Tree']+=[to_newick(sp)]
-        
-        dic= read_log('True Process',i,dic)
-
-
-        dic['Gene_tree']+=[to_newick(tr)]
-        dic['Species_Tree']+=[to_newick(sp)]
         sp_copy= copy.deepcopy(sp)
         sp_copy.reset()
 
@@ -709,6 +745,17 @@ for i in range(100):
         tr.isRoot=True
         sp_copy.isRoot=True
         driver(tr,sp,sp_copy,sp)
+
+        dic['Gene_tree']+=[to_newick(tr)]
+        dic['Species_Tree']+=[sp_string]
+        
+        dic['Gene_tree']+=[to_newick(tr)]
+        dic['Species_Tree']+=[sp_string]    
+
+        dic= read_log('True Process',i,dic)
+
+    
+        
         print('######################33')
         print(to_newick(sp))
 
@@ -728,9 +775,14 @@ for i in range(100):
 
         dic= Create_pd_ete3('ETE3',i,dict(Counter(sp_event_ete3(recon_tree_ete))),dic)
     except:
+        erro=1
         continue
 
-
+print(dic)
+if erro==1:
+    dic=previous_dict
+for i in dic:
+    print(len(dic[i]))
 df = pd.DataFrame(dic)
 
 df.to_csv('result.csv', index=False)

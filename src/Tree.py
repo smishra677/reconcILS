@@ -20,6 +20,7 @@ class Tree:
         self.to_tag=None
         self.cost=0
         self.inital_ref=0
+        self.event_list=[]
 
 
     def reset(self):
@@ -515,8 +516,8 @@ class Tree:
     def locate_copy(self,copy_tree,tree):
         if tree:
 
-            if tree.taxa==self.taxa:
- 
+            if tree.id==self.id:
+                print(tree.taxa)
                 if tree.parent==None:
                     return
                 if tree.parent.leftChild == tree:
@@ -622,6 +623,7 @@ class Tree:
 
 
         if self.parent==None:
+            print('No_parent')
             return [[copy_left,copy_left],[copy_right,copy_right]]
         
         geneTree_left.label_internal()

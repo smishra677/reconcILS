@@ -788,8 +788,8 @@ from collections import Counter
 
 
 sp_string='(A,(B,C));'
-'''
-tree='((A,B),(C,(B,C));'
+
+tree='((A,A),((C,B),A));'
 tr=parse(tree)
 sp=parse(sp_string)
 sp_copy= copy.deepcopy(sp)
@@ -816,7 +816,7 @@ li =sp_event(sp,[])
 
 
 exit()
-'''
+
 #sp ='(((A,B),C),D);'
 for i in range(100):
     print()

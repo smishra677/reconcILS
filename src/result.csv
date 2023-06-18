@@ -1,298 +1,292 @@
-Process,Replicate,Gene_tree,Species_Tree,Duplication,NNI,Loss
-True Process,0,"(A,C);","((C,B),A);",0,1,1
-Our_algorithm,0,"(A,C);","((C,B),A);",0,0,1
-ETE3,0,"(A,C);","(A,(B,C));",0,0,1
-True Process,1,"((B,C),A);","((C,B),A);",2,1,2
-Our_algorithm,1,"((B,C),A);","((C,B),A);",0,0,0
-ETE3,1,"((B,C),A);","(A,(B,C));",0,0,0
-True Process,2,"(((B,B),((C,C),A)),C);","((C,B),A);",3,1,0
-Our_algorithm,2,"(((B,B),((C,C),A)),C);","((C,B),A);",3,2,2
-ETE3,2,"(((B,B),((C,C),A)),C);","(A,(B,C));",4,0,5
-True Process,4,"(B,A);","((C,B),A);",0,1,1
-Our_algorithm,4,"(B,A);","((C,B),A);",0,0,1
-ETE3,4,"(B,A);","(A,(B,C));",0,0,1
-True Process,5,"(((B,B),B),((C,C),B));","((C,B),A);",4,1,1
-Our_algorithm,5,"(((B,B),B),((C,C),B));","((C,B),A);",4,1,1
-ETE3,5,"(((B,B),B),((C,C),B));","(A,(B,C));",4,0,1
-True Process,6,"((C,C),(A,A));","((C,B),A);",2,1,1
-Our_algorithm,6,"((C,C),(A,A));","((C,B),A);",2,0,1
-ETE3,6,"((C,C),(A,A));","(A,(B,C));",2,0,1
-True Process,7,"(((C,C),A),(B,B));","((C,B),A);",3,1,1
-Our_algorithm,7,"(((C,C),A),(B,B));","((C,B),A);",3,0,0
-ETE3,7,"(((C,C),A),(B,B));","(A,(B,C));",3,0,3
-True Process,8,"(C,B);","((C,B),A);",2,0,3
-Our_algorithm,8,"(C,B);","((C,B),A);",0,0,1
-ETE3,8,"(C,B);","(A,(B,C));",0,0,0
-True Process,9,"((((B,B),B),C),A);","((C,B),A);",2,0,0
-Our_algorithm,9,"((((B,B),B),C),A);","((C,B),A);",3,0,0
-ETE3,9,"((((B,B),B),C),A);","(A,(B,C));",2,0,0
-True Process,10,"(C,(((A,A),A),B));","((C,B),A);",2,1,0
-Our_algorithm,10,"(C,(((A,A),A),B));","((C,B),A);",2,1,0
-ETE3,10,"(C,(((A,A),A),B));","(A,(B,C));",3,0,3
-True Process,11,"(((C,A),(C,A)),B);","((C,B),A);",3,1,1
-Our_algorithm,11,"(((C,A),(C,A)),B);","((C,B),A);",2,0,2
-ETE3,11,"(((C,A),(C,A)),B);","(A,(B,C));",2,0,4
-True Process,12,"(A,B);","((C,B),A);",0,1,1
-Our_algorithm,12,"(A,B);","((C,B),A);",0,0,1
-ETE3,12,"(A,B);","(A,(B,C));",0,0,1
-True Process,13,"((B,C),A);","((C,B),A);",0,0,0
-Our_algorithm,13,"((B,C),A);","((C,B),A);",0,0,0
-ETE3,13,"((B,C),A);","(A,(B,C));",0,0,0
-True Process,14,"(((B,B),C),A);","((C,B),A);",1,0,0
-Our_algorithm,14,"(((B,B),C),A);","((C,B),A);",2,0,0
-ETE3,14,"(((B,B),C),A);","(A,(B,C));",1,0,0
-True Process,15,"((A,A),(C,A));","((C,B),A);",2,0,1
-Our_algorithm,15,"((A,A),(C,A));","((C,B),A);",2,1,1
-ETE3,15,"((A,A),(C,A));","(A,(B,C));",2,0,3
-True Process,16,"(C,((A,B),((B,B),A)));","((C,B),A);",3,1,0
-Our_algorithm,16,"(C,((A,B),((B,B),A)));","((C,B),A);",3,3,2
-ETE3,16,"(C,((A,B),((B,B),A)));","(A,(B,C));",3,0,4
-True Process,17,"(A,(B,C));","((C,B),A);",0,0,0
-Our_algorithm,17,"(A,(B,C));","((C,B),A);",0,0,0
-ETE3,17,"(A,(B,C));","(A,(B,C));",0,0,0
-True Process,18,"((A,A),((C,B),A));","((C,B),A);",4,1,2
-Our_algorithm,18,"((A,A),((C,B),A));","((C,B),A);",2,1,0
-ETE3,18,"((A,A),((C,B),A));","(A,(B,C));",2,0,2
-True Process,19,"(B,C);","((C,B),A);",1,0,2
-Our_algorithm,19,"(B,C);","((C,B),A);",0,0,1
-ETE3,19,"(B,C);","(A,(B,C));",0,0,0
-True Process,20,C;,"((C,B),A);",0,1,2
-Our_algorithm,20,C;,"((C,B),A);",0,0,2
-ETE3,20,C;,"(A,(B,C));",0,0,0
-True Process,21,"((A,((B,B),C)),A);","((C,B),A);",2,0,0
-Our_algorithm,21,"((A,((B,B),C)),A);","((C,B),A);",3,1,0
-ETE3,21,"((A,((B,B),C)),A);","(A,(B,C));",2,0,2
-True Process,22,"((C,B),B);","((C,B),A);",2,0,2
-Our_algorithm,22,"((C,B),B);","((C,B),A);",1,0,1
-ETE3,22,"((C,B),B);","(A,(B,C));",1,0,1
-True Process,23,"(B,(C,A));","((C,B),A);",0,1,0
-Our_algorithm,23,"(B,(C,A));","((C,B),A);",0,1,0
-ETE3,23,"(B,(C,A));","(A,(B,C));",1,0,3
-True Process,24,"(((C,C),B),C);","((C,B),A);",3,1,2
-Our_algorithm,24,"(((C,C),B),C);","((C,B),A);",2,1,1
-ETE3,24,"(((C,C),B),C);","(A,(B,C));",2,0,1
-True Process,25,"(((B,B),C),A);","((C,B),A);",1,0,0
-Our_algorithm,25,"(((B,B),C),A);","((C,B),A);",2,0,0
-ETE3,25,"(((B,B),C),A);","(A,(B,C));",1,0,0
-True Process,26,C;,"((C,B),A);",0,1,2
-Our_algorithm,26,C;,"((C,B),A);",0,0,2
-ETE3,26,C;,"(A,(B,C));",0,0,0
-True Process,27,B;,"((C,B),A);",0,1,2
-Our_algorithm,27,B;,"((C,B),A);",0,0,2
-ETE3,27,B;,"(A,(B,C));",0,0,0
-True Process,28,"(A,B);","((C,B),A);",1,1,2
-Our_algorithm,28,"(A,B);","((C,B),A);",0,0,1
-ETE3,28,"(A,B);","(A,(B,C));",0,0,1
-True Process,29,"((B,A),C);","((C,B),A);",0,1,0
-Our_algorithm,29,"((B,A),C);","((C,B),A);",0,1,0
-ETE3,29,"((B,A),C);","(A,(B,C));",1,0,3
-True Process,30,"((A,C),C);","((C,B),A);",2,1,2
-Our_algorithm,30,"((A,C),C);","((C,B),A);",1,0,3
-ETE3,30,"((A,C),C);","(A,(B,C));",1,0,3
-True Process,31,"((A,A),C);","((C,B),A);",1,1,1
-Our_algorithm,31,"((A,A),C);","((C,B),A);",1,0,1
-ETE3,31,"((A,A),C);","(A,(B,C));",1,0,1
-True Process,32,"(((C,C),(C,C)),B);","((C,B),A);",3,1,1
-Our_algorithm,32,"(((C,C),(C,C)),B);","((C,B),A);",3,0,1
-ETE3,32,"(((C,C),(C,C)),B);","(A,(B,C));",3,0,0
-True Process,33,"(A,C);","((C,B),A);",0,1,1
-Our_algorithm,33,"(A,C);","((C,B),A);",0,0,1
-ETE3,33,"(A,C);","(A,(B,C));",0,0,1
-True Process,34,"(C,A);","((C,B),A);",0,0,1
-Our_algorithm,34,"(C,A);","((C,B),A);",0,0,1
-ETE3,34,"(C,A);","(A,(B,C));",0,0,1
-True Process,35,"((((A,A),A),A),C);","((C,B),A);",3,1,1
-Our_algorithm,35,"((((A,A),A),A),C);","((C,B),A);",1,0,1
-ETE3,35,"((((A,A),A),A),C);","(A,(B,C));",3,0,1
-True Process,36,"((C,C),(B,A));","((C,B),A);",2,0,1
-Our_algorithm,36,"((C,C),(B,A));","((C,B),A);",2,0,0
-ETE3,36,"((C,C),(B,A));","(A,(B,C));",2,0,3
-True Process,37,"(((B,B),(C,A)),B);","((C,B),A);",2,1,0
-Our_algorithm,37,"(((B,B),(C,A)),B);","((C,B),A);",3,0,2
-ETE3,37,"(((B,B),(C,A)),B);","(A,(B,C));",3,0,5
-True Process,38,"(B,B);","((C,B),A);",1,1,2
-Our_algorithm,38,"(B,B);","((C,B),A);",1,0,2
-ETE3,38,"(B,B);","(A,(B,C));",1,0,0
-True Process,39,"((C,C),(B,A));","((C,B),A);",1,1,0
-Our_algorithm,39,"((C,C),(B,A));","((C,B),A);",2,0,0
-ETE3,39,"((C,C),(B,A));","(A,(B,C));",2,0,3
-True Process,40,"(C,B);","((C,B),A);",0,0,1
-Our_algorithm,40,"(C,B);","((C,B),A);",0,0,1
-ETE3,40,"(C,B);","(A,(B,C));",0,0,0
-True Process,41,"(C,(B,A));","((C,B),A);",1,1,1
-Our_algorithm,41,"(C,(B,A));","((C,B),A);",0,1,0
-ETE3,41,"(C,(B,A));","(A,(B,C));",1,0,3
-True Process,42,"((C,A),(A,C));","((C,B),A);",2,1,1
-Our_algorithm,42,"((C,A),(A,C));","((C,B),A);",1,0,2
-ETE3,42,"((C,A),(A,C));","(A,(B,C));",1,0,2
-True Process,43,"(((A,C),C),B);","((C,B),A);",1,1,0
-Our_algorithm,43,"(((A,C),C),B);","((C,B),A);",2,0,4
-ETE3,43,"(((A,C),C),B);","(A,(B,C));",2,0,5
-True Process,44,"((A,A),(C,B));","((C,B),A);",1,0,0
-Our_algorithm,44,"((A,A),(C,B));","((C,B),A);",1,0,0
-ETE3,44,"((A,A),(C,B));","(A,(B,C));",1,0,0
-True Process,45,"((A,A),((B,C),C));","((C,B),A);",2,0,0
-Our_algorithm,45,"((A,A),((B,C),C));","((C,B),A);",2,1,0
-ETE3,45,"((A,A),((B,C),C));","(A,(B,C));",2,0,1
-True Process,46,"(((A,A),B),(A,C));","((C,B),A);",3,1,1
-Our_algorithm,46,"(((A,A),B),(A,C));","((C,B),A);",2,0,0
-ETE3,46,"(((A,A),B),(A,C));","(A,(B,C));",2,0,2
-True Process,47,"(((A,B),B),(C,C));","((C,B),A);",2,1,0
-Our_algorithm,47,"(((A,B),B),(C,C));","((C,B),A);",4,2,0
-ETE3,47,"(((A,B),B),(C,C));","(A,(B,C));",3,0,5
-True Process,48,"(((A,A),(C,C)),B);","((C,B),A);",3,1,1
-Our_algorithm,48,"(((A,A),(C,C)),B);","((C,B),A);",3,1,0
-ETE3,48,"(((A,A),(C,C)),B);","(A,(B,C));",3,0,3
-True Process,49,"((A,A),(B,C));","((C,B),A);",3,1,2
-Our_algorithm,49,"((A,A),(B,C));","((C,B),A);",1,0,0
-ETE3,49,"((A,A),(B,C));","(A,(B,C));",1,0,0
-True Process,50,"((C,C),(B,A));","((C,B),A);",1,1,0
-Our_algorithm,50,"((C,C),(B,A));","((C,B),A);",2,0,0
-ETE3,50,"((C,C),(B,A));","(A,(B,C));",2,0,3
-True Process,51,"((C,B),(B,A));","((C,B),A);",1,1,0
-Our_algorithm,51,"((C,B),(B,A));","((C,B),A);",1,1,0
-ETE3,51,"((C,B),(B,A));","(A,(B,C));",1,0,2
-True Process,52,"(((A,B),A),((B,C),C));","((C,B),A);",3,0,0
-Our_algorithm,52,"(((A,B),A),((B,C),C));","((C,B),A);",3,0,2
-ETE3,52,"(((A,B),A),((B,C),C));","(A,(B,C));",3,0,5
-True Process,53,"((B,B),((C,C),(A,B)));","((C,B),A);",3,1,0
-Our_algorithm,53,"((B,B),((C,C),(A,B)));","((C,B),A);",4,0,0
-ETE3,53,"((B,B),((C,C),(A,B)));","(A,(B,C));",4,0,5
-True Process,54,"((((C,B),A),B),C);","((C,B),A);",3,1,1
-Our_algorithm,54,"((((C,B),A),B),C);","((C,B),A);",2,0,4
-ETE3,54,"((((C,B),A),B),C);","(A,(B,C));",2,0,4
-True Process,55,"((B,B),C);","((C,B),A);",1,1,1
-Our_algorithm,55,"((B,B),C);","((C,B),A);",1,0,1
-ETE3,55,"((B,B),C);","(A,(B,C));",1,0,0
-True Process,56,"((A,A),C);","((C,B),A);",1,1,1
-Our_algorithm,56,"((A,A),C);","((C,B),A);",1,0,1
-ETE3,56,"((A,A),C);","(A,(B,C));",1,0,1
-True Process,57,"(((A,A),A),C);","((C,B),A);",3,1,2
-Our_algorithm,57,"(((A,A),A),C);","((C,B),A);",1,0,1
-ETE3,57,"(((A,A),A),C);","(A,(B,C));",2,0,1
-True Process,58,"(((C,C),C),B);","((C,B),A);",2,0,1
-Our_algorithm,58,"(((C,C),C),B);","((C,B),A);",2,0,1
-ETE3,58,"(((C,C),C),B);","(A,(B,C));",2,0,0
-True Process,59,"((B,C),C);","((C,B),A);",2,0,2
-Our_algorithm,59,"((B,C),C);","((C,B),A);",1,0,1
-ETE3,59,"((B,C),C);","(A,(B,C));",1,0,1
-True Process,60,"(((C,B),A),A);","((C,B),A);",1,0,0
-Our_algorithm,60,"(((C,B),A),A);","((C,B),A);",1,1,0
-ETE3,60,"(((C,B),A),A);","(A,(B,C));",1,0,2
-True Process,61,"((C,C),(C,B));","((C,B),A);",2,1,1
-Our_algorithm,61,"((C,C),(C,B));","((C,B),A);",2,1,1
-ETE3,61,"((C,C),(C,B));","(A,(B,C));",2,0,1
-True Process,62,"((B,B),((A,A),C));","((C,B),A);",2,1,0
-Our_algorithm,62,"((B,B),((A,A),C));","((C,B),A);",3,1,0
-ETE3,62,"((B,B),((A,A),C));","(A,(B,C));",3,0,3
-True Process,63,"(C,B);","((C,B),A);",0,0,1
-Our_algorithm,63,"(C,B);","((C,B),A);",0,0,1
-ETE3,63,"(C,B);","(A,(B,C));",0,0,0
-True Process,64,"((C,C),((A,A),B));","((C,B),A);",2,1,0
-Our_algorithm,64,"((C,C),((A,A),B));","((C,B),A);",3,1,0
-ETE3,64,"((C,C),((A,A),B));","(A,(B,C));",3,0,3
-True Process,65,A;,"((C,B),A);",0,1,2
-Our_algorithm,65,A;,"((C,B),A);",0,0,2
-ETE3,65,A;,"(A,(B,C));",0,0,0
-True Process,66,"(A,A);","((C,B),A);",1,1,2
-Our_algorithm,66,"(A,A);","((C,B),A);",1,0,2
-ETE3,66,"(A,A);","(A,(B,C));",1,0,0
-True Process,67,"(((C,B),C),A);","((C,B),A);",2,1,1
-Our_algorithm,67,"(((C,B),C),A);","((C,B),A);",1,0,0
-ETE3,67,"(((C,B),C),A);","(A,(B,C));",1,0,1
-True Process,68,"(((A,A),C),A);","((C,B),A);",3,1,2
-Our_algorithm,68,"(((A,A),C),A);","((C,B),A);",2,0,3
-ETE3,68,"(((A,A),C),A);","(A,(B,C));",2,0,3
-True Process,69,"((B,B),C);","((C,B),A);",1,1,1
-Our_algorithm,69,"((B,B),C);","((C,B),A);",1,0,1
-ETE3,69,"((B,B),C);","(A,(B,C));",1,0,0
-True Process,70,A;,"((C,B),A);",0,1,2
-Our_algorithm,70,A;,"((C,B),A);",0,0,2
-ETE3,70,A;,"(A,(B,C));",0,0,0
-True Process,71,"(A,((B,B),(C,C)));","((C,B),A);",3,0,1
-Our_algorithm,71,"(A,((B,B),(C,C)));","((C,B),A);",2,0,0
-ETE3,71,"(A,((B,B),(C,C)));","(A,(B,C));",2,0,0
-True Process,72,"((B,B),C);","((C,B),A);",1,1,1
-Our_algorithm,72,"((B,B),C);","((C,B),A);",1,0,1
-ETE3,72,"((B,B),C);","(A,(B,C));",1,0,0
-True Process,73,"((B,B),(C,B));","((C,B),A);",2,1,1
-Our_algorithm,73,"((B,B),(C,B));","((C,B),A);",2,1,1
-ETE3,73,"((B,B),(C,B));","(A,(B,C));",2,0,1
-True Process,74,"(A,C);","((C,B),A);",1,1,2
-Our_algorithm,74,"(A,C);","((C,B),A);",0,0,1
-ETE3,74,"(A,C);","(A,(B,C));",0,0,1
-True Process,75,"((A,A),((B,B),C));","((C,B),A);",3,0,1
-Our_algorithm,75,"((A,A),((B,B),C));","((C,B),A);",2,0,0
-ETE3,75,"((A,A),((B,B),C));","(A,(B,C));",2,0,0
-True Process,76,"((A,B),(A,C));","((C,B),A);",3,1,2
-Our_algorithm,76,"((A,B),(A,C));","((C,B),A);",1,0,0
-ETE3,76,"((A,B),(A,C));","(A,(B,C));",1,0,2
-True Process,77,"(((C,C),((C,C),B)),A);","((C,B),A);",4,0,1
-Our_algorithm,77,"(((C,C),((C,C),B)),A);","((C,B),A);",4,0,0
-ETE3,77,"(((C,C),((C,C),B)),A);","(A,(B,C));",3,0,1
-True Process,78,"((B,A),C);","((C,B),A);",0,1,0
-Our_algorithm,78,"((B,A),C);","((C,B),A);",0,1,0
-ETE3,78,"((B,A),C);","(A,(B,C));",1,0,3
-True Process,79,"((A,A),C);","((C,B),A);",1,1,1
-Our_algorithm,79,"((A,A),C);","((C,B),A);",1,0,1
-ETE3,79,"((A,A),C);","(A,(B,C));",1,0,1
-True Process,80,"(A,(((B,B),C),B));","((C,B),A);",2,0,0
-Our_algorithm,80,"(A,(((B,B),C),B));","((C,B),A);",1,2,0
-ETE3,80,"(A,(((B,B),C),B));","(A,(B,C));",2,0,1
-True Process,81,"((B,B),((B,A),C));","((C,B),A);",2,1,0
-Our_algorithm,81,"((B,B),((B,A),C));","((C,B),A);",3,0,2
-ETE3,81,"((B,B),((B,A),C));","(A,(B,C));",3,0,5
-True Process,82,"(((C,C),A),C);","((C,B),A);",2,0,1
-Our_algorithm,82,"(((C,C),A),C);","((C,B),A);",2,2,1
-ETE3,82,"(((C,C),A),C);","(A,(B,C));",2,0,3
-True Process,83,"((C,C),B);","((C,B),A);",2,1,2
-Our_algorithm,83,"((C,C),B);","((C,B),A);",1,0,1
-ETE3,83,"((C,C),B);","(A,(B,C));",1,0,0
-True Process,84,"(((A,B),C),C);","((C,B),A);",1,1,0
-Our_algorithm,84,"(((A,B),C),C);","((C,B),A);",2,0,4
-ETE3,84,"(((A,B),C),C);","(A,(B,C));",2,0,5
-True Process,85,"((C,A),B);","((C,B),A);",0,1,0
-Our_algorithm,85,"((C,A),B);","((C,B),A);",0,1,0
-ETE3,85,"((C,A),B);","(A,(B,C));",1,0,3
-True Process,86,"(C,(((B,B),B),A));","((C,B),A);",2,1,0
-Our_algorithm,86,"(C,(((B,B),B),A));","((C,B),A);",3,1,0
-ETE3,86,"(C,(((B,B),B),A));","(A,(B,C));",3,0,3
-True Process,87,"(((A,A),A),(((C,C),B),A));","((C,B),A);",6,1,2
-Our_algorithm,87,"(((A,A),A),(((C,C),B),A));","((C,B),A);",5,1,0
-ETE3,87,"(((A,A),A),(((C,C),B),A));","(A,(B,C));",4,0,2
-True Process,88,"((((C,C),C),A),B);","((C,B),A);",2,1,0
-Our_algorithm,88,"((((C,C),C),A),B);","((C,B),A);",3,1,0
-ETE3,88,"((((C,C),C),A),B);","(A,(B,C));",3,0,3
-True Process,89,"(A,(B,C));","((C,B),A);",0,0,0
-Our_algorithm,89,"(A,(B,C));","((C,B),A);",0,0,0
-ETE3,89,"(A,(B,C));","(A,(B,C));",0,0,0
-True Process,90,"((B,C),(A,C));","((C,B),A);",1,1,0
-Our_algorithm,90,"((B,C),(A,C));","((C,B),A);",1,1,0
-ETE3,90,"((B,C),(A,C));","(A,(B,C));",1,0,2
-True Process,91,"((A,B),B);","((C,B),A);",1,0,1
-Our_algorithm,91,"((A,B),B);","((C,B),A);",1,0,3
-ETE3,91,"((A,B),B);","(A,(B,C));",1,0,3
-True Process,92,"(((B,C),C),A);","((C,B),A);",1,0,0
-Our_algorithm,92,"(((B,C),C),A);","((C,B),A);",1,0,0
-ETE3,92,"(((B,C),C),A);","(A,(B,C));",1,0,1
-True Process,93,"((A,B),C);","((C,B),A);",1,1,1
-Our_algorithm,93,"((A,B),C);","((C,B),A);",0,1,0
-ETE3,93,"((A,B),C);","(A,(B,C));",1,0,3
-True Process,94,"((((C,C),C),A),C);","((C,B),A);",3,1,1
-Our_algorithm,94,"((((C,C),C),A),C);","((C,B),A);",3,2,1
-ETE3,94,"((((C,C),C),A),C);","(A,(B,C));",3,0,3
-True Process,95,"(C,((B,B),A));","((C,B),A);",1,1,0
-Our_algorithm,95,"(C,((B,B),A));","((C,B),A);",2,1,0
-ETE3,95,"(C,((B,B),A));","(A,(B,C));",2,0,3
-True Process,96,"(B,A);","((C,B),A);",1,1,2
-Our_algorithm,96,"(B,A);","((C,B),A);",0,0,1
-ETE3,96,"(B,A);","(A,(B,C));",0,0,1
-True Process,97,"((B,B),A);","((C,B),A);",2,1,2
-Our_algorithm,97,"((B,B),A);","((C,B),A);",1,0,1
-ETE3,97,"((B,B),A);","(A,(B,C));",1,0,1
-True Process,98,"(A,C);","((C,B),A);",0,0,1
-Our_algorithm,98,"(A,C);","((C,B),A);",0,0,1
-ETE3,98,"(A,C);","(A,(B,C));",0,0,1
-True Process,99,"((B,C),B);","((C,B),A);",1,0,1
-Our_algorithm,99,"((B,C),B);","((C,B),A);",1,0,1
-ETE3,99,"((B,C),B);","(A,(B,C));",1,0,1
+Process,Replicate,Gene_tree,Species_Tree,Duplication,NNI,Loss,Status,
+True Process,0,"(A,C);","(A,(B,C));",0,1,1,Correct,
+Our_algorithm,0,"(A,C);","(A,(B,C));",0,0,1,Correct,
+ETE3,0,"(A,C);","(A,(B,C));",0,0,1,Correct,
+True Process,1,"((B,C),A);","(A,(B,C));",2,1,2,Correct But not matching,
+Our_algorithm,1,"((B,C),A);","(A,(B,C));",0,0,0,Correct But not matching,
+ETE3,1,"((B,C),A);","(A,(B,C));",0,0,0,Correct But not matching,
+True Process,2,"(((B,B),((C,C),A)),C);","(A,(B,C));",3,1,0,Correct,
+Our_algorithm,2,"(((B,B),((C,C),A)),C);","(A,(B,C));",3,2,0,Correct,
+ETE3,2,"(((B,B),((C,C),A)),C);","(A,(B,C));",4,0,5,Correct,
+True Process,4,"(B,A);","(A,(B,C));",0,1,1,Correct,
+Our_algorithm,4,"(B,A);","(A,(B,C));",0,0,1,Correct,
+ETE3,4,"(B,A);","(A,(B,C));",0,0,1,Correct,
+True Process,5,"(((B,B),B),((C,C),B));","(A,(B,C));",4,1,1,Correct,
+Our_algorithm,5,"(((B,B),B),((C,C),B));","(A,(B,C));",4,1,1,Correct,
+ETE3,5,"(((B,B),B),((C,C),B));","(A,(B,C));",4,0,1,Correct,
+True Process,6,"((C,C),(A,A));","(A,(B,C));",2,1,1,Correct,
+Our_algorithm,6,"((C,C),(A,A));","(A,(B,C));",2,0,1,Correct,
+ETE3,6,"((C,C),(A,A));","(A,(B,C));",2,0,1,Correct,
+True Process,7,"(((C,C),A),(B,B));","(A,(B,C));",3,1,1,Correct But not matching,
+Our_algorithm,7,"(((C,C),A),(B,B));","(A,(B,C));",2,1,0,Correct But not matching,
+ETE3,7,"(((C,C),A),(B,B));","(A,(B,C));",3,0,3,Correct But not matching,
+True Process,8,"(C,B);","(A,(B,C));",2,0,3,Correct But not matching,
+Our_algorithm,8,"(C,B);","(A,(B,C));",0,0,1,Correct But not matching,
+ETE3,8,"(C,B);","(A,(B,C));",0,0,0,Correct But not matching,
+True Process,9,"((((B,B),B),C),A);","(A,(B,C));",2,0,0,Wrong,
+Our_algorithm,9,"((((B,B),B),C),A);","(A,(B,C));",3,0,0,Wrong,
+ETE3,9,"((((B,B),B),C),A);","(A,(B,C));",2,0,0,Wrong,
+True Process,10,"(C,(((A,A),A),B));","(A,(B,C));",2,1,0,Correct,
+Our_algorithm,10,"(C,(((A,A),A),B));","(A,(B,C));",2,1,0,Correct,
+ETE3,10,"(C,(((A,A),A),B));","(A,(B,C));",3,0,3,Correct,
+True Process,11,"(((C,A),(C,A)),B);","(A,(B,C));",3,1,1,Correct But not matching,
+Our_algorithm,11,"(((C,A),(C,A)),B);","(A,(B,C));",2,4,0,Correct But not matching,
+ETE3,11,"(((C,A),(C,A)),B);","(A,(B,C));",2,0,4,Correct But not matching,
+True Process,12,"(A,B);","(A,(B,C));",0,1,1,Correct But not matching,
+Our_algorithm,12,"(A,B);","(A,(B,C));",0,0,1,Correct But not matching,
+ETE3,12,"(A,B);","(A,(B,C));",0,0,1,Correct But not matching,
+True Process,13,"((B,C),A);","(A,(B,C));",0,0,0,Correct,
+Our_algorithm,13,"((B,C),A);","(A,(B,C));",0,0,0,Correct,
+ETE3,13,"((B,C),A);","(A,(B,C));",0,0,0,Correct,
+True Process,14,"(((B,B),C),A);","(A,(B,C));",1,0,0,Correct,
+Our_algorithm,14,"(((B,B),C),A);","(A,(B,C));",1,0,0,Correct,
+ETE3,14,"(((B,B),C),A);","(A,(B,C));",1,0,0,Correct,
+True Process,15,"((A,A),(C,A));","(A,(B,C));",2,0,1,Correct,
+Our_algorithm,15,"((A,A),(C,A));","(A,(B,C));",2,1,1,Correct,
+ETE3,15,"((A,A),(C,A));","(A,(B,C));",2,0,3,Correct,
+True Process,16,"(C,((A,B),((B,B),A)));","(A,(B,C));",3,1,0,Correct But not matching,
+Our_algorithm,16,"(C,((A,B),((B,B),A)));","(A,(B,C));",2,3,0,Correct But not matching,
+ETE3,16,"(C,((A,B),((B,B),A)));","(A,(B,C));",3,0,4,Correct But not matching,
+True Process,17,"(A,(B,C));","(A,(B,C));",0,0,0,Correct,
+Our_algorithm,17,"(A,(B,C));","(A,(B,C));",0,0,0,Correct,
+ETE3,17,"(A,(B,C));","(A,(B,C));",0,0,0,Correct,
+True Process,18,"((A,A),((C,B),A));","(A,(B,C));",4,1,2,Correct But not matching,
+Our_algorithm,18,"((A,A),((C,B),A));","(A,(B,C));",2,1,0,Correct But not matching,
+ETE3,18,"((A,A),((C,B),A));","(A,(B,C));",2,0,2,Correct But not matching,
+True Process,19,"(B,C);","(A,(B,C));",1,0,2,Correct But not matching,
+Our_algorithm,19,"(B,C);","(A,(B,C));",0,0,1,Correct But not matching,
+ETE3,19,"(B,C);","(A,(B,C));",0,0,0,Correct But not matching,
+True Process,20,C;,"(A,(B,C));",0,1,2,Correct But not matching,
+Our_algorithm,20,C;,"(A,(B,C));",0,0,2,Correct But not matching,
+ETE3,20,C;,"(A,(B,C));",0,0,0,Correct But not matching,
+True Process,21,"((A,((B,B),C)),A);","(A,(B,C));",2,0,0,Correct But not matching,
+Our_algorithm,21,"((A,((B,B),C)),A);","(A,(B,C));",2,1,0,Correct But not matching,
+ETE3,21,"((A,((B,B),C)),A);","(A,(B,C));",2,0,2,Correct But not matching,
+True Process,22,"((C,B),B);","(A,(B,C));",2,0,2,Correct But not matching,
+Our_algorithm,22,"((C,B),B);","(A,(B,C));",1,1,1,Correct But not matching,
+ETE3,22,"((C,B),B);","(A,(B,C));",1,0,1,Correct But not matching,
+True Process,23,"(B,(C,A));","(A,(B,C));",0,1,0,Correct,
+Our_algorithm,23,"(B,(C,A));","(A,(B,C));",0,1,0,Correct,
+ETE3,23,"(B,(C,A));","(A,(B,C));",1,0,3,Correct,
+True Process,24,"(((C,C),B),C);","(A,(B,C));",3,1,2,Correct But not matching,
+Our_algorithm,24,"(((C,C),B),C);","(A,(B,C));",2,1,1,Correct But not matching,
+ETE3,24,"(((C,C),B),C);","(A,(B,C));",2,0,1,Correct But not matching,
+True Process,25,"(((B,B),C),A);","(A,(B,C));",1,0,0,Correct,
+Our_algorithm,25,"(((B,B),C),A);","(A,(B,C));",1,0,0,Correct,
+ETE3,25,"(((B,B),C),A);","(A,(B,C));",1,0,0,Correct,
+True Process,26,C;,"(A,(B,C));",0,1,2,Correct But not matching,
+Our_algorithm,26,C;,"(A,(B,C));",0,0,2,Correct But not matching,
+ETE3,26,C;,"(A,(B,C));",0,0,0,Correct But not matching,
+True Process,27,B;,"(A,(B,C));",0,1,2,Correct But not matching,
+Our_algorithm,27,B;,"(A,(B,C));",0,0,2,Correct But not matching,
+ETE3,27,B;,"(A,(B,C));",0,0,0,Correct But not matching,
+True Process,28,"(A,B);","(A,(B,C));",1,1,2,Correct But not matching,
+Our_algorithm,28,"(A,B);","(A,(B,C));",0,0,1,Correct But not matching,
+ETE3,28,"(A,B);","(A,(B,C));",0,0,1,Correct But not matching,
+True Process,29,"((B,A),C);","(A,(B,C));",0,1,0,Correct,
+Our_algorithm,29,"((B,A),C);","(A,(B,C));",0,1,0,Correct,
+ETE3,29,"((B,A),C);","(A,(B,C));",1,0,3,Correct,
+True Process,30,"((A,C),C);","(A,(B,C));",2,1,2,Correct But not matching,
+Our_algorithm,30,"((A,C),C);","(A,(B,C));",1,1,1,Correct But not matching,
+ETE3,30,"((A,C),C);","(A,(B,C));",1,0,3,Correct But not matching,
+True Process,31,"((A,A),C);","(A,(B,C));",1,1,1,Correct But not matching,
+Our_algorithm,31,"((A,A),C);","(A,(B,C));",1,0,1,Correct But not matching,
+ETE3,31,"((A,A),C);","(A,(B,C));",1,0,1,Correct But not matching,
+True Process,32,"(((C,C),(C,C)),B);","(A,(B,C));",3,1,1,Correct But not matching,
+Our_algorithm,32,"(((C,C),(C,C)),B);","(A,(B,C));",3,0,1,Correct But not matching,
+ETE3,32,"(((C,C),(C,C)),B);","(A,(B,C));",3,0,0,Correct But not matching,
+True Process,33,"(A,C);","(A,(B,C));",0,1,1,Correct But not matching,
+Our_algorithm,33,"(A,C);","(A,(B,C));",0,0,1,Correct But not matching,
+ETE3,33,"(A,C);","(A,(B,C));",0,0,1,Correct But not matching,
+True Process,34,"(C,A);","(A,(B,C));",0,0,1,Correct,
+Our_algorithm,34,"(C,A);","(A,(B,C));",0,0,1,Correct,
+ETE3,34,"(C,A);","(A,(B,C));",0,0,1,Correct,
+True Process,36,"((C,C),(B,A));","(A,(B,C));",2,0,1,Wrong,
+Our_algorithm,36,"((C,C),(B,A));","(A,(B,C));",1,0,0,Wrong,
+ETE3,36,"((C,C),(B,A));","(A,(B,C));",2,0,3,Wrong,
+True Process,37,"(((B,B),(C,A)),B);","(A,(B,C));",2,1,0,Wrong,
+Our_algorithm,37,"(((B,B),(C,A)),B);","(A,(B,C));",1,1,0,Wrong,
+ETE3,37,"(((B,B),(C,A)),B);","(A,(B,C));",3,0,5,Wrong,
+True Process,38,"(B,B);","(A,(B,C));",1,1,2,Correct,
+Our_algorithm,38,"(B,B);","(A,(B,C));",1,0,2,Correct,
+ETE3,38,"(B,B);","(A,(B,C));",1,0,0,Correct,
+True Process,39,"((C,C),(B,A));","(A,(B,C));",1,1,0,same as 36,same as 36
+Our_algorithm,39,"((C,C),(B,A));","(A,(B,C));",1,0,0,same as 36,
+ETE3,39,"((C,C),(B,A));","(A,(B,C));",2,0,3,same as 36,
+True Process,40,"(C,B);","(A,(B,C));",0,0,1,Correct,
+Our_algorithm,40,"(C,B);","(A,(B,C));",0,0,1,Correct,
+ETE3,40,"(C,B);","(A,(B,C));",0,0,0,Correct,
+True Process,41,"(C,(B,A));","(A,(B,C));",1,1,1,Correct But not matching,
+Our_algorithm,41,"(C,(B,A));","(A,(B,C));",0,1,0,Correct But not matching,
+ETE3,41,"(C,(B,A));","(A,(B,C));",1,0,3,Correct But not matching,
+True Process,42,"((C,A),(A,C));","(A,(B,C));",2,1,1,Correct But not matching,
+Our_algorithm,42,"((C,A),(A,C));","(A,(B,C));",2,3,1,Correct But not matching,
+ETE3,42,"((C,A),(A,C));","(A,(B,C));",1,0,2,Correct But not matching,
+True Process,43,"(((A,C),C),B);","(A,(B,C));",1,1,0,Correct But not matching,
+Our_algorithm,43,"(((A,C),C),B);","(A,(B,C));",1,2,0,Correct But not matching,
+ETE3,43,"(((A,C),C),B);","(A,(B,C));",2,0,5,Correct But not matching,
+True Process,44,"((A,A),(C,B));","(A,(B,C));",1,0,0,Correct,
+Our_algorithm,44,"((A,A),(C,B));","(A,(B,C));",1,0,0,Correct,
+ETE3,44,"((A,A),(C,B));","(A,(B,C));",1,0,0,Correct,
+True Process,45,"((A,A),((B,C),C));","(A,(B,C));",2,0,0,Correct But not matching,
+Our_algorithm,45,"((A,A),((B,C),C));","(A,(B,C));",2,1,0,Correct But not matching,
+ETE3,45,"((A,A),((B,C),C));","(A,(B,C));",2,0,1,Correct But not matching,
+True Process,46,"(((A,A),B),(A,C));","(A,(B,C));",3,1,1,Correct But not matching,
+Our_algorithm,46,"(((A,A),B),(A,C));","(A,(B,C));",2,1,0,Correct But not matching,
+ETE3,46,"(((A,A),B),(A,C));","(A,(B,C));",2,0,2,Correct But not matching,
+True Process,47,"(((A,B),B),(C,C));","(A,(B,C));",2,1,0,Correct But not matching,
+Our_algorithm,47,"(((A,B),B),(C,C));","(A,(B,C));",2,2,0,Correct But not matching,
+ETE3,47,"(((A,B),B),(C,C));","(A,(B,C));",3,0,5,Correct But not matching,
+True Process,48,"(((A,A),(C,C)),B);","(A,(B,C));",3,1,1,Correct But not matching,
+Our_algorithm,48,"(((A,A),(C,C)),B);","(A,(B,C));",2,1,0,Correct But not matching,
+ETE3,48,"(((A,A),(C,C)),B);","(A,(B,C));",3,0,3,Correct But not matching,
+True Process,49,"((A,A),(B,C));","(A,(B,C));",3,1,2,Correct But not matching,
+Our_algorithm,49,"((A,A),(B,C));","(A,(B,C));",1,0,0,Correct But not matching,
+ETE3,49,"((A,A),(B,C));","(A,(B,C));",1,0,0,Correct But not matching,
+True Process,50,"((C,C),(B,A));","(A,(B,C));",1,1,0,same as 36,
+Our_algorithm,50,"((C,C),(B,A));","(A,(B,C));",1,0,0,same as 36,
+ETE3,50,"((C,C),(B,A));","(A,(B,C));",2,0,3,same as 36,
+True Process,51,"((C,B),(B,A));","(A,(B,C));",1,1,0,Correct,
+Our_algorithm,51,"((C,B),(B,A));","(A,(B,C));",1,1,0,Correct,
+ETE3,51,"((C,B),(B,A));","(A,(B,C));",1,0,2,Correct,
+True Process,52,"(((A,B),A),((B,C),C));","(A,(B,C));",3,0,0,Correct But not matching,
+Our_algorithm,52,"(((A,B),A),((B,C),C));","(A,(B,C));",3,4,0,Correct But not matching,
+ETE3,52,"(((A,B),A),((B,C),C));","(A,(B,C));",3,0,5,Correct But not matching,
+True Process,53,"((B,B),((C,C),(A,B)));","(A,(B,C));",3,1,0,Wrong,
+Our_algorithm,53,"((B,B),((C,C),(A,B)));","(A,(B,C));",1,1,0,Wrong,
+ETE3,53,"((B,B),((C,C),(A,B)));","(A,(B,C));",4,0,5,Wrong,
+True Process,54,"((((C,B),A),B),C);","(A,(B,C));",3,1,1,Correct But not matching,
+Our_algorithm,54,"((((C,B),A),B),C);","(A,(B,C));",2,2,0,Correct But not matching,
+ETE3,54,"((((C,B),A),B),C);","(A,(B,C));",2,0,4,Correct But not matching,
+True Process,55,"((B,B),C);","(A,(B,C));",1,1,1,Correct But not matching,
+Our_algorithm,55,"((B,B),C);","(A,(B,C));",1,0,1,Correct But not matching,
+ETE3,55,"((B,B),C);","(A,(B,C));",1,0,0,Correct But not matching,
+True Process,56,"((A,A),C);","(A,(B,C));",1,1,1,Correct But not matching,
+Our_algorithm,56,"((A,A),C);","(A,(B,C));",1,0,1,Correct But not matching,
+ETE3,56,"((A,A),C);","(A,(B,C));",1,0,1,Correct But not matching,
+True Process,58,"(((C,C),C),B);","(A,(B,C));",2,0,1,Correct,
+Our_algorithm,58,"(((C,C),C),B);","(A,(B,C));",2,0,1,Correct,
+ETE3,58,"(((C,C),C),B);","(A,(B,C));",2,0,0,Correct,
+True Process,59,"((B,C),C);","(A,(B,C));",2,0,2,Correct But not matching,
+Our_algorithm,59,"((B,C),C);","(A,(B,C));",1,1,1,Correct But not matching,
+ETE3,59,"((B,C),C);","(A,(B,C));",1,0,1,Correct But not matching,
+True Process,60,"(((C,B),A),A);","(A,(B,C));",1,0,0,Correct But not matching,
+Our_algorithm,60,"(((C,B),A),A);","(A,(B,C));",1,1,0,Correct But not matching,
+ETE3,60,"(((C,B),A),A);","(A,(B,C));",1,0,2,Correct But not matching,
+True Process,61,"((C,C),(C,B));","(A,(B,C));",2,1,1,Correct,
+Our_algorithm,61,"((C,C),(C,B));","(A,(B,C));",2,1,1,Correct,
+ETE3,61,"((C,C),(C,B));","(A,(B,C));",2,0,1,Correct,
+True Process,62,"((B,B),((A,A),C));","(A,(B,C));",2,1,0,Correct,
+Our_algorithm,62,"((B,B),((A,A),C));","(A,(B,C));",2,1,0,Correct,
+ETE3,62,"((B,B),((A,A),C));","(A,(B,C));",3,0,3,Correct,
+True Process,63,"(C,B);","(A,(B,C));",0,0,1,Correct,
+Our_algorithm,63,"(C,B);","(A,(B,C));",0,0,1,Correct,
+ETE3,63,"(C,B);","(A,(B,C));",0,0,0,Correct,
+True Process,64,"((C,C),((A,A),B));","(A,(B,C));",2,1,0,Correct,
+Our_algorithm,64,"((C,C),((A,A),B));","(A,(B,C));",2,1,0,Correct,
+ETE3,64,"((C,C),((A,A),B));","(A,(B,C));",3,0,3,Correct,
+True Process,65,A;,"(A,(B,C));",0,1,2,Correct But not matching,
+Our_algorithm,65,A;,"(A,(B,C));",0,0,2,Correct But not matching,
+ETE3,65,A;,"(A,(B,C));",0,0,0,Correct But not matching,
+True Process,66,"(A,A);","(A,(B,C));",1,1,2,Correct But not matching,
+Our_algorithm,66,"(A,A);","(A,(B,C));",1,0,2,Correct But not matching,
+ETE3,66,"(A,A);","(A,(B,C));",1,0,0,Correct But not matching,
+True Process,67,"(((C,B),C),A);","(A,(B,C));",2,1,1,Correct But not matching,
+Our_algorithm,67,"(((C,B),C),A);","(A,(B,C));",1,1,0,Correct But not matching,
+ETE3,67,"(((C,B),C),A);","(A,(B,C));",1,0,1,Correct But not matching,
+True Process,68,"(((A,A),C),A);","(A,(B,C));",3,1,2,Correct But not matching,
+Our_algorithm,68,"(((A,A),C),A);","(A,(B,C));",2,2,1,Correct But not matching,
+ETE3,68,"(((A,A),C),A);","(A,(B,C));",2,0,3,Correct But not matching,
+True Process,69,"((B,B),C);","(A,(B,C));",1,1,1,Correct But not matching,
+Our_algorithm,69,"((B,B),C);","(A,(B,C));",1,0,1,Correct But not matching,
+ETE3,69,"((B,B),C);","(A,(B,C));",1,0,0,Correct But not matching,
+True Process,70,A;,"(A,(B,C));",0,1,2,Correct But not matching,
+Our_algorithm,70,A;,"(A,(B,C));",0,0,2,Correct But not matching,
+ETE3,70,A;,"(A,(B,C));",0,0,0,Correct But not matching,
+True Process,71,"(A,((B,B),(C,C)));","(A,(B,C));",3,0,1,Correct But not matching,
+Our_algorithm,71,"(A,((B,B),(C,C)));","(A,(B,C));",2,0,0,Correct But not matching,
+ETE3,71,"(A,((B,B),(C,C)));","(A,(B,C));",2,0,0,Correct But not matching,
+True Process,72,"((B,B),C);","(A,(B,C));",1,1,1,Correct But not matching,
+Our_algorithm,72,"((B,B),C);","(A,(B,C));",1,0,1,Correct But not matching,
+ETE3,72,"((B,B),C);","(A,(B,C));",1,0,0,Correct But not matching,
+True Process,73,"((B,B),(C,B));","(A,(B,C));",2,1,1,Correct,
+Our_algorithm,73,"((B,B),(C,B));","(A,(B,C));",2,1,1,Correct,
+ETE3,73,"((B,B),(C,B));","(A,(B,C));",2,0,1,Correct,
+True Process,74,"(A,C);","(A,(B,C));",1,1,2,Correct But not matching,
+Our_algorithm,74,"(A,C);","(A,(B,C));",0,0,1,Correct But not matching,
+ETE3,74,"(A,C);","(A,(B,C));",0,0,1,Correct But not matching,
+True Process,75,"((A,A),((B,B),C));","(A,(B,C));",3,0,1,Correct But not matching,
+Our_algorithm,75,"((A,A),((B,B),C));","(A,(B,C));",2,0,0,Correct But not matching,
+ETE3,75,"((A,A),((B,B),C));","(A,(B,C));",2,0,0,Correct But not matching,
+True Process,76,"((A,B),(A,C));","(A,(B,C));",3,1,2,Wrong ILS,
+Our_algorithm,76,"((A,B),(A,C));","(A,(B,C));",1,1,0,Wrong ILS,
+ETE3,76,"((A,B),(A,C));","(A,(B,C));",1,0,2,Wrong ILS,
+True Process,77,"(((C,C),((C,C),B)),A);","(A,(B,C));",4,0,1,Wrong,
+Our_algorithm,77,"(((C,C),((C,C),B)),A);","(A,(B,C));",1,1,0,Wrong,
+ETE3,77,"(((C,C),((C,C),B)),A);","(A,(B,C));",3,0,1,Wrong,
+True Process,78,"((B,A),C);","(A,(B,C));",0,1,0,Correct,
+Our_algorithm,78,"((B,A),C);","(A,(B,C));",0,1,0,Correct,
+ETE3,78,"((B,A),C);","(A,(B,C));",1,0,3,Correct,
+True Process,79,"((A,A),C);","(A,(B,C));",1,1,1,Correct But not matching,
+Our_algorithm,79,"((A,A),C);","(A,(B,C));",1,0,1,Correct But not matching,
+ETE3,79,"((A,A),C);","(A,(B,C));",1,0,1,Correct But not matching,
+True Process,80,"(A,(((B,B),C),B));","(A,(B,C));",2,0,0,Wrong,
+Our_algorithm,80,"(A,(((B,B),C),B));","(A,(B,C));",1,2,0,Wrong,
+ETE3,80,"(A,(((B,B),C),B));","(A,(B,C));",2,0,1,Wrong,
+True Process,81,"((B,B),((B,A),C));","(A,(B,C));",2,1,0,Correct But not matching,
+Our_algorithm,81,"((B,B),((B,A),C));","(A,(B,C));",2,2,0,Correct But not matching,
+ETE3,81,"((B,B),((B,A),C));","(A,(B,C));",3,0,5,Correct But not matching,
+True Process,82,"(((C,C),A),C);","(A,(B,C));",2,0,1,Correct But not matching,
+Our_algorithm,82,"(((C,C),A),C);","(A,(B,C));",2,2,1,Correct But not matching,
+ETE3,82,"(((C,C),A),C);","(A,(B,C));",2,0,3,Correct But not matching,
+True Process,83,"((C,C),B);","(A,(B,C));",2,1,2,Correct But not matching,
+Our_algorithm,83,"((C,C),B);","(A,(B,C));",1,0,1,Correct But not matching,
+ETE3,83,"((C,C),B);","(A,(B,C));",1,0,0,Correct But not matching,
+True Process,84,"(((A,B),C),C);","(A,(B,C));",1,1,0,Correct But not matching,
+Our_algorithm,84,"(((A,B),C),C);","(A,(B,C));",1,2,0,Correct But not matching,
+ETE3,84,"(((A,B),C),C);","(A,(B,C));",2,0,5,Correct But not matching,
+True Process,85,"((C,A),B);","(A,(B,C));",0,1,0,Correct,
+Our_algorithm,85,"((C,A),B);","(A,(B,C));",0,1,0,Correct,
+ETE3,85,"((C,A),B);","(A,(B,C));",1,0,3,Correct,
+True Process,86,"(C,(((B,B),B),A));","(A,(B,C));",2,1,0,Wrong,
+Our_algorithm,86,"(C,(((B,B),B),A));","(A,(B,C));",3,1,0,Wrong,
+ETE3,86,"(C,(((B,B),B),A));","(A,(B,C));",3,0,3,Wrong,
+True Process,87,"(((A,A),A),(((C,C),B),A));","(A,(B,C));",6,1,2,Correct But not matching,
+Our_algorithm,87,"(((A,A),A),(((C,C),B),A));","(A,(B,C));",4,1,0,Correct But not matching,
+ETE3,87,"(((A,A),A),(((C,C),B),A));","(A,(B,C));",4,0,2,Correct But not matching,
+True Process,88,"((((C,C),C),A),B);","(A,(B,C));",2,1,0,Wrong,
+Our_algorithm,88,"((((C,C),C),A),B);","(A,(B,C));",3,1,0,Wrong,
+ETE3,88,"((((C,C),C),A),B);","(A,(B,C));",3,0,3,Wrong,
+True Process,89,"(A,(B,C));","(A,(B,C));",0,0,0,Correct,
+Our_algorithm,89,"(A,(B,C));","(A,(B,C));",0,0,0,Correct,
+ETE3,89,"(A,(B,C));","(A,(B,C));",0,0,0,Correct,
+True Process,90,"((B,C),(A,C));","(A,(B,C));",1,1,0,Correct,
+Our_algorithm,90,"((B,C),(A,C));","(A,(B,C));",1,1,0,Correct,
+ETE3,90,"((B,C),(A,C));","(A,(B,C));",1,0,2,Correct,
+True Process,91,"((A,B),B);","(A,(B,C));",1,0,1,Correct But not matching,
+Our_algorithm,91,"((A,B),B);","(A,(B,C));",1,1,1,Correct But not matching,
+ETE3,91,"((A,B),B);","(A,(B,C));",1,0,3,Correct But not matching,
+True Process,92,"(((B,C),C),A);","(A,(B,C));",1,0,0,Correct But not matching,
+Our_algorithm,92,"(((B,C),C),A);","(A,(B,C));",1,1,0,Correct But not matching,
+ETE3,92,"(((B,C),C),A);","(A,(B,C));",1,0,1,Correct But not matching,
+True Process,93,"((A,B),C);","(A,(B,C));",1,1,1,Correct But not matching,
+Our_algorithm,93,"((A,B),C);","(A,(B,C));",0,1,0,Correct But not matching,
+ETE3,93,"((A,B),C);","(A,(B,C));",1,0,3,Correct But not matching,
+True Process,94,"((((C,C),C),A),C);","(A,(B,C));",3,1,1,Correct But not matching,
+Our_algorithm,94,"((((C,C),C),A),C);","(A,(B,C));",3,2,1,Correct But not matching,
+ETE3,94,"((((C,C),C),A),C);","(A,(B,C));",3,0,3,Correct But not matching,
+True Process,95,"(C,((B,B),A));","(A,(B,C));",1,1,0,Correct,
+Our_algorithm,95,"(C,((B,B),A));","(A,(B,C));",1,1,0,Correct,
+ETE3,95,"(C,((B,B),A));","(A,(B,C));",2,0,3,Correct,
+True Process,96,"(B,A);","(A,(B,C));",1,1,2,Correct But not matching,
+Our_algorithm,96,"(B,A);","(A,(B,C));",0,0,1,Correct But not matching,
+ETE3,96,"(B,A);","(A,(B,C));",0,0,1,Correct But not matching,
+True Process,97,"((B,B),A);","(A,(B,C));",2,1,2,Correct But not matching,
+Our_algorithm,97,"((B,B),A);","(A,(B,C));",1,0,1,Correct But not matching,
+ETE3,97,"((B,B),A);","(A,(B,C));",1,0,1,Correct But not matching,
+True Process,98,"(A,C);","(A,(B,C));",0,0,1,Correct,
+Our_algorithm,98,"(A,C);","(A,(B,C));",0,0,1,Correct,
+ETE3,98,"(A,C);","(A,(B,C));",0,0,1,Correct,
+True Process,99,"((B,C),B);","(A,(B,C));",1,0,1,Correct But not matching,
+Our_algorithm,99,"((B,C),B);","(A,(B,C));",1,1,1,Correct But not matching,
+ETE3,99,"((B,C),B);","(A,(B,C));",1,0,1,Correct But not matching,
