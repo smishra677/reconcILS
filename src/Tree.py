@@ -623,7 +623,7 @@ class Tree:
 
 
         if self.parent==None:
-            print('No_parent')
+            #print('No_parent')
             return [[copy_left,copy_left],[copy_right,copy_right]]
         
         geneTree_left.label_internal()
