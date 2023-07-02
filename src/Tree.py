@@ -101,13 +101,13 @@ class Tree:
         pass
     
 
-    def printorder_gene(self,species_tree):
+    def order_gene(self,species_tree):
     
         if self != None:
             if self.leftChild:
-                self.leftChild.printorder_gene(species_tree)
+                self.leftChild.order_gene(species_tree)
             if  self.rightChild:
-                self.rightChild.printorder_gene(species_tree)
+                self.rightChild.order_gene(species_tree)
             self.search_sp(species_tree),
     
 
@@ -209,7 +209,7 @@ class Tree:
                     new_recon_left.reset()
          
                     gene_tree.reset()
-                    gene_tree.printorder_gene(new_recon_right)
+                    gene_tree.order_gene(new_recon_right)
                     gene_tree.label_internal()
                     new_recon_right.label_internal()
                     gene_tree.map_gene(new_recon_right)
@@ -217,7 +217,7 @@ class Tree:
 
 
                     gene_tree.reset()
-                    gene_tree.printorder_gene(new_recon_left)
+                    gene_tree.order_gene(new_recon_left)
                     gene_tree.label_internal()
                     new_recon_left.label_internal()
                     gene_tree.map_gene(new_recon_left)
@@ -264,7 +264,7 @@ class Tree:
 
 
                     self.reset()
-                    gene_tree.printorder_gene(self)
+                    gene_tree.order_gene(self)
                     self.label_internal()
                     gene_tree.label_internal()
                     gene_tree.map_gene(self)
@@ -497,7 +497,7 @@ class Tree:
         pass
 
     def optimize_cost(self,node,tree2):
-        tree2.printorder_gene(self)
+        tree2.order_gene(self)
         
         tree2.label_internal()
     

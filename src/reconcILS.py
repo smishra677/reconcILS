@@ -284,7 +284,7 @@ def ILS(gene_tree,tr,sp_copy,cost):
                         new_sp = copy.deepcopy(sp_copy)
                         new_sp.reset()
                         new_topo.reset()
-                        new_topo.printorder_gene(new_sp)
+                        new_topo.order_gene(new_sp)
                         
                         new_topo.label_internal()
                     
@@ -604,7 +604,7 @@ def main():
     sp_copy= copy.deepcopy(sp)
     sp_copy.reset()
 
-    tr.printorder_gene(sp)
+    tr.order_gene(sp)
 
     tr.label_internal()
     sp.label_internal()
