@@ -4,6 +4,8 @@ import re
 import os
 import copy
 
+import argparse
+
 
 
 a= Tree.Tree()
@@ -297,7 +299,7 @@ def ILS(gene_tree,tr,sp_copy,cost):
                 else:
                     return new_topo,cost
         
-def driver(tr,sp,sp_copy,sp_):
+def reconcILS(tr,sp,sp_copy,sp_):
     if sp: 
         ##print(sp.taxa)
         ##print(sp.parent)
@@ -336,8 +338,8 @@ def driver(tr,sp,sp_copy,sp_):
                 else:
                     sp.evolve='Speciation'
 
-                sp.leftChild= driver(None,sp.leftChild,sp_copy,sp_)
-                sp.rightChild =driver(None,sp.rightChild,sp_copy,sp_)
+                sp.leftChild= reconcILS(None,sp.leftChild,sp_copy,sp_)
+                sp.rightChild =reconcILS(None,sp.rightChild,sp_copy,sp_)
                 return sp
 
           
@@ -360,15 +362,15 @@ def driver(tr,sp,sp_copy,sp_):
 
                     sp.evolve= 'Speciation'
 
-                    sp.leftChild= driver(tr,sp.leftChild,sp_copy,sp_)
-                    sp.rightChild =driver(tr,sp.rightChild,sp_copy,sp_)
+                    sp.leftChild= reconcILS(tr,sp.leftChild,sp_copy,sp_)
+                    sp.rightChild =reconcILS(tr,sp.rightChild,sp_copy,sp_)
                     #print('22',to_newick(sp))
                     
                     return sp
             else:
                     sp.evolve= 'Speciation'
-                    sp.leftChild= driver(tr.leftChild,sp.leftChild,sp_copy,sp_)
-                    sp.rightChild=driver(tr.rightChild,sp.rightChild,sp_copy,sp_)
+                    sp.leftChild= reconcILS(tr.leftChild,sp.leftChild,sp_copy,sp_)
+                    sp.rightChild=reconcILS(tr.rightChild,sp.rightChild,sp_copy,sp_)
                     
                     sp.cost=0
                     #print('1283',to_newick(sp))
@@ -453,11 +455,11 @@ def driver(tr,sp,sp_copy,sp_):
                         
                         if len(set(new_topo.leftChild.taxa).intersection(set(sp.leftChild.taxa)))>len(set(new_topo.rightChild.taxa).intersection(set(sp.leftChild.taxa))):
                            
-                            sp.leftChild = driver(new_topo.leftChild,sp.leftChild,sp_copy,sp_) 
-                            sp.rightChild = driver(new_topo.rightChild,sp.rightChild,sp_copy,sp_)
+                            sp.leftChild = reconcILS(new_topo.leftChild,sp.leftChild,sp_copy,sp_) 
+                            sp.rightChild = reconcILS(new_topo.rightChild,sp.rightChild,sp_copy,sp_)
                         else:           
-                            sp.leftChild = driver(new_topo.rightChild,sp.leftChild,sp_copy,sp_) 
-                            sp.rightChild = driver(new_topo.leftChild,sp.rightChild,sp_copy,sp_)
+                            sp.leftChild = reconcILS(new_topo.rightChild,sp.leftChild,sp_copy,sp_) 
+                            sp.rightChild = reconcILS(new_topo.leftChild,sp.rightChild,sp_copy,sp_)
                             
                         sp.cost=Initial_multiple_mapping- cost
                         #print('NNI',to_newick(sp))
@@ -513,8 +515,8 @@ def driver(tr,sp,sp_copy,sp_):
                                                           
 
                                                   
-                            sp.leftChild = driver(tr.leftChild,recon_left,sp_copy,sp_) 
-                            sp.rightChild = driver(tr.rightChild,recon_right,sp_copy,sp_)
+                            sp.leftChild = reconcILS(tr.leftChild,recon_left,sp_copy,sp_) 
+                            sp.rightChild = reconcILS(tr.rightChild,recon_right,sp_copy,sp_)
 
 
 
@@ -536,8 +538,8 @@ def driver(tr,sp,sp_copy,sp_):
 
                             #print('12',to_newick(recon_right))
                                                   
-                            sp.leftChild = driver(tr.leftChild,recon_left,sp_copy,sp_) 
-                            sp.rightChild = driver(tr.rightChild,recon_right,sp_copy,sp_)
+                            sp.leftChild = reconcILS(tr.leftChild,recon_left,sp_copy,sp_) 
+                            sp.rightChild = reconcILS(tr.rightChild,recon_right,sp_copy,sp_)
 
                             clearcost(sp)
                             #print('dups 22',to_newick(sp))
@@ -562,8 +564,8 @@ def driver(tr,sp,sp_copy,sp_):
 
                             clearcost(recon_right)
 
-                            sp.leftChild = driver(tr.leftChild,recon_left,sp_copy,sp_) 
-                            sp.rightChild = driver(tr.rightChild,recon_right,sp_copy,sp_)
+                            sp.leftChild = reconcILS(tr.leftChild,recon_left,sp_copy,sp_) 
+                            sp.rightChild = reconcILS(tr.rightChild,recon_right,sp_copy,sp_)
 
                             clearcost(sp)
     
@@ -574,8 +576,55 @@ def driver(tr,sp,sp_copy,sp_):
                 else:
 
                         sp.evolve='Speciation'
-                        sp.leftChild =driver(tr,sp.leftChild,sp_copy,sp_)
-                        sp.rightChild = driver(tr,sp.rightChild,sp_copy,sp_)
+                        sp.leftChild =reconcILS(tr,sp.leftChild,sp_copy,sp_)
+                        sp.rightChild = reconcILS(tr,sp.rightChild,sp_copy,sp_)
                         return sp
 
+def parse1():
+    parser = argparse.ArgumentParser(description="reconcile Gene Tree with Species Tree")
+    parser.add_argument('--spTree', type=str, help="Species_Tree")
+    parser.add_argument('--gTree', type=str, help="gene_Tree")
+    parser.add_argument('--output', type=str, help="Location and name to output")
+    args= parser.parse_args()
+    return(args)
 
+
+def main():
+    parser = parse1()
+    from collections import Counter
+
+
+    sp_string=parser.spTree
+
+    gene_tree=parser.gTree
+
+    tr=parse(gene_tree)
+
+    sp=parse(sp_string)
+    sp_copy= copy.deepcopy(sp)
+    sp_copy.reset()
+
+    tr.printorder_gene(sp)
+
+    tr.label_internal()
+    sp.label_internal()
+
+
+
+    tr.map_gene(sp)
+
+    setCost(sp)
+    sp.isRoot=True
+    tr.isRoot=True
+    sp_copy.isRoot=True
+    reconcILS(tr,sp,sp_copy,sp)
+    #print('######################33')
+    #print(to_newick(sp))
+
+    li =sp_event(sp,[])
+
+    print(Counter(li))
+
+
+if __name__ == "__main__":
+    main()

@@ -43,7 +43,7 @@ setCost(sp)
 sp.isRoot=True
 tr.isRoot=True
 sp_copy.isRoot=True
-driver(tr,sp,sp_copy,sp)
+reconcILS(tr,sp,sp_copy,sp)
 #print('######################33')
 #print(to_newick(sp))
 
@@ -98,7 +98,7 @@ for i in range(100):
         sp.isRoot=True
         tr.isRoot=True
         sp_copy.isRoot=True
-        driver(tr,sp,sp_copy,sp)
+        reconcILS(tr,sp,sp_copy,sp)
 
         dic['Gene_tree']+=[to_newick(tr)]
         dic['Species_Tree']+=[sp_string]
