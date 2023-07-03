@@ -592,6 +592,7 @@ def parse1():
 def main():
     parser = parse1()
     from collections import Counter
+    import pandas as pd
 
 
     sp_string=parser.spTree
@@ -624,6 +625,15 @@ def main():
     li =sp_event(sp,[])
 
     print(Counter(li))
+    dic={'Process':[],'Replicate':[],'Gene_tree':[],'Species_Tree':[],'Duplication':[],'NNI':[],'Loss':[]}
+    
+    dic['Gene_tree']+=[to_newick(tr)]
+    dic['Species_Tree']+=[sp_string]
+        
+    dic= Create_pd('reconcILS',0,dict(Counter(li)),dic)
+    
+    df = pd.DataFrame(dic)
+    df.to_csv(parser.output, index=False)
 
 
 if __name__ == "__main__":
