@@ -22,7 +22,7 @@ from collections import Counter
 
 
 sp_string='(A,(B,C));'
-
+'''
 gene_tree='((A,C),B);'
 tr=parse(gene_tree)
 
@@ -30,7 +30,7 @@ sp=parse(sp_string)
 sp_copy= copy.deepcopy(sp)
 sp_copy.reset()
 
-tr.printorder_gene(sp)
+tr.order_gene(sp)
 
 tr.label_internal()
 sp.label_internal()
@@ -53,7 +53,7 @@ print(Counter(li))
 exit()
 '''
 
-gene_folder='output_simulation_sp'
+gene_folder='example_tree_version1'
 #gene_tre= open('./output_gene/gene_tree.txt')
 #trees =gene_tre.read().strip().split('\n')
 #gene_tre.close()
@@ -85,7 +85,7 @@ for i in range(100):
         sp_copy= copy.deepcopy(sp)
         sp_copy.reset()
 
-        tr.printorder_gene(sp)
+        tr.order_gene(sp)
 
         tr.label_internal()
         sp.label_internal()
@@ -130,8 +130,9 @@ for i in range(100):
         dic= Create_pd_ete3('ETE3',i,dict(Counter(sp_event_ete3(recon_tree_ete))),dic)
     except:
         erro=1
-        continue
+        print(to_newick(tr))
 
+        continue
 #print(dic)
 if erro==1:
     dic=previous_dict
@@ -139,8 +140,8 @@ for i in dic:
     print(len(dic[i]))
 df = pd.DataFrame(dic)
 
-df.to_csv('result.csv', index=False)
-
+df.to_csv('result_7_14_1.csv', index=False)
+'''
 
 Initial_multiple_mapping=1
 #sp.find_cost(tr,0)

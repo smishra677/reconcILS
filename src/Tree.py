@@ -517,7 +517,7 @@ class Tree:
         if tree:
 
             if tree.id==self.id:
-                print(tree.taxa)
+                #print(tree.taxa)
                 if tree.parent==None:
                     return
                 if tree.parent.leftChild == tree:

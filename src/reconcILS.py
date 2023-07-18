@@ -192,7 +192,13 @@ def find_parent_child(root,child):
 
     return child
         
+def clear_ref(root):
+    if root:
+        clear_ref(root.leftChild)
 
+        clear_ref(root.rightChild)
+        root.refTo=[]
+        root.tag = None
             
 def parent_child(root,child):
     if root:
@@ -233,9 +239,11 @@ def swap(tree):
 
 def ILS(gene_tree,tr,sp_copy,cost):
     list_tree=[]
-    child=[]    
+    child=[]
+
     child= parent_child(tr,child)
     #print(gene_tree.parent)
+
     if len(child)==0 or cost==0:
         return gene_tree,cost
     else:
@@ -274,9 +282,10 @@ def ILS(gene_tree,tr,sp_copy,cost):
                              
                             new_topo=copy.deepcopy(i[1])
                         else:
-                             new_topo=copy.deepcopy(i[0])
-                        ##print('new_topo',to_newick(new_topo))
+                             new_topo=copy.deepcopy(i[1])
+                    #print('new_topo',to_newick(new_topo))
                         imporvement=True
+
                 cost=cost-1
                 if cost==0 or imporvement==False:
                     return new_topo,cost
@@ -292,6 +301,8 @@ def ILS(gene_tree,tr,sp_copy,cost):
                         
                         new_topo.map_gene(new_sp)
 
+                        #print(to_newick(new_sp))
+
                         return ILS(new_topo,new_sp,sp_copy,cost)
 
                 if imporvement:
@@ -301,7 +312,7 @@ def ILS(gene_tree,tr,sp_copy,cost):
         
 def reconcILS(tr,sp,sp_copy,sp_):
     if sp: 
-        ##print(sp.taxa)
+        #print(sp.taxa)
         ##print(sp.parent)
 
         sp_copy = copy.deepcopy(sp)
@@ -317,7 +328,7 @@ def reconcILS(tr,sp,sp_copy,sp_):
 
 
         Initial_multiple_mapping=len(sp.refTo)
-        #print('cost',Initial_multiple_mapping)
+        print('cost',Initial_multiple_mapping)
         
 
 
@@ -345,6 +356,7 @@ def reconcILS(tr,sp,sp_copy,sp_):
           
         if Initial_multiple_mapping in [0,1]:
             
+        
             if sp.isLeaf:
                 if sp.inital_ref==0:
                     sp.evolve='Loss'
@@ -369,8 +381,8 @@ def reconcILS(tr,sp,sp_copy,sp_):
                     return sp
             else:
                     sp.evolve= 'Speciation'
-                    sp.leftChild= reconcILS(tr.leftChild,sp.leftChild,sp_copy,sp_)
-                    sp.rightChild=reconcILS(tr.rightChild,sp.rightChild,sp_copy,sp_)
+                    sp.leftChild= reconcILS(tr,sp.leftChild,sp_copy,sp_)
+                    sp.rightChild=reconcILS(tr,sp.rightChild,sp_copy,sp_)
                     
                     sp.cost=0
                     #print('1283',to_newick(sp))
@@ -425,6 +437,7 @@ def reconcILS(tr,sp,sp_copy,sp_):
                 new_sp = copy.deepcopy(sp)
                 new_sp.leftChild=recon_left
                 new_sp.rightChild=recon_right
+
                 new_sp.reset()
                 tr_copy_2.reset()
 
@@ -451,17 +464,42 @@ def reconcILS(tr,sp,sp_copy,sp_):
                         #print(to_newick(new_topo))
                         #print(to_newick(tr))
                         sp.refTo=[]
-                        sp.evolve='NNI'
                         
+                        new_topo.reset()
+                        clear_ref(sp)
+
+                        new_topo.order_gene(sp)
+
+                                
+                        new_topo.label_internal()
+                    
+
+                                        
+                        new_topo.map_gene(sp)
+                        
+                        sp.cost=Initial_multiple_mapping- cost
+                        sp.evolve='NNI'
+
+                        #return reconcILS(new_topo,sp,sp_copy,sp_)
+                       
+
+
+
                         if len(set(new_topo.leftChild.taxa).intersection(set(sp.leftChild.taxa)))>len(set(new_topo.rightChild.taxa).intersection(set(sp.leftChild.taxa))):
-                           
+
+                            
+                            #sp.leftChild.optimize_cost(sp.leftChild,new_topo.leftChild)
+                            #sp.rightChild.optimize_cost(sp.rightChild,new_topo.rightChild)
+
                             sp.leftChild = reconcILS(new_topo.leftChild,sp.leftChild,sp_copy,sp_) 
                             sp.rightChild = reconcILS(new_topo.rightChild,sp.rightChild,sp_copy,sp_)
-                        else:           
+                        else:
+                            #sp.leftChild.optimize_cost(sp.leftChild,new_topo.rightChild)
+                            #sp.rightChild.optimize_cost(sp.rightChild,new_topo.leftChild)
+
                             sp.leftChild = reconcILS(new_topo.rightChild,sp.leftChild,sp_copy,sp_) 
                             sp.rightChild = reconcILS(new_topo.leftChild,sp.rightChild,sp_copy,sp_)
-                            
-                        sp.cost=Initial_multiple_mapping- cost
+      
                         #print('NNI',to_newick(sp))
                     
                         return sp
@@ -478,83 +516,150 @@ def reconcILS(tr,sp,sp_copy,sp_):
                         recon_right.reset()
                         recon_left.parent=sp
                         recon_right.parent=sp
+
+                        sp.taxa=''
+                        sp.leftChild=recon_left
+                        sp.rightChild=recon_right
+
+
+                        #recon_left.isLeaf=True
+
+
+                        #recon_right.isLeaf=True
                         sp.evolve='Duplication'
                         sp.refTo=sp.refTo[1:]
-
+       
                         if sp.isLeaf:
-                            #print(1)
+                            print(1)
                             if Initial_multiple_mapping==2:
                                 recon_left.isLeaf=True
                                 recon_right.isLeaf=True
                                 recon_left.evolve='Speciation'
 
                                 recon_right.evolve='Speciation'
-                                sp.leftChild=recon_left
-                                sp.rightChild=recon_right
+                                #sp.leftChild=recon_left
+                                #sp.rightChild=recon_right
                                 return sp
                             #print(12455)
                             
 
 
-                            tr.leftChild.reset()
-                            tr.rightChild.reset()
-                            recon_left.isLeaf=True
-                            recon_right.isLeaf=True
-                            clearcost(recon_left)
-                            #print('11',to_newick(recon_left))
+                            #tr.leftChild.reset()
+                            #tr.rightChild.reset()
+                            #recon_left.isLeaf=True
+                            #recon_right.isLeaf=True
+                            #clearcost(recon_left)
 
-                            #print('11',to_newick(recon_right))
+
+                            #clearcost(recon_right)
+
+                            tr.reset()
+
+
+                            clear_ref(sp)
+
+                            tr.order_gene(sp)
+
+                            tr.label_internal()
+                            sp.label_internal()
+                        
+
+                            tr.map_gene(sp)
+
+                            li =sp_event(sp,[])
+                            print(li)
+
+                            print(to_newick(sp))
+
+                            print(to_newick(recon_left))
+
+                            print(to_newick(recon_right))
+                            clearcost(recon_left)
 
                             clearcost(recon_right)
-                                                    
 
-                            recon_left.optimize_cost(recon_left,tr.leftChild)
-                            recon_right.optimize_cost(recon_right,tr.rightChild)
+                            clearcost(sp)
+                            
+                            #recon_left.optimize_cost(recon_left,tr.leftChild)
+                            #recon_right.optimize_cost(recon_right,tr.rightChild)
+                            #print(recon_left.refTo)  
+                            #print(recon_right.refTo)     
+                            #print('-------------------------')
+                           
+                            #print(recon_left.refTo)  
+                            #print(recon_right.refTo)               
+                            #recon_left.refTo=recon_left.refTo[2:]
+                            #clearcost(recon_left)
+                            #recon_right.refTo=recon_right.refTo[2:]
+                            
 
-  
-                                                          
-
-                                                  
-                            sp.leftChild = reconcILS(tr.leftChild,recon_left,sp_copy,sp_) 
-                            sp.rightChild = reconcILS(tr.rightChild,recon_right,sp_copy,sp_)
-
-
+                            #clearcost(recon_right)
+                            #if len(recon_left.refTo)>0:
+                            sp.leftChild = reconcILS(tr,recon_left,sp_copy,sp_) 
+                           
+                            sp.rightChild = reconcILS(tr,recon_right,sp_copy,sp_) 
+                           
 
  
                             return sp
                         if Initial_multiple_mapping==2:
                   
-                            tr.leftChild.reset()
-                            tr.rightChild.reset()
+
+
+                            tr.reset()
+
+
+                            clear_ref(sp)
+
+                            tr.order_gene(sp)
+
+                            tr.label_internal()
+                            sp.label_internal()
+                        
+
+                            tr.map_gene(sp)
 
      
-                            recon_left.optimize_cost(recon_left,tr.leftChild)
-                            recon_right.optimize_cost(recon_right,tr.rightChild)
+                            #recon_left.optimize_cost(recon_left,tr.leftChild)
+                            #recon_right.optimize_cost(recon_right,tr.rightChild)
 
                             clearcost(recon_left)
 
                             clearcost(recon_right)
+                            clearcost(sp)
                             #print('12',to_newick(recon_left))
 
                             #print('12',to_newick(recon_right))
                                                   
-                            sp.leftChild = reconcILS(tr.leftChild,recon_left,sp_copy,sp_) 
-                            sp.rightChild = reconcILS(tr.rightChild,recon_right,sp_copy,sp_)
+                            sp.leftChild = reconcILS(tr,recon_left,sp_copy,sp_) 
+                            sp.rightChild = reconcILS(tr,recon_right,sp_copy,sp_)
 
                             clearcost(sp)
                             #print('dups 22',to_newick(sp))
                             return sp
 
                         else:
-                            tr.leftChild.reset()
-                            tr.rightChild.reset()
+                            #tr.leftChild.reset()
+                            #tr.rightChild.reset()
 
                               
-  
+                            tr.reset()
+
+
+                            clear_ref(sp)
+
+                            tr.order_gene(sp)
+
+                            tr.label_internal()
+                            sp.label_internal()
+                        
+
+                            tr.map_gene(sp)
+
                                                         
    
-                            recon_left.optimize_cost(recon_left,tr.leftChild)
-                            recon_right.optimize_cost(recon_right,tr.rightChild)
+                            #recon_left.optimize_cost(recon_left,tr.leftChild)
+                            #recon_right.optimize_cost(recon_right,tr.rightChild)
 
                             #print('12',to_newick(recon_left))
 
@@ -563,9 +668,9 @@ def reconcILS(tr,sp,sp_copy,sp_):
                             clearcost(recon_left)
 
                             clearcost(recon_right)
-
-                            sp.leftChild = reconcILS(tr.leftChild,recon_left,sp_copy,sp_) 
-                            sp.rightChild = reconcILS(tr.rightChild,recon_right,sp_copy,sp_)
+                            clearcost(sp)
+                            sp.leftChild = reconcILS(tr,recon_left,sp_copy,sp_) 
+                            sp.rightChild = reconcILS(tr,recon_right,sp_copy,sp_)
 
                             clearcost(sp)
     
@@ -601,6 +706,7 @@ def main():
 
     tr=parse(gene_tree)
 
+
     sp=parse(sp_string)
     sp_copy= copy.deepcopy(sp)
     sp_copy.reset()
@@ -620,11 +726,16 @@ def main():
     sp_copy.isRoot=True
     reconcILS(tr,sp,sp_copy,sp)
     #print('######################33')
-    #print(to_newick(sp))
 
+    
     li =sp_event(sp,[])
 
-    print(Counter(li))
+    sp.reset()
+    print(to_newick(sp))
+    tr.order_gene(sp)
+    print(to_newick(sp))
+
+    #print(Counter(li))
     dic={'Process':[],'Replicate':[],'Gene_tree':[],'Species_Tree':[],'Duplication':[],'NNI':[],'Loss':[]}
     
     dic['Gene_tree']+=[to_newick(tr)]
@@ -633,6 +744,7 @@ def main():
     dic= Create_pd('reconcILS',0,dict(Counter(li)),dic)
     
     df = pd.DataFrame(dic)
+    print(dic)
     df.to_csv(parser.output, index=False)
 
 
