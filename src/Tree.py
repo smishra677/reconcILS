@@ -21,6 +21,7 @@ class Tree:
         self.cost=0
         self.inital_ref=0
         self.event_list=[]
+        self.visited=[]
 
 
     def reset(self):
@@ -511,15 +512,18 @@ class Tree:
         return self.find_cost(node,0)
         pass
 
-
+    
 
     def locate_copy(self,copy_tree,tree):
         if tree:
+            self.locate_copy(copy_tree,tree.leftChild)
+            self.locate_copy(copy_tree,tree.rightChild)
 
-            if tree.id==self.id:
-                #print(tree.taxa)
-                if tree.parent==None:
+            if tree.parent==None:
                     return
+            if self.parent.id==tree.parent.id :
+
+
                 if tree.parent.leftChild == tree:
                     tree.parent.children.remove(tree.parent.leftChild)
                     tree.parent.leftChild =copy_tree
@@ -533,8 +537,7 @@ class Tree:
                     tree.parent.children.append(copy_tree)
                     #print('right_child',tree.children)
                     return                  
-            self.locate_copy(copy_tree,tree.leftChild)
-            self.locate_copy(copy_tree,tree.rightChild)
+           
             
     
     def NNI(self,gene_tree,flag):
@@ -632,6 +635,11 @@ class Tree:
 
         copy_left.label_internal()
         copy_right.label_internal()
+
+        #geneTree_left.rightChild=copy_left
+
+        #geneTree_right.leftChild=copy_right
+
 
 
         self.locate_copy(copy_left,geneTree_left)
