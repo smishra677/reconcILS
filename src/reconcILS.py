@@ -324,33 +324,11 @@ def ILS(gene_tree,tr,sp_copy,cost):
 
                 cost=cost-1
                 tr.visited.append([ch1[0],ch1[1]])
-
+                
                 if ch1[0] in tr.visited[0]:
-                    return new_topo,cost
-                '''
-                if ch1[0] in tr.visited:
-                    new_topo=copy.deepcopy(gene_tree)
-                    geneTree =copy.deepcopy(new_topo)
-                    geneTree.reset()
-                    list_tree= ch1[0].NNI(geneTree,ch1[2])
-                    best_cost=cost
-                    imporvement=False
-                    new_topo=copy.deepcopy(geneTree)
-
-
-                else:
-                '''
-
-
-
-                print(to_newick(new_topo))
-
-    
-            
-    '''
-                if cost==0 or imporvement==False:
-                    return new_topo,cost
-                else:
+                    if cost==0 or imporvement==False:
+                        return new_topo,cost
+                    else:
                         new_sp = copy.deepcopy(sp_copy)
                         new_sp.reset()
                         new_topo.reset()
@@ -365,11 +343,21 @@ def ILS(gene_tree,tr,sp_copy,cost):
                         #print(to_newick(new_sp))
 
                         return ILS(new_topo,new_sp,sp_copy,cost)
+                
+                
+                '''
 
-                if imporvement:
-                        print('new_topo1',to_newick(new_topo))
-                else:
-    '''
+
+
+                print(to_newick(new_topo))
+
+    
+            
+             
+               
+
+             
+                '''
     return new_topo,cost
         
 def reconcILS(tr,sp,sp_copy,sp_):
