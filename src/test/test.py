@@ -53,7 +53,7 @@ print(Counter(li))
 exit()
 '''
 
-gene_folder='example_tree_version1'
+gene_folder='7_25'
 #gene_tre= open('./output_gene/gene_tree.txt')
 #trees =gene_tre.read().strip().split('\n')
 #gene_tre.close()
@@ -76,7 +76,7 @@ for i in range(100):
         tree= str(read_trees(i,gene_folder))
         #print('tree',tree)
         tr=parse(tree)
-        #tr=parse(to_newick(tr))
+        tr=parse(to_newick(tr))
 
 
         

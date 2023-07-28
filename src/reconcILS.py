@@ -205,8 +205,10 @@ def find_parent_child(root,child):
 
     if len(root.refTo)>1:
             root.refTo.reverse()
+            
             for tre in root.refTo:
                 for tree1 in root.refTo:
+                   
                     if (tree1 in tre.children):
                         if tree1==tre.leftChild:
                             child.append([tre,tree1,'Left'])
@@ -310,7 +312,7 @@ def ILS(gene_tree,tr,sp_copy,cost):
                     new_cost = len(cop.refTo)
                     print(best_cost,new_cost)
 
-
+                
                     
                     if best_cost>new_cost and cost>0:
                         best_cost=new_cost
@@ -430,22 +432,41 @@ def reconcILS(tr,sp,sp_copy,sp_):
                     sp.evolve= 'Speciation'
                     print('species',to_newick(sp))
 
+                    if len(set(sp.leftChild.taxa).intersection(set(tr.taxa)))==0:
+                        sp.leftChild.evolve='Loss'
+                        return reconcILS(tr,sp,sp_copy,sp_)
+                    
+                    if len(set(sp.rightChild.taxa).intersection(set(tr.taxa)))==0:
+                        sp.rightChild.evolve='Loss'
+                        return reconcILS(tr,sp,sp_copy,sp_)
+                    
+
+                    if len(set(sp.leftChild.taxa).intersection(set(tr.leftChild.taxa)))>=len(set(sp.rightChild.taxa).intersection(set(tr.leftChild.taxa))):
 
 
-                    sp.leftChild= reconcILS(tr,sp.leftChild,sp_copy,sp_)
-                    sp.rightChild =reconcILS(tr,sp.rightChild,sp_copy,sp_)
-                    #print('22',to_newick(sp))
+                        sp.leftChild= reconcILS(tr.leftChild,sp.leftChild,sp_copy,sp_)
+                        sp.rightChild =reconcILS(tr.rightChild,sp.rightChild,sp_copy,sp_)
+                    else:
+
+                        sp.leftChild= reconcILS(tr.rightChild,sp.leftChild,sp_copy,sp_)
+                        sp.rightChild =reconcILS(tr.leftChild,sp.rightChild,sp_copy,sp_)                        
+                    
+                    sp.cost=0
+                    #print('1283',to_newick(sp))
                     
                     return sp
             else:
                     sp.evolve= 'Speciation'
                     if len(set(sp.leftChild.taxa).intersection(set(tr.taxa)))==0:
+                        print('left')
                         sp.leftChild.evolve='Loss'
-                        return reconcILS(tr,sp.rightChild,sp_copy,sp_)
+                        
+                        return reconcILS(tr,sp,sp_copy,sp_)
                     
                     if len(set(sp.rightChild.taxa).intersection(set(tr.taxa)))==0:
+                        print('right')
                         sp.rightChild.evolve='Loss'
-                        return reconcILS(tr,sp.leftChild,sp_copy,sp_)
+                        return reconcILS(tr,sp,sp_copy,sp_)
                     
 
                     if len(set(sp.leftChild.taxa).intersection(set(tr.leftChild.taxa)))>=len(set(sp.rightChild.taxa).intersection(set(tr.leftChild.taxa))):
@@ -471,6 +492,7 @@ def reconcILS(tr,sp,sp_copy,sp_):
 
                 print(5)
                 new_topo,cost =(ILS(tr_copy_1,sp_1,sp_1,Initial_multiple_mapping))
+                #new_topo =parse(to_newick(new_topo))
 
 
                 recon_1 = copy.deepcopy(sp_1)
@@ -545,7 +567,8 @@ def reconcILS(tr,sp,sp_copy,sp_):
 
                 print(recon_1.cost)
  
-                if  recon_1.cost<=recon_1_cost and  sp.isLeaf==None:
+ 
+                if  recon_1.cost<recon_1_cost and  sp.isLeaf==None:
                         #print('NNI')
                         #print(to_newick(new_topo))
                         #print(to_newick(tr))
@@ -621,19 +644,7 @@ def reconcILS(tr,sp,sp_copy,sp_):
                             print(1)
 
                             
-                            if Initial_multiple_mapping==2:
-                                recon_left.isLeaf=True
-                                recon_right.isLeaf=True
-                                recon_left.evolve='Speciation'
-
-                                recon_right.evolve='Speciation'
-                                                           
-                                sp.leftChild=recon_left
-                                sp.rightChild=recon_right
-                                #sp.leftChild=recon_left
-                                #sp.rightChild=recon_right
-                                return sp
-                            #print(12455)
+    
                             
 
 
@@ -672,7 +683,9 @@ def reconcILS(tr,sp,sp_copy,sp_):
   
 
                             #clearcost_1(sp_copy,recon_left,recon_right)
-                            print(to_newick(tr))
+                            print(to_newick(tr.leftChild))
+
+                            print(to_newick(tr.rightChild))
                             print(tr.isLeaf)
                             if tr.isLeaf:
                                 tr.order_gene(recon_left)
@@ -686,7 +699,8 @@ def reconcILS(tr,sp,sp_copy,sp_):
    
                                 tr.map_gene(recon_right)
                                 sp.rightChild = reconcILS(tr,recon_right,sp_copy,sp_)
-                               
+                                sp.children+=[sp.leftChild ]
+                                sp.children+=[sp.rightChild]
                             
 
 
@@ -700,17 +714,14 @@ def reconcILS(tr,sp,sp_copy,sp_):
                                 sp.leftChild = reconcILS(tr.leftChild,recon_left,sp_copy,sp_) 
                                 tr.rightChild.map_gene(recon_right)
                                 sp.rightChild = reconcILS(tr.rightChild,recon_right,sp_copy,sp_)
-
+                                sp.children+=[sp.leftChild ]
+                                sp.children+=[sp.rightChild]
+                            
                            
                             #sp.leftChild=recon_left
                             #sp.rightChild=recon_right
                             return sp
-                else:
 
-                        sp.evolve='Speciation'
-                        sp.leftChild =reconcILS(tr,sp.leftChild,sp_copy,sp_)
-                        sp.rightChild = reconcILS(tr,sp.rightChild,sp_copy,sp_)
-                        return sp
 
 def parse1():
     parser = argparse.ArgumentParser(description="reconcile Gene Tree with Species Tree")
@@ -732,6 +743,8 @@ def main():
     gene_tree=parser.gTree
 
     tr=parse(gene_tree)
+
+    #tr=parse(to_newick(tr))
 
 
     sp=parse(sp_string)
