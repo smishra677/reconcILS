@@ -1,5 +1,10 @@
 from itertools import count
 import copy
+import matplotlib.pyplot as plt
+import pydot
+
+
+
 
 class Tree:
     new_id = count()
@@ -66,9 +71,90 @@ class Tree:
                 self.rightChild.reset()
 
 
+    def visualize_binary_tree(self, graph):
+        
+        if self.leftChild:
+            if len(str(self.leftChild.taxa))==0:
+                label='None'
+            else:
+                label=str(self.leftChild.taxa)
+            Node_left=pydot.Node(str(self.leftChild.id), label=label)
+            node2 = graph.add_node(Node_left)
+            if self.leftChild.evolve=='Loss':
+                graph.add_edge(pydot.Edge(str(self.id),str(self.leftChild.id), color='blue'))
+            else:
+                graph.add_edge(pydot.Edge(str(self.id), str(self.leftChild.id), color='green'))
+            self.leftChild.visualize_binary_tree(graph)
+        if self.rightChild:
+            if len(str(self.rightChild.taxa))==0:
+                label='None'
+            else:
+                label=str(self.rightChild.taxa)
+            Node_right=pydot.Node(str(self.rightChild.id), label=str(self.rightChild.taxa))
+            node3 = graph.add_node(Node_right)
+            if self.rightChild.evolve=='Loss':
+                graph.add_edge(pydot.Edge(str(self.id),str(self.rightChild.id), color='blue'))
+            else:
+                graph.add_edge(pydot.Edge(str(self.id), str(self.rightChild.id), color='green'))
+            self.rightChild.visualize_binary_tree(graph)
+
+        else:
+            return graph
+        
+        
+
+        
+        
+        return graph
 
 
+    def viz(self):
+        graph = pydot.Dot()
+        Node_root=pydot.Node(str(self.id), label=('None'))
+        node1 = graph.add_node(Node_root)
+        #graph.write_png("binary_tree.png")
+        graph= self.visualize_binary_tree(graph)
+        print(graph)
+        graph.write_png("binary_tree.png")
+       
+
+
+    def find_all_edges(root,edges,node_,taxa_,color_):
+        #print(root.taxa)
+                        
+        node_.append(int(root.id))
+        color_.append(root.evolve)   
+        
+        
+        if root.isLeaf:
+            number_of_taxa=''.join(taxa_).count(root.taxa)
+            taxa_.append(root.taxa+'_'+str(number_of_taxa))
+        else:
+            number_of_taxa=''.join(taxa_).count(root.evolve)
+            taxa_.append(root.evolve+'_'+str(number_of_taxa+1))
+            #taxa_.append(root.evolve)
+                 
+      
+
+
+        if root.rightChild:
+            edges.append((root.id,root.rightChild.id))
+            edges, node_,taxa_, color_=root.rightChild.find_all_edges(edges,node_,taxa_,color_)
+
+
+        if root.leftChild:
+            edges.append((root.id,root.leftChild.id))
+            edges, node_,taxa_, color_ =root.leftChild.find_all_edges(edges,node_,taxa_,color_)
+
+
+        #print(node_)
+        #print(taxa_)
+        #print(color_)
+
+        return edges, node_,taxa_, color_
     
+   
+                
     def __setNewick__(self,newick):
         self.taxa=None
 
@@ -453,7 +539,21 @@ class Tree:
                 self.rightChild.sp_tag()
 
 
+    def add_edges(self,graph,node):
+        if node is not None:
+            if node.leftChild is not None:
+                graph.add_edge(node.taxa, node.leftChild.taxa)
+                self.add_edges(graph, node.leftChild)
+            if node.rightChild is not None:
+                graph.add_edge(node.taxa, node.rightChild.taxa)
+                self.add_edges(graph, node.rightChild)
 
+    def plot_tree(root):
+        graph = nx.DiGraph()
+        root.add_edges(graph, root)
+        pos = graphviz_layout(graph, prog='dot')
+        nx.draw(graph, pos, with_labels=True, arrows=False)
+        plt.show()
 
 
 
@@ -511,33 +611,61 @@ class Tree:
         #print(self.find_cost(node,0))
         return self.find_cost(node,0)
         pass
+    
+    def traverse(self, newick):
+        if self.leftChild and not self.rightChild:
+            newick = f"(,{self.leftChild.traverse(newick)}){self.taxa if self.isLeaf else ''}"
+        elif not self.leftChild and self.rightChild:
+            newick = f"({self.rightChild.traverse(newick)},){self.taxa if self.isLeaf else ''}"
+        elif self.leftChild and self.rightChild:
+            newick = f"({self.rightChild.traverse(newick)},{self.leftChild.traverse(newick)}){self.taxa if self.isLeaf else ''}"
+        elif not self.leftChild and not self.rightChild :
+            newick = f"{self.taxa if self.isLeaf else ''}"
+        else:
+            pass
+        return newick
+
+
+
+
+    def to_newick(self):
+        newick = ""
+        newick = self.traverse(newick)
+        newick = f"{newick};"
+        return newick
 
     
 
     def locate_copy(self,copy_tree,tree):
         if tree:
-            self.locate_copy(copy_tree,tree.leftChild)
-            self.locate_copy(copy_tree,tree.rightChild)
 
-            if tree.parent==None:
-                    return
-            if self.parent.id==tree.parent.id :
-
+            if self.id==tree.id:
+               
 
                 if tree.parent.leftChild == tree:
+                    
                     tree.parent.children.remove(tree.parent.leftChild)
                     tree.parent.leftChild =copy_tree
+                    copy_tree.parent=tree.parent
                     tree.parent.children.append(copy_tree)
 
                     #print('left_child',tree.children)
                     return
                 else:
+                    
+                    
                     tree.parent.children.remove(tree.parent.rightChild)
                     tree.parent.rightChild =copy_tree
+                    
+                    copy_tree.parent=tree.parent
                     tree.parent.children.append(copy_tree)
+                    #print('after1:',tree.parent.rightChild.to_newick())
                     #print('right_child',tree.children)
-                    return                  
-           
+                    return
+            else:
+                self.locate_copy(copy_tree,tree.leftChild)
+                self.locate_copy(copy_tree,tree.rightChild)                 
+            
             
     
     def NNI(self,gene_tree,flag):
@@ -644,5 +772,7 @@ class Tree:
 
         self.locate_copy(copy_left,geneTree_left)
         self.locate_copy(copy_right,geneTree_right)
+        print('Left:',geneTree_left.to_newick())
+        print('Right:',geneTree_right.to_newick())
         return [[copy_left,geneTree_left],[copy_right,geneTree_right]]
 

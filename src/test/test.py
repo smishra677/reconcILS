@@ -53,7 +53,7 @@ print(Counter(li))
 exit()
 '''
 
-gene_folder='7_25'
+gene_folder='7_28'
 #gene_tre= open('./output_gene/gene_tree.txt')
 #trees =gene_tre.read().strip().split('\n')
 #gene_tre.close()
@@ -140,7 +140,7 @@ for i in dic:
     print(len(dic[i]))
 df = pd.DataFrame(dic)
 
-df.to_csv('result_7_14_1.csv', index=False)
+df.to_csv('result_7_30.csv', index=False)
 '''
 
 Initial_multiple_mapping=1

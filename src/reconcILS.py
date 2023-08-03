@@ -204,7 +204,7 @@ def clearcost_1(sp,left,right):
 def find_parent_child(root,child):
 
     if len(root.refTo)>1:
-            root.refTo.reverse()
+            #root.refTo.reverse()
             
             for tre in root.refTo:
                 for tree1 in root.refTo:
@@ -232,6 +232,22 @@ def parent_child(root,child):
         else:
             child= find_parent_child(root,child)
     return child
+
+
+def clearid(sp,ori):
+    if sp:
+        if ori=='Left':
+            sp.id =sp.id*5
+
+
+        else:
+            sp.id =sp.id*7
+
+        clearid(sp.leftChild,ori)
+            
+        clearid(sp.rightChild,ori) 
+            
+
 
 
 
@@ -267,6 +283,8 @@ def ILS(gene_tree,tr,sp_copy,cost):
     child=[]
 
     child= parent_child(tr,child)
+    print(to_newick(gene_tree))
+    
     
     #print(gene_tree.parent)
 
@@ -279,17 +297,19 @@ def ILS(gene_tree,tr,sp_copy,cost):
         geneTree.reset()
         
         print(child)
-        for ch1 in child[:2]:
+        for ch1 in child:
                 if ch1 in tr.visited:
                     print('visited')
                     continue 
                 ch = copy.deepcopy(ch1[0])
                 ch.reset()
+                
                 list_tree= ch1[0].NNI(geneTree,ch1[2])
                 best_cost=cost
                 imporvement=False
 
                 new_topo=copy.deepcopy(geneTree)
+
                 for i in list_tree:
                     i[1].reset()
                     i[0].reset()
@@ -316,11 +336,11 @@ def ILS(gene_tree,tr,sp_copy,cost):
                     
                     if best_cost>new_cost and cost>0:
                         best_cost=new_cost
-                        if tr.parent==None:
+                        if tr.isRoot:
                              
                             new_topo=copy.deepcopy(i[1])
                         else:
-                             new_topo=copy.deepcopy(i[0])
+                             new_topo=copy.deepcopy(i[1])
                     #print('new_topo',to_newick(new_topo))
                         imporvement=True
 
@@ -391,13 +411,14 @@ def reconcILS(tr,sp,sp_copy,sp_):
         if tr==None:
             if sp.isLeaf:
                 if sp.inital_ref==0:
+                    
                     sp.evolve='Loss'
                     sp = parse(to_newick(sp))
                     sp.evolve='Loss'
                 elif Initial_multiple_mapping>=2:
                     sp.evolve='Duplication'
                     sp = parse(to_newick(sp))
-
+                
                 return sp 
             else:
                 if Initial_multiple_mapping>=2:
@@ -415,7 +436,7 @@ def reconcILS(tr,sp,sp_copy,sp_):
             
         
             if sp.isLeaf:
-                if sp.inital_ref==0:
+                if sp.inital_ref==0 and sp.parent.evolve!='Loss':
                     sp.evolve='Loss'
 
                     sp.cost=0
@@ -434,10 +455,12 @@ def reconcILS(tr,sp,sp_copy,sp_):
 
                     if len(set(sp.leftChild.taxa).intersection(set(tr.taxa)))==0:
                         sp.leftChild.evolve='Loss'
+                        clearid(sp,'right')
                         return reconcILS(tr,sp,sp_copy,sp_)
                     
                     if len(set(sp.rightChild.taxa).intersection(set(tr.taxa)))==0:
                         sp.rightChild.evolve='Loss'
+                        clearid(sp,'Left')
                         return reconcILS(tr,sp,sp_copy,sp_)
                     
 
@@ -457,21 +480,23 @@ def reconcILS(tr,sp,sp_copy,sp_):
                     return sp
             else:
                     sp.evolve= 'Speciation'
+      
                     if len(set(sp.leftChild.taxa).intersection(set(tr.taxa)))==0:
                         print('left')
                         sp.leftChild.evolve='Loss'
-                        
+                        clearid(sp,'right')
                         return reconcILS(tr,sp,sp_copy,sp_)
                     
                     if len(set(sp.rightChild.taxa).intersection(set(tr.taxa)))==0:
                         print('right')
                         sp.rightChild.evolve='Loss'
+                        clearid(sp,'Left')
                         return reconcILS(tr,sp,sp_copy,sp_)
                     
 
                     if len(set(sp.leftChild.taxa).intersection(set(tr.leftChild.taxa)))>=len(set(sp.rightChild.taxa).intersection(set(tr.leftChild.taxa))):
 
-
+                        
                         sp.leftChild= reconcILS(tr.leftChild,sp.leftChild,sp_copy,sp_)
                         sp.rightChild =reconcILS(tr.rightChild,sp.rightChild,sp_copy,sp_)
                     else:
@@ -511,7 +536,9 @@ def reconcILS(tr,sp,sp_copy,sp_):
                 recon.tag_species(new_gene_tree,tr_copy_2)
 
                 recon_left = copy.deepcopy(sp)
+                #recon_left.id =recon_left.id *10
                 recon_right = copy.deepcopy(sp)
+                #recon_right.id =recon_right.id *10
                 new_sp = copy.deepcopy(sp)
 
                 new_sp.leftChild=recon_left
@@ -585,6 +612,7 @@ def reconcILS(tr,sp,sp_copy,sp_):
 
                                         
                         new_topo.map_gene(sp)
+                        #new_topo.id= new_topo.id*17
                         
                         sp.cost=Initial_multiple_mapping- cost
                         sp.evolve='NNI'
@@ -619,9 +647,16 @@ def reconcILS(tr,sp,sp_copy,sp_):
                         print('Duplication')
                         
                         #sp.refTo=[]
-
+                        
                         recon_left = copy.deepcopy(sp)
+                        clearid(recon_left,'Left')
+                        
+                        
+                        
                         recon_right = copy.deepcopy(sp)
+                        clearid(recon_right,'right')
+                        
+                        
                         recon_left.reset()
                         recon_right.reset()
 
@@ -701,6 +736,7 @@ def reconcILS(tr,sp,sp_copy,sp_):
                                 sp.rightChild = reconcILS(tr,recon_right,sp_copy,sp_)
                                 sp.children+=[sp.leftChild ]
                                 sp.children+=[sp.rightChild]
+                                sp.isLeaf=None
                             
 
 
@@ -716,10 +752,12 @@ def reconcILS(tr,sp,sp_copy,sp_):
                                 sp.rightChild = reconcILS(tr.rightChild,recon_right,sp_copy,sp_)
                                 sp.children+=[sp.leftChild ]
                                 sp.children+=[sp.rightChild]
+                                sp.isLeaf=None
                             
                            
                             #sp.leftChild=recon_left
                             #sp.rightChild=recon_right
+                        
                             return sp
 
 
@@ -736,6 +774,9 @@ def main():
     parser = parse1()
     from collections import Counter
     import pandas as pd
+    import igraph as ig
+    import matplotlib.pyplot as plt
+    
 
 
     sp_string=parser.spTree
@@ -744,10 +785,11 @@ def main():
 
     tr=parse(gene_tree)
 
-    #tr=parse(to_newick(tr))
+    tr=parse(to_newick(tr))
 
 
     sp=parse(sp_string)
+    
     sp_copy= copy.deepcopy(sp)
     sp_copy.reset()
 
@@ -770,13 +812,64 @@ def main():
     sp_copy.isRoot=True
     reconcILS(tr,sp,sp_copy,sp)
     #print('######################33')
-
+    
     
     li =sp_event(sp,[])
+    #sp.viz()
+    edges, node_,taxa_, color_=sp.find_all_edges([],[],[],[])
+
+    print(len(node_))
+    print(node_)
+    print(edges)
+    print(color_)
+    g = ig.Graph(edges=edges)
+    print(g)
+    #g.vs["evolve"]=color_
+    
+       
+  
+
+    
+   
+    to_delete = [i for i in range(0,max(node_)) if i  not in node_]
+    g.delete_vertices(to_delete)
+
+    new_dic= dict(zip(node_,color_))
+    print(new_dic)
+    
+    Keys = list(new_dic.keys())
+    Keys.sort()
+    sorted_dict = {i: new_dic[i] for i in Keys}
+    
+    color_=list(sorted_dict.values())
+
+    color_dict = {"Duplication": "blue", "Loss": "pink",'NNI':"red","Speciation":"yellow"}
+    g.vs["color"] = [color_dict[evolve] for evolve in color_]
+    
+    print('taxa',taxa_)
+    new_dic= dict(zip(node_,taxa_))
+    print(new_dic)
+    
+    Keys = list(new_dic.keys())
+    Keys.sort()
+    sorted_dict = {i: new_dic[i] for i in Keys}
+    
+    g.vs["label"] = list(sorted_dict.values())
+    print(list(sorted_dict.values()))
+    s=str(g)
+    
+
+    fig, ax = plt.subplots()
+
+    layout = g.layout_reingold_tilford(root=[int(s.split('\n')[3][0].split('--')[0])])
+    ig.plot(g, layout=layout, target=ax)
+    plt.show()
+
 
     sp.reset()
     print(to_newick(sp))
     tr.order_gene(sp)
+    
     print(to_newick(sp))
 
     #print(Counter(li))
