@@ -249,6 +249,20 @@ def clearid(sp,ori):
             
 
 
+def paralogy_NNI(sp,lis_paralogy,lis_NNI):
+    if sp:
+        list_paralogy,lis_NNI=paralogy_NNI(sp.leftChild,lis_paralogy,lis_NNI)
+        list_paralogy,lis_NNI=paralogy_NNI(sp.rightChild,lis_paralogy,lis_NNI)
+        if len(sp.paralogy)>0:
+            lis_paralogy+=sp.paralogy
+        if len(sp.NNI_)>0:
+            lis_NNI+=sp.NNI_[0]
+        return list_paralogy,lis_NNI
+
+    return lis_paralogy,lis_NNI
+
+            
+
 
 
 def clearcost(sp):
@@ -259,6 +273,15 @@ def clearcost(sp):
         clearcost(sp.leftChild)
         
         clearcost(sp.rightChild)  
+
+
+def copy_event(re,sp):
+    if sp:
+        sp.NNI_.append(re.NNI_)
+        copy_event(re.leftChild,sp.leftChild)
+        copy_event(re.rightChild,sp.rightChild)
+
+
 
 
 
@@ -309,6 +332,7 @@ def ILS(gene_tree,tr,sp_copy,cost):
                 imporvement=False
 
                 new_topo=copy.deepcopy(geneTree)
+                
 
                 for i in list_tree:
                     i[1].reset()
@@ -336,11 +360,19 @@ def ILS(gene_tree,tr,sp_copy,cost):
                     
                     if best_cost>new_cost and cost>0:
                         best_cost=new_cost
+
+
                         if tr.isRoot:
                              
                             new_topo=copy.deepcopy(i[1])
                         else:
                              new_topo=copy.deepcopy(i[1])
+                        if ch1[2]=='Left':
+
+                            tr.NNI_+=[(tr.id,tr.leftChild.id)]
+                        else:
+                            
+                            tr.NNI_+=[(tr.id,tr.rightChild.id)]
                     #print('new_topo',to_newick(new_topo))
                         imporvement=True
 
@@ -617,6 +649,7 @@ def reconcILS(tr,sp,sp_copy,sp_):
                         sp.cost=Initial_multiple_mapping- cost
                         sp.evolve='NNI'
                         print('NNI',to_newick(new_topo))
+                        copy_event(sp_1,sp)
 
                         #return reconcILS(new_topo,sp,sp_copy,sp_)
                        
@@ -736,6 +769,7 @@ def reconcILS(tr,sp,sp_copy,sp_):
                                 sp.rightChild = reconcILS(tr,recon_right,sp_copy,sp_)
                                 sp.children+=[sp.leftChild ]
                                 sp.children+=[sp.rightChild]
+                                sp.paralogy+[(sp.id, sp.id)]
                                 sp.isLeaf=None
                             
 
@@ -752,6 +786,7 @@ def reconcILS(tr,sp,sp_copy,sp_):
                                 sp.rightChild = reconcILS(tr.rightChild,recon_right,sp_copy,sp_)
                                 sp.children+=[sp.leftChild ]
                                 sp.children+=[sp.rightChild]
+                                sp.paralogy+=[(sp.id, sp.id)]
                                 sp.isLeaf=None
                             
                            
@@ -759,6 +794,35 @@ def reconcILS(tr,sp,sp_copy,sp_):
                             #sp.rightChild=recon_right
                         
                             return sp
+                        
+
+def search_per(sp,recon):
+    if sp:
+        if sp.taxa==recon.taxa:
+            sp.li.append(recon.evolve)
+        search_per(sp.leftChild,recon)
+        search_per(sp.rightChild,recon)
+
+def per(sp,recon):
+    if recon:
+        search_per(sp,recon)
+
+        per(sp,recon.leftChild)
+        per(sp,recon.rightChild)
+        
+
+
+def make_table(lis_paralogy,lis_NNI,dic,sp_1):
+    print('###############################')
+    for i in lis_paralogy:
+        print('Duplication on edge between:',dic[i[0]],'---->',dic[i[1]])
+
+    for i in lis_NNI:
+        print('ILS on edge between:',dic[i[0]],'------->',dic[i[1]])
+    
+    print('###############################')
+
+
 
 
 def parse1():
@@ -768,6 +832,8 @@ def parse1():
     parser.add_argument('--output', type=str, help="Location and name to output")
     args= parser.parse_args()
     return(args)
+
+
 
 
 def main():
@@ -815,22 +881,51 @@ def main():
     
     
     li =sp_event(sp,[])
-    #sp.viz()
-    edges, node_,taxa_, color_=sp.find_all_edges([],[],[],[])
+           
+    sp_1=parse(sp_string)
+    sp_1.label_internal()
+    sp.label_internal()
 
+    per(sp_1,sp)
+    sp.map_gene(sp_1)
+
+    
+
+    #sp.viz()
+    edges, node_,taxa_, color_,LC_=sp.find_all_edges([],[],[],[],[])
+    lis_paralogy, lis_NNI= paralogy_NNI(sp,[],[])
+
+    print(lis_paralogy)
+    print(lis_NNI)
     print(len(node_))
     print(node_)
     print(edges)
     print(color_)
+    print(LC_)
     g = ig.Graph(edges=edges)
     print(g)
     #g.vs["evolve"]=color_
-    
-       
-  
 
-    
+
+    new_dic_LC= dict(zip(node_,LC_))
    
+    Keys = list(new_dic_LC.keys())
+    Keys.sort()
+    sorted_dict_LC = {i: new_dic_LC[i] for i in Keys}
+    print(sorted_dict_LC)
+    
+
+
+    '''   
+    if len(lis_paralogy)>0:
+        for edge  in lis_paralogy:
+            g.add_edge(edge[0],edge[1],label='Duplication')
+    if len(lis_NNI)>0:
+        for edge  in lis_NNI:
+            g.add_edge(edge[0],edge[1],label='NNI',edge_color='RED')
+
+    '''
+    
     to_delete = [i for i in range(0,max(node_)) if i  not in node_]
     g.delete_vertices(to_delete)
 
@@ -843,13 +938,16 @@ def main():
     
     color_=list(sorted_dict.values())
 
+
     color_dict = {"Duplication": "blue", "Loss": "pink",'NNI':"red","Speciation":"yellow"}
     g.vs["color"] = [color_dict[evolve] for evolve in color_]
+   
     
     print('taxa',taxa_)
     new_dic= dict(zip(node_,taxa_))
     print(new_dic)
     
+    make_table(lis_paralogy,lis_NNI,sorted_dict_LC,sp_1)
     Keys = list(new_dic.keys())
     Keys.sort()
     sorted_dict = {i: new_dic[i] for i in Keys}
@@ -857,12 +955,14 @@ def main():
     g.vs["label"] = list(sorted_dict.values())
     print(list(sorted_dict.values()))
     s=str(g)
-    
+
+
 
     fig, ax = plt.subplots()
 
     layout = g.layout_reingold_tilford(root=[int(s.split('\n')[3][0].split('--')[0])])
     ig.plot(g, layout=layout, target=ax)
+    
     plt.show()
 
 

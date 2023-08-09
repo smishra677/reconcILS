@@ -27,6 +27,10 @@ class Tree:
         self.inital_ref=0
         self.event_list=[]
         self.visited=[]
+        self.li=[]
+        self.paralogy=[]
+        self.NNI_=[]
+
 
 
     def reset(self):
@@ -118,17 +122,20 @@ class Tree:
         graph.write_png("binary_tree.png")
        
 
-
-    def find_all_edges(root,edges,node_,taxa_,color_):
+    def find_all_edges_sp(root,edges,node_,taxa_,color_,LC_):
         #print(root.taxa)
                         
         node_.append(int(root.id))
-        color_.append(root.evolve)   
+        color_.append(root.evolve)
+    
+        LC_.append(root.taxa)
         
         
         if root.isLeaf:
+            
             number_of_taxa=''.join(taxa_).count(root.taxa)
             taxa_.append(root.taxa+'_'+str(number_of_taxa))
+            
         else:
             number_of_taxa=''.join(taxa_).count(root.evolve)
             taxa_.append(root.evolve+'_'+str(number_of_taxa+1))
@@ -139,19 +146,58 @@ class Tree:
 
         if root.rightChild:
             edges.append((root.id,root.rightChild.id))
-            edges, node_,taxa_, color_=root.rightChild.find_all_edges(edges,node_,taxa_,color_)
+            edges, node_,taxa_, color_,LC_=root.rightChild.find_all_edges(edges,node_,taxa_,color_,LC_)
 
 
         if root.leftChild:
             edges.append((root.id,root.leftChild.id))
-            edges, node_,taxa_, color_ =root.leftChild.find_all_edges(edges,node_,taxa_,color_)
+            edges, node_,taxa_, color_,LC_ =root.leftChild.find_all_edges(edges,node_,taxa_,color_,LC_)
 
 
         #print(node_)
         #print(taxa_)
         #print(color_)
 
-        return edges, node_,taxa_, color_
+        return edges, node_,taxa_, color_,LC_
+
+
+
+
+    def find_all_edges(root,edges,node_,taxa_,color_,LC_):
+        #print(root.taxa)
+                        
+        node_.append(int(root.id))
+        color_.append(root.evolve)   
+        
+        
+        if root.isLeaf:
+            LC_.append(set(root.taxa))
+            number_of_taxa=''.join(taxa_).count(root.taxa)
+            taxa_.append(root.taxa+'_'+str(number_of_taxa))
+        else:
+            LC_.append(root.taxa)
+            number_of_taxa=''.join(taxa_).count(root.evolve)
+            taxa_.append(root.evolve+'_'+str(number_of_taxa+1))
+            #taxa_.append(root.evolve)
+                 
+      
+
+
+        if root.rightChild:
+            edges.append((root.id,root.rightChild.id))
+            edges, node_,taxa_, color_,LC_=root.rightChild.find_all_edges(edges,node_,taxa_,color_,LC_)
+
+
+        if root.leftChild:
+            edges.append((root.id,root.leftChild.id))
+            edges, node_,taxa_, color_,LC_ =root.leftChild.find_all_edges(edges,node_,taxa_,color_,LC_)
+
+
+        #print(node_)
+        #print(taxa_)
+        #print(color_)
+
+        return edges, node_,taxa_, color_,LC_
     
    
                 
@@ -755,7 +801,7 @@ class Tree:
 
         if self.parent==None:
             #print('No_parent')
-            return [[copy_left,copy_left],[copy_right,copy_right]]
+            return [[copy_left,copy_left,'left'],[copy_right,copy_right,'right']]
         
         geneTree_left.label_internal()
         
@@ -774,5 +820,5 @@ class Tree:
         self.locate_copy(copy_right,geneTree_right)
         print('Left:',geneTree_left.to_newick())
         print('Right:',geneTree_right.to_newick())
-        return [[copy_left,geneTree_left],[copy_right,geneTree_right]]
+        return [[copy_left,geneTree_left,'left'],[copy_right,geneTree_right,'right']]
 

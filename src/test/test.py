@@ -22,6 +22,24 @@ from collections import Counter
 
 
 sp_string='(A,(B,C));'
+
+tr='(((A,A),C),B);'
+
+genetree = PhyloTree(tr)
+sptree = PhyloTree(sp_string)
+
+recon_tree_ete, events = genetree.reconcile(sptree)
+
+for ev in events:
+    if ev.etype == "S":
+        print('ORTHOLOGY RELATIONSHIP:', ','.join(ev.inparalogs), "<====>", ','.join(ev.orthologs))
+    elif ev.etype == "D":
+        print('PARALOGY RELATIONSHIP:', ','.join(ev.inparalogs), "<====>", ','.join(ev.outparalogs))
+recon_tree_ete.show()
+
+
+
+exit()
 '''
 gene_tree='((A,C),B);'
 tr=parse(gene_tree)
