@@ -282,6 +282,13 @@ def copy_event(re,sp):
         copy_event(re.rightChild,sp.rightChild)
 
 
+def sp_id(sp,dic):
+    if sp:
+        dic=sp_id(sp.leftChild,dic)
+        dic=sp_id(sp.rightChild,dic)
+
+        #dic[sp.id]=set(sp.taxa)
+    return dic
 
 
 
@@ -367,12 +374,25 @@ def ILS(gene_tree,tr,sp_copy,cost):
                             new_topo=copy.deepcopy(i[1])
                         else:
                              new_topo=copy.deepcopy(i[1])
+                        
                         if ch1[2]=='Left':
-
-                            tr.NNI_+=[(tr.id,tr.leftChild.id)]
+                            if len(new_topo.leftChild.taxa)==1:
+                                if tr.leftChild.rightChild:
+                                    tr.NNI_+=[(tr.id,tr.leftChild.rightChild.id)]
+                                else:
+                                    tr.NNI_+=[(tr.id,tr.rightChild.id)]
+                            else:
+                                tr.NNI_+=[(tr.id,tr.leftChild.id)]
                         else:
-                            
-                            tr.NNI_+=[(tr.id,tr.rightChild.id)]
+                            if  len(new_topo.rightChild.taxa)==1:
+                                if tr.rightChild.leftChild:
+                                    #print('Taxa',tr.rightChild.rightChild.taxa)
+                                    tr.NNI_+=[(tr.id,tr.rightChild.leftChild.id)]
+                                else:
+                                    tr.NNI_+=[(tr.id,tr.leftChild.id)]
+                            else:
+                                tr.NNI_+=[(tr.id,tr.rightChild.id)]
+                        
                     #print('new_topo',to_newick(new_topo))
                         imporvement=True
 
@@ -769,7 +789,11 @@ def reconcILS(tr,sp,sp_copy,sp_):
                                 sp.rightChild = reconcILS(tr,recon_right,sp_copy,sp_)
                                 sp.children+=[sp.leftChild ]
                                 sp.children+=[sp.rightChild]
-                                sp.paralogy+[(sp.id, sp.id)]
+                                if sp.isLeaf:
+                                    sp.paralogy+=[(sp.id, sp.id)]  
+                                else:  
+                                    sp.paralogy+=[(sp.parent.id, sp.id)]  
+                                sp.paralogy+[(sp.parent.id, sp.id)]
                                 sp.isLeaf=None
                             
 
@@ -786,7 +810,11 @@ def reconcILS(tr,sp,sp_copy,sp_):
                                 sp.rightChild = reconcILS(tr.rightChild,recon_right,sp_copy,sp_)
                                 sp.children+=[sp.leftChild ]
                                 sp.children+=[sp.rightChild]
-                                sp.paralogy+=[(sp.id, sp.id)]
+                                if sp.isLeaf:
+                                    sp.paralogy+=[(sp.id, sp.id)]  
+                                else:  
+                                    sp.paralogy+=[(sp.parent.id, sp.id)]
+                                #sp.paralogy+=[(sp.parent.id, sp.id)]
                                 sp.isLeaf=None
                             
                            
@@ -813,13 +841,38 @@ def per(sp,recon):
 
 
 def make_table(lis_paralogy,lis_NNI,dic,sp_1):
+    #dic=sp_id(sp_1,dic)
     print('###############################')
     for i in lis_paralogy:
-        print('Duplication on edge between:',dic[i[0]],'---->',dic[i[1]])
+        if(i[0]  in dic.keys() and i[1] in dic.keys()):
+            print('Duplication on edge between:',dic[i[0]],'---->',dic[i[1]])
+        else:
+            key_0=-1
+            key_1=-1
+            for k in dic.keys():
+                if k%i[0]==0 and key_0==-1:
+                    key_0=k
+                if k%i[1]==0 and key_1==-1:
+                    key_1=k
+            print('Duplication on edge between:',dic[key_0],'---->',dic[key_1])
+                
+            
 
     for i in lis_NNI:
-        print('ILS on edge between:',dic[i[0]],'------->',dic[i[1]])
-    
+        if(i[0]  in dic.keys() and i[1] in dic.keys()):
+            print('ILS on edge between:',dic[i[0]],'------->',dic[i[1]])
+        else:
+                key_0=-1
+                key_1=-1
+                for k in dic.keys():
+                    if k%i[0]==0 and key_0==-1:
+                        key_0=k
+                    if k%i[1]==0 and key_1==-1:
+                        key_1=k
+                print('ILS on edge between:',dic[key_0],'------->',dic[key_1])
+                    
+                
+        
     print('###############################')
 
 
@@ -857,6 +910,8 @@ def main():
     sp=parse(sp_string)
     
     sp_copy= copy.deepcopy(sp)
+
+    sp_copy_1= copy.deepcopy(sp)
     sp_copy.reset()
 
     tr.order_gene(sp)
@@ -947,7 +1002,7 @@ def main():
     new_dic= dict(zip(node_,taxa_))
     print(new_dic)
     
-    make_table(lis_paralogy,lis_NNI,sorted_dict_LC,sp_1)
+    make_table(lis_paralogy,lis_NNI,sorted_dict_LC,sp_copy_1)
     Keys = list(new_dic.keys())
     Keys.sort()
     sorted_dict = {i: new_dic[i] for i in Keys}
