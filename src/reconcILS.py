@@ -16,6 +16,11 @@ def read_trees(i,folder):
      gene_tre.close()
      return str(tr[0])
 
+def write_tree(i,folder,tree):
+    with open('./'+folder+'/rep_1_'+str(i)+'.tre', 'w') as f:
+        f.write(tree)
+    
+
 def read_log(flag,i,dic,folder):
     o= open('./'+folder+'/rep_'+str(i)+'.log').read()
     dic['Process']+=[flag]
@@ -376,23 +381,29 @@ def ILS(gene_tree,tr,sp_copy,cost):
                              new_topo=copy.deepcopy(i[1])
                         
                         if ch1[2]=='Left':
-                            if len(new_topo.leftChild.taxa)==1:
-                                if tr.leftChild.rightChild:
-                                    tr.NNI_+=[(tr.id,tr.leftChild.rightChild.id)]
-                                else:
-                                    tr.NNI_+=[(tr.id,tr.rightChild.id)]
+                            if new_topo.leftChild.taxa ==None:
+                                tr.NNI_+=[tr.id,tr.id]
                             else:
-                                tr.NNI_+=[(tr.id,tr.leftChild.id)]
-                        else:
-                            if  len(new_topo.rightChild.taxa)==1:
-                                if tr.rightChild.leftChild:
-                                    #print('Taxa',tr.rightChild.rightChild.taxa)
-                                    tr.NNI_+=[(tr.id,tr.rightChild.leftChild.id)]
+                                if len(new_topo.leftChild.taxa)==1:
+                                    if tr.leftChild.rightChild:
+                                        tr.NNI_+=[(tr.id,tr.leftChild.rightChild.id)]
+                                    else:
+                                        tr.NNI_+=[(tr.id,tr.rightChild.id)]
                                 else:
                                     tr.NNI_+=[(tr.id,tr.leftChild.id)]
+                        else:
+                            if new_topo.rightChild.taxa==None:
+                                tr.NNI_+=[tr.id,tr.id]
                             else:
-                                tr.NNI_+=[(tr.id,tr.rightChild.id)]
-                        
+                                if  len(new_topo.rightChild.taxa)==1:
+                                    if tr.rightChild.leftChild:
+                                        #print('Taxa',tr.rightChild.rightChild.taxa)
+                                        tr.NNI_+=[(tr.id,tr.rightChild.leftChild.id)]
+                                    else:
+                                        tr.NNI_+=[(tr.id,tr.leftChild.id)]
+                                else:
+                                    tr.NNI_+=[(tr.id,tr.rightChild.id)]
+                            
                     #print('new_topo',to_newick(new_topo))
                         imporvement=True
 
