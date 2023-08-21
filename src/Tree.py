@@ -680,18 +680,77 @@ class Tree:
         newick = f"{newick};"
         return newick
 
+
+
+    def parse(self,newick):
+        import re
+
+        tokens = re.finditer(r"([^:;,()\s]*)(?:\s*:\s*([\d.]+)\s*)?([,);])|(\S)", newick+";")
+
+        def recurse(tre,nextid = 0, parentid = -1): # one node
+            thisid = nextid
+            #tre.id= nextid
+            children = []
+
+            name, length, delim, ch = next(tokens).groups(0)
+            tre.taxa= name
+            if name!=0:
+                tre.taxa= name.split('_')[0]
+                tre.isLeaf= True
+            if ch == "(":
+                while ch in "(,":
+                    new_tre= Tree()
+                    node, ch, nextid,tre1 = recurse(new_tre,nextid+1, thisid)
+                    children.append(node)
+                    tre.children.append(tre1)
+
+
+
+                if len(tre.children)==1:
+                    tre.children =[]
+                    tre =tre1
+                else:
+                    tre.leftChild= tre.children[0]
+                    tre.children[0].parent =tre
+                    tre.children[1].parent =tre
+                    tre.rightChild=tre.children[1]
+                
+
+
+
+                    
+                name, length, delim, ch = next(tokens).groups(0)
+            return {"id": thisid, "name": name, "length": length if length else None, 
+                    "parentid": parentid, "children": children}, delim, nextid,tre
+
+        tre= Tree()
+        val =recurse(tre)
+
+        return val[-1]
     
 
     def locate_copy(self,copy_tree,tree):
         if tree:
 
             if self.id==tree.id:
+                print('###########################################################')
+                print(copy_tree.to_newick())
+                print(tree.to_newick())
+                print(tree.parent.children)
+                print(tree.parent.leftChild)
+                print(tree.parent.leftChild.to_newick())
+                print(tree.parent.rightChild)
+                print(tree.parent.rightChild.to_newick())
+                print(tree)
+                print('###########################################################')
                
 
                 if tree.parent.leftChild == tree:
                     
                     tree.parent.children.remove(tree.parent.leftChild)
                     tree.parent.leftChild =copy_tree
+                    tree.leftChild =copy_tree.leftChild
+                    tree.rightChild =copy_tree.rightChild
                     copy_tree.parent=tree.parent
                     tree.parent.children.append(copy_tree)
 
@@ -702,7 +761,8 @@ class Tree:
                     
                     tree.parent.children.remove(tree.parent.rightChild)
                     tree.parent.rightChild =copy_tree
-                    
+                    tree.leftChild =copy_tree.leftChild
+                    tree.rightChild =copy_tree.rightChild
                     copy_tree.parent=tree.parent
                     tree.parent.children.append(copy_tree)
                     #print('after1:',tree.parent.rightChild.to_newick())
@@ -744,7 +804,7 @@ class Tree:
 
             copy_left.rightChild=new_tree_left
             copy_left.leftChild=copy_right_child
-            copy_left.children = [copy_left.rightChild, copy_left.leftChild]
+            copy_left.children= [copy_left.rightChild, copy_left.leftChild]
             new_tree_left.parent=copy_left
             copy_right_child.parent=copy_left
 
@@ -760,19 +820,22 @@ class Tree:
 
             copy_right.rightChild=new_tree_right
             copy_right.leftChild=copy_left_child
-            copy_right.children+= [copy_right.rightChild, copy_right.leftChild]
+            copy_right.children= [copy_right.rightChild, copy_right.leftChild]
             copy_right.rightChild.parent=copy_right
             copy_right.leftChild.parent=copy_right
         
         else:
             copy_right_child= copy.deepcopy(self.rightChild.rightChild)
+            print(copy_right_child.to_newick())
             copy_right_child.reset()
             copy_left_child= copy.deepcopy(self.rightChild.leftChild)
+            print(copy_left_child.to_newick())
             copy_left_child.reset()
             
             new_tree_left = Tree()
             new_tree_left.rightChild =copy_left_child
             new_tree_left.leftChild=copy_left.leftChild
+            print(new_tree_left.to_newick())
             new_tree_left.children =[new_tree_left.leftChild, new_tree_left.rightChild]
             new_tree_left.leftChild.parent=new_tree_left
             new_tree_left.rightChild.parent=new_tree_left
@@ -780,7 +843,7 @@ class Tree:
 
             copy_left.rightChild=new_tree_left
             copy_left.leftChild=copy_right_child
-            copy_left.children+= [copy_left.rightChild, copy_left.leftChild]
+            copy_left.children= [copy_left.rightChild, copy_left.leftChild]
             copy_left.rightChild.parent=copy_left
             copy_left.leftChild.parent=copy_left
 
@@ -788,20 +851,21 @@ class Tree:
             new_tree_right = Tree()
             new_tree_right.leftChild=copy_right_child
             new_tree_right.rightChild=copy_right.leftChild
+            print(new_tree_right.to_newick())
             new_tree_right.children= [new_tree_right.leftChild, new_tree_right.leftChild]
             new_tree_right.leftChild.parent=new_tree_right
             new_tree_right.leftChild.parent=new_tree_right
 
             copy_right.rightChild=new_tree_right
             copy_right.leftChild=copy_left_child
-            copy_right.children+= [copy_right.rightChild, copy_right.leftChild]
+            copy_right.children= [copy_right.rightChild, copy_right.leftChild]
             copy_right.rightChild.parent=copy_right
             copy_right.leftChild.parent=copy_right        
 
 
         if self.parent==None:
             #print('No_parent')
-            return [[copy_left,copy_left,'left'],[copy_right,copy_right,'right']]
+            return [[self.parse(copy_left.to_newick()),self.parse(copy_left.to_newick()),'left'],[self.parse(copy_right.to_newick()),self.parse(copy_right.to_newick()),'right']]
         
         geneTree_left.label_internal()
         
@@ -815,10 +879,11 @@ class Tree:
         #geneTree_right.leftChild=copy_right
 
 
-
+        print(geneTree_left)
+        print(geneTree_right)
+        
         self.locate_copy(copy_left,geneTree_left)
         self.locate_copy(copy_right,geneTree_right)
         print('Left:',geneTree_left.to_newick())
         print('Right:',geneTree_right.to_newick())
-        return [[copy_left,geneTree_left,'left'],[copy_right,geneTree_right,'right']]
-
+        return [[self.parse(copy_left.to_newick()),self.parse(geneTree_left.to_newick()),'left'],[self.parse(copy_right.to_newick()),self.parse(geneTree_right.to_newick()),'right']]

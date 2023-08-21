@@ -210,12 +210,14 @@ def find_parent_child(root,child):
 
     if len(root.refTo)>1:
             #root.refTo.reverse()
-            
+            print('ref',root.refTo)
             for tre in root.refTo:
                 for tree1 in root.refTo:
-                   
+                    if tree1.parent:
+                        print(tre.children,tree1,tree1.taxa,tree1.parent,tree1.parent.taxa,tree1.parent.children)
                     if (tree1 in tre.children):
                         if tree1==tre.leftChild:
+                            print('match_left')
                             child.append([tre,tree1,'Left'])
                         else:
                             child.append([tre,tree1,'Right'])
@@ -319,8 +321,7 @@ def ILS(gene_tree,tr,sp_copy,cost):
 
     child= parent_child(tr,child)
     print(to_newick(gene_tree))
-    
-    
+    print(child)
     #print(gene_tree.parent)
 
     if len(child)==0 or cost==0:
@@ -331,7 +332,7 @@ def ILS(gene_tree,tr,sp_copy,cost):
         geneTree =copy.deepcopy(new_topo)
         geneTree.reset()
         
-        print(child)
+        
         for ch1 in child:
                 if ch1 in tr.visited:
                     print('visited')
@@ -410,10 +411,9 @@ def ILS(gene_tree,tr,sp_copy,cost):
                 cost=cost-1
                 tr.visited.append([ch1[0],ch1[1]])
                 
-                if ch1[0] in tr.visited[0]:
-                    if cost==0 or imporvement==False:
+                if cost==0 or imporvement==False:
                         return new_topo,cost
-                    else:
+                else:
                         new_sp = copy.deepcopy(sp_copy)
                         new_sp.reset()
                         new_topo.reset()
@@ -448,7 +448,7 @@ def ILS(gene_tree,tr,sp_copy,cost):
 def reconcILS(tr,sp,sp_copy,sp_):
     if sp: 
         #print(sp.taxa)
-        ##print(sp.parent)
+        #print(sp.children)
 
         sp_copy = copy.deepcopy(sp)
 
@@ -579,6 +579,7 @@ def reconcILS(tr,sp,sp_copy,sp_):
                 
 
                 print(5)
+
                 new_topo,cost =(ILS(tr_copy_1,sp_1,sp_1,Initial_multiple_mapping))
                 #new_topo =parse(to_newick(new_topo))
 
@@ -628,19 +629,22 @@ def reconcILS(tr,sp,sp_copy,sp_):
                 recon.clean_up()
                 recon.total_cost_()
 
-                recon_left.total_cost_()
-                recon_left.clean_up()
 
 
-                recon_right.total_cost_()
-                recon_right.clean_up()
+                tr_copy_2.leftChild.total_cost_()
+                tr_copy_2.leftChild.clean_up()
 
 
+                tr_copy_2.rightChild.total_cost_()
+                tr_copy_2.rightChild.clean_up()
 
-                recon_1_cost =recon_right.cost+recon_left.cost+1+len(recon_right.refTo)+len(recon_left.refTo)
+                
+
+                recon_1_cost =tr_copy_2.rightChild.cost+tr_copy_2.leftChild.cost+1+len(recon_right.refTo)+len(recon_left.refTo)
                 recon_left.reset()
                 recon_right.reset()
-
+                tr_copy_2.rightChild.reset()
+                tr_copy_2.leftChild.reset()
                
                 new_topo.label_internal()
                 new_topo.map_gene(recon_1)
@@ -667,6 +671,7 @@ def reconcILS(tr,sp,sp_copy,sp_):
                         new_topo.reset()
                         clear_ref(sp)
 
+
                         new_topo.order_gene(sp)
 
                                 
@@ -675,6 +680,8 @@ def reconcILS(tr,sp,sp_copy,sp_):
 
                                         
                         new_topo.map_gene(sp)
+                        print(sp.leftChild.refTo)
+                        print(sp.rightChild.refTo)
                         #new_topo.id= new_topo.id*17
                         
                         sp.cost=Initial_multiple_mapping- cost
@@ -709,8 +716,6 @@ def reconcILS(tr,sp,sp_copy,sp_):
                 if  recon_1.cost>=recon_1_cost or  sp.isLeaf:
 
                         print('Duplication')
-                        
-                        #sp.refTo=[]
                         
                         recon_left = copy.deepcopy(sp)
                         clearid(recon_left,'Left')
@@ -800,11 +805,16 @@ def reconcILS(tr,sp,sp_copy,sp_):
                                 sp.rightChild = reconcILS(tr,recon_right,sp_copy,sp_)
                                 sp.children+=[sp.leftChild ]
                                 sp.children+=[sp.rightChild]
-                                if sp.isLeaf:
-                                    sp.paralogy+=[(sp.id, sp.id)]  
-                                else:  
-                                    sp.paralogy+=[(sp.parent.id, sp.id)]  
-                                sp.paralogy+[(sp.parent.id, sp.id)]
+                                sp.leftChild.parent=sp
+                                sp.rightChild.parent=sp
+                                if sp.parent==None:
+                                    sp.paralogy+=[(-367,sp.id)]
+                                else:
+                                    if sp.isLeaf:
+                                        sp.paralogy+=[(sp.id, sp.id)]  
+                                    else:  
+                                        sp.paralogy+=[(sp.parent.id, sp.id)]  
+                                    sp.paralogy+[(sp.parent.id, sp.id)]
                                 sp.isLeaf=None
                             
 
@@ -821,11 +831,17 @@ def reconcILS(tr,sp,sp_copy,sp_):
                                 sp.rightChild = reconcILS(tr.rightChild,recon_right,sp_copy,sp_)
                                 sp.children+=[sp.leftChild ]
                                 sp.children+=[sp.rightChild]
-                                if sp.isLeaf:
-                                    sp.paralogy+=[(sp.id, sp.id)]  
-                                else:  
-                                    sp.paralogy+=[(sp.parent.id, sp.id)]
-                                #sp.paralogy+=[(sp.parent.id, sp.id)]
+                                sp.leftChild.parent=sp
+                                sp.rightChild.parent=sp
+
+                                if sp.parent==None:
+                                    sp.paralogy+=[(-367,sp.id)]
+                                else:
+                                    if sp.isLeaf:
+                                        sp.paralogy+=[(sp.id, sp.id)]  
+                                    else:  
+                                        sp.paralogy+=[(sp.parent.id, sp.id)]
+                                    #sp.paralogy+=[(sp.parent.id, sp.id)]
                                 sp.isLeaf=None
                             
                            
@@ -1013,7 +1029,7 @@ def main():
     new_dic= dict(zip(node_,taxa_))
     print(new_dic)
     
-    make_table(lis_paralogy,lis_NNI,sorted_dict_LC,sp_copy_1)
+    #make_table(lis_paralogy,lis_NNI,sorted_dict_LC,sp_copy_1)
     Keys = list(new_dic.keys())
     Keys.sort()
     sorted_dict = {i: new_dic[i] for i in Keys}
