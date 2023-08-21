@@ -579,90 +579,97 @@ def reconcILS(tr,sp,sp_copy,sp_):
                 
 
                 print(5)
-
-                new_topo,cost =(ILS(tr_copy_1,sp_1,sp_1,Initial_multiple_mapping))
-                #new_topo =parse(to_newick(new_topo))
-
-
-                recon_1 = copy.deepcopy(sp_1)
-                recon_1.reset()
-                recon_1.label_internal()
-
-
-                new_gene_tree =copy.deepcopy(tr_copy_2)
-                new_gene_tree.reset()
-
-
-                recon=Tree.Tree()
-                recon= copy.deepcopy(sp_2)
-                
-
-                recon.tag_species(new_gene_tree,tr_copy_2)
-
-                recon_left = copy.deepcopy(sp)
-                #recon_left.id =recon_left.id *10
-                recon_right = copy.deepcopy(sp)
-                #recon_right.id =recon_right.id *10
-                new_sp = copy.deepcopy(sp)
-
-                new_sp.leftChild=recon_left
-                new_sp.rightChild=recon_right
-
-                new_sp.reset()
-                recon_left.label_internal()
-
-                recon_right.label_internal()
-
-                
-                if recon.split_list!=None:
-                    recon.split_list[0].map_gene(recon_left)
-                
-                    recon.split_list[0].map_recon(recon_left)
-                    
-                    recon.split_list[1].map_gene(recon_right)
-                
-                    recon.split_list[1].map_recon(recon_right)
+                if sp.isLeaf:
+                    NNI_cost=1
+                    duplication_cost=1
                 else:
-                    tr_copy_2.map_recon(recon)
+
+                    new_topo,cost =(ILS(tr_copy_1,sp_1,sp_1,Initial_multiple_mapping))
+                    #new_topo =parse(to_newick(new_topo))
 
 
-                recon.clean_up()
-                recon.total_cost_()
+                    recon_1 = copy.deepcopy(sp_1)
+                    recon_1.reset()
+                    recon_1.label_internal()
 
 
+                    new_gene_tree =copy.deepcopy(tr_copy_2)
+                    new_gene_tree.reset()
 
-                tr_copy_2.leftChild.total_cost_()
-                tr_copy_2.leftChild.clean_up()
+
+                    recon=Tree.Tree()
+                    recon= copy.deepcopy(sp_2)
+                    
+
+                    recon.tag_species(new_gene_tree,tr_copy_2)
+
+                    recon_left = copy.deepcopy(sp)
+                    #recon_left.id =recon_left.id *10
+                    recon_right = copy.deepcopy(sp)
+                    #recon_right.id =recon_right.id *10
+                    new_sp = copy.deepcopy(sp)
+
+                    new_sp.leftChild=recon_left
+                    new_sp.rightChild=recon_right
+
+                    new_sp.reset()
+                    recon_left.label_internal()
+
+                    recon_right.label_internal()
+
+                    
+                    if recon.split_list!=None:
+                        recon.split_list[0].map_gene(recon_left)
+                    
+                        recon.split_list[0].map_recon(recon_left)
+                        
+                        recon.split_list[1].map_gene(recon_right)
+                    
+                        recon.split_list[1].map_recon(recon_right)
+                    else:
+                        tr_copy_2.map_recon(recon)
 
 
-                tr_copy_2.rightChild.total_cost_()
-                tr_copy_2.rightChild.clean_up()
+                    recon.clean_up()
+                    recon.total_cost_()
 
+                    
+
+                    tr_copy_2.leftChild.total_cost_()
+                    tr_copy_2.leftChild.clean_up()
+
+
+                    tr_copy_2.rightChild.total_cost_()
+                    tr_copy_2.rightChild.clean_up()
+
+                    
+
+                    recon_1_cost =tr_copy_2.rightChild.cost+tr_copy_2.leftChild.cost+1+len(recon_right.refTo)+len(recon_left.refTo)
+                    recon_left.reset()
+                    recon_right.reset()
+                    tr_copy_2.rightChild.reset()
+                    tr_copy_2.leftChild.reset()
                 
+                    new_topo.label_internal()
+                    new_topo.map_gene(recon_1)
+                    
+                    new_topo.map_recon(recon_1)
+    
+                    recon_1.clean_up()
+                    recon_1.total_cost_()
 
-                recon_1_cost =tr_copy_2.rightChild.cost+tr_copy_2.leftChild.cost+1+len(recon_right.refTo)+len(recon_left.refTo)
-                recon_left.reset()
-                recon_right.reset()
-                tr_copy_2.rightChild.reset()
-                tr_copy_2.leftChild.reset()
-               
-                new_topo.label_internal()
-                new_topo.map_gene(recon_1)
-                
-                new_topo.map_recon(recon_1)
+                    recon_1.cost= recon_1.cost+(Initial_multiple_mapping- cost) +len(recon_1.refTo)
+
+                    
+                    print(recon_1_cost)
+
+                    print(recon_1.cost)
+
+                    NNI_cost=recon_1.cost
+                    duplication_cost=recon_1_cost
+    
  
-                recon_1.clean_up()
-                recon_1.total_cost_()
-
-                recon_1.cost= recon_1.cost+(Initial_multiple_mapping- cost) +len(recon_1.refTo)
-
-                
-                print(recon_1_cost)
-
-                print(recon_1.cost)
- 
- 
-                if  recon_1.cost<recon_1_cost and  sp.isLeaf==None:
+                if  NNI_cost<duplication_cost and  sp.isLeaf==None:
                         #print('NNI')
                         #print(to_newick(new_topo))
                         #print(to_newick(tr))
@@ -713,7 +720,7 @@ def reconcILS(tr,sp,sp_copy,sp_):
                     
                         return sp
 
-                if  recon_1.cost>=recon_1_cost or  sp.isLeaf:
+                if  NNI_cost>=duplication_cost or  sp.isLeaf:
 
                         print('Duplication')
                         
@@ -787,9 +794,7 @@ def reconcILS(tr,sp,sp_copy,sp_):
   
 
                             #clearcost_1(sp_copy,recon_left,recon_right)
-                            print(to_newick(tr.leftChild))
-
-                            print(to_newick(tr.rightChild))
+                           
                             print(tr.isLeaf)
                             if tr.isLeaf:
                                 tr.order_gene(recon_left)
