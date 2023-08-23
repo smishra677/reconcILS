@@ -30,8 +30,12 @@ def read_log(flag,i,dic,folder):
         val= (i.split(':'))
         if val[0]=='Total duplications':
             dic['Duplication']+=[int(val[1])]
-        elif val[0]=='Total ILS':
+        elif val[0] in ['Deep Coalescence in the parent tree']:
             dic['NNI']+=[int(val[1])]
+        elif val[0] in ['Deep Coalescence in the daughter trees']:
+            dic['NNI'][-1]+=int(val[1])
+        elif val[0] in ['Deep Coalescences when joining daughter trees']:
+            dic['NNI'][-1]+=int(val[1])
         elif val[0]=='Total losses':
             dic['Loss']+=[int(val[1])]
         else:
@@ -362,16 +366,16 @@ def ILS(gene_tree,tr,sp_copy,cost):
 
                     
                     #new_cost =cop.optimize_cost(i[0],i[1])
-                    i[0].order_gene(cop)
-                    i[0].label_internal()
+                    i[1].order_gene(cop)
+                    i[1].label_internal()
                     cop.label_internal()
-                    i[0].map_gene(cop)
+                    i[1].map_gene(cop)
                     new_cost = len(cop.refTo)
                     print(best_cost,new_cost)
 
                 
                     
-                    if best_cost>new_cost and cost>0:
+                    if best_cost>=new_cost and cost>0:
                         best_cost=new_cost
 
 
@@ -635,36 +639,44 @@ def reconcILS(tr,sp,sp_copy,sp_):
 
                     
 
-                    tr_copy_2.leftChild.total_cost_()
-                    tr_copy_2.leftChild.clean_up()
-
-
-                    tr_copy_2.rightChild.total_cost_()
-                    tr_copy_2.rightChild.clean_up()
-
+                  
+                    new_gene_tree.leftChild.map_gene(recon_left)
+                    
+                    new_gene_tree.leftChild.map_gene(recon_right)
                     
 
-                    recon_1_cost =tr_copy_2.rightChild.cost+tr_copy_2.leftChild.cost+1+len(recon_right.refTo)+len(recon_left.refTo)
+                    
+                    recon_left.find_loss_sp(recon_left)
+                    recon_right.find_loss_sp(recon_right)
+
                     recon_left.reset()
+
                     recon_right.reset()
-                    tr_copy_2.rightChild.reset()
-                    tr_copy_2.leftChild.reset()
+                    
+
+
+                    print(recon_left.cost)
+                    print(recon_right.cost)
+                    print(to_newick(recon_left))
+                    print(to_newick(recon_right))
+
+                    recon_1_cost =recon_right.cost+recon_right.cost+1
+
+                    new_gene_tree.rightChild.reset()
+                    new_gene_tree.leftChild.reset()
                 
                     new_topo.label_internal()
                     new_topo.map_gene(recon_1)
-                    
-                    new_topo.map_recon(recon_1)
-    
-                    recon_1.clean_up()
-                    recon_1.total_cost_()
 
+                    
+                    recon_1.find_loss_sp(recon_1)
                     recon_1.cost= recon_1.cost+(Initial_multiple_mapping- cost) +len(recon_1.refTo)
 
                     
-                    print(recon_1_cost)
+                    print('Duplication Cost',recon_1_cost)
 
-                    print(recon_1.cost)
-
+                    print('NNI Cost',recon_1.cost)
+                    
                     NNI_cost=recon_1.cost
                     duplication_cost=recon_1_cost
     
@@ -695,8 +707,12 @@ def reconcILS(tr,sp,sp_copy,sp_):
                         sp.evolve='NNI'
                         print('NNI',to_newick(new_topo))
                         copy_event(sp_1,sp)
+                        clearid(sp,'Left')
+                        clearid(sp,'Right')
 
                         #return reconcILS(new_topo,sp,sp_copy,sp_)
+
+                        
                        
 
 
@@ -1045,9 +1061,10 @@ def main():
 
 
 
+
     fig, ax = plt.subplots()
 
-    layout = g.layout_reingold_tilford(root=[int(s.split('\n')[3][0].split('--')[0])])
+    layout = g.layout_reingold_tilford(root=[int(s.split('\n')[3].split('--')[0])])
     ig.plot(g, layout=layout, target=ax)
     
     plt.show()

@@ -482,6 +482,17 @@ class Tree:
 
     
 
+    def find_loss_sp(self,root):
+        if self:
+            if self.leftChild:
+                root.cost+=self.leftChild.find_loss_sp(root)
+            if self.rightChild:
+                root.cost+=self.leftChild.find_loss_sp(root)
+            
+            if len(self.refTo)==0:
+                return 1
+
+
                 
 
     def search_sp_loss(self,recon):
@@ -546,11 +557,11 @@ class Tree:
                 self.rightChild.total_cost_()
 
             if self.isLeaf:
-                if self.evolve !='Speciation':
+                if self.evolve =='Loss':
                     self.cost=1
             else:
                 self.cost = self.leftChild.cost+self.rightChild.cost
-                if self.evolve in ['Duplication','NNI','Loss']:
+                if self.evolve in ['Loss']:
                     self.cost = self.cost +1
                 
 

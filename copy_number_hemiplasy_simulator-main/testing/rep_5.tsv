@@ -1,4 +1,2 @@
-Branch	Parent_1	Copy_2	Copy_3	Copy_4
-1	False	True	True	False
-2	True	True	True	True
-3	True	True	True	True
+Branch	Parent_1	Copy_2	Copy_3
+2	True	True	True

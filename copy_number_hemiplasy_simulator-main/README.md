@@ -26,9 +26,9 @@ Simulate gene trees under a model that allows copy number hemiplasy.
 
 * rep_i.tre = final simulated gene family tree for replicate i.
 * rep_i_alltrees.tre = all full subtrees (prior to the placement of mutations) for replicate i.
-* rep_i.log = A log file indicating the total numbers of duplications and losses for the replicate. Also indicates when all copies were lost.
+* rep_i.log = A log file indicating the total numbers of duplications and losses for the replicate. Also indicates when all copies were lost, and has counters for different types of deep coalescence events.
 * rep_i.tsv = A table indicating for each branch in the species tree, which subtrees were concordant.
 * rep_sptree_i.tre = An annotated species tree for matching branches to those in the tsv file.
 
 # Example Usage
-python3 simulator_v1f.py --stree sp_tree.tre --mu_par 0.3 --lambda_par 0.5 --reps 10 --output example_trees
+python3 simulator_v1g.py --stree sp_tree.tre --mu_par 0 --lambda_par 0.3 --reps 10 --output example
