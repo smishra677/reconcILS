@@ -583,7 +583,7 @@ def reconcILS(tr,sp,sp_copy,sp_):
                 
 
                 print(5)
-                if sp.isLeaf:
+                if sp.isLeaf :
                     NNI_cost=1
                     duplication_cost=1
                 else:
@@ -638,23 +638,36 @@ def reconcILS(tr,sp,sp_copy,sp_):
                     recon.total_cost_()
 
                     
-
-                  
-                    new_gene_tree.leftChild.map_gene(recon_left)
-                    
-                    new_gene_tree.leftChild.map_gene(recon_right)
-                    
-
-                    
-                    recon_left.find_loss_sp(recon_left)
-                    recon_right.find_loss_sp(recon_right)
-
                     recon_left.reset()
 
                     recon_right.reset()
+
+                    recon_left.label_internal()
+
+                    recon_right.label_internal()
+
+                    
+                    
+                    print('new_gene',to_newick(new_gene_tree))
+
+                    print('new_gene',to_newick(new_gene_tree.leftChild))
+
+                    print('new_gene',to_newick(new_gene_tree.rightChild))
+                    new_gene_tree.label_internal()
+
+                  
+                    new_gene_tree.leftChild.map_gene(recon_left)
+
+                    
+                    new_gene_tree.rightChild.map_gene(recon_right)
+                    recon_left.find_loss_sp(recon_left)
+                    recon_right.find_loss_sp(recon_right)
+
                     
 
-
+                    print(to_newick(recon_left))
+                    print(to_newick(recon_right))
+                    
                     print(recon_left.cost)
                     print(recon_right.cost)
                     print(to_newick(recon_left))
@@ -662,6 +675,10 @@ def reconcILS(tr,sp,sp_copy,sp_):
 
                     recon_1_cost =recon_right.cost+recon_right.cost+1
 
+                    recon_left.reset()
+
+                    recon_right.reset()
+                    
                     new_gene_tree.rightChild.reset()
                     new_gene_tree.leftChild.reset()
                 
@@ -681,7 +698,7 @@ def reconcILS(tr,sp,sp_copy,sp_):
                     duplication_cost=recon_1_cost
     
  
-                if  NNI_cost<duplication_cost and  sp.isLeaf==None:
+                if  NNI_cost<=duplication_cost and  sp.isLeaf==None:
                         #print('NNI')
                         #print(to_newick(new_topo))
                         #print(to_newick(tr))

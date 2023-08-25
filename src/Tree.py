@@ -484,13 +484,20 @@ class Tree:
 
     def find_loss_sp(self,root):
         if self:
+            print('tag',self.to_newick())
+            if self.leftChild and self.rightChild:
+                if self.rightChild.isLeaf and len(self.rightChild.refTo)==0 and self.leftChild.isLeaf and len(self.leftChild.refTo)==0:
+                    return 1
             if self.leftChild:
                 root.cost+=self.leftChild.find_loss_sp(root)
             if self.rightChild:
-                root.cost+=self.leftChild.find_loss_sp(root)
+                root.cost+=self.rightChild.find_loss_sp(root)
             
             if len(self.refTo)==0:
                 return 1
+            else:
+                return 0
+
 
 
                 
