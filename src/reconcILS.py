@@ -470,16 +470,13 @@ def reconcILS(tr,sp,sp_copy,sp_):
         
         print('cost',Initial_multiple_mapping)
 
-        if sp.evolve!=None:
-            sp.leftChild= reconcILS(tr,sp.leftChild,sp_copy,sp_)
-            sp.rightChild=reconcILS(tr,sp.rightChild,sp_copy,sp_)
-            return sp        
+
 
         if tr==None:
             if sp.isLeaf:
                 if sp.inital_ref==0:
                     
-                    sp.evolve='Loss'
+
                     sp = parse(to_newick(sp))
                     sp.evolve='Loss'
                 elif Initial_multiple_mapping>=2:
@@ -500,7 +497,7 @@ def reconcILS(tr,sp,sp_copy,sp_):
         print(to_newick(tr))
         print(to_newick(sp))  
         if Initial_multiple_mapping in [0,1]:
-            
+
         
             if sp.isLeaf:
                 if sp.inital_ref==0 and sp.parent.evolve!='Loss':
@@ -522,13 +519,19 @@ def reconcILS(tr,sp,sp_copy,sp_):
 
                     if len(set(sp.leftChild.taxa).intersection(set(tr.taxa)))==0:
                         sp.leftChild.evolve='Loss'
+                        print('right')
                         clearid(sp,'right')
-                        return reconcILS(tr,sp,sp_copy,sp_)
+                        sp.leftChild =sp.leftChild
+                        sp.rightChild= reconcILS(tr,sp.rightChild,sp_copy,sp_)
+                        return sp
                     
                     if len(set(sp.rightChild.taxa).intersection(set(tr.taxa)))==0:
                         sp.rightChild.evolve='Loss'
+                        print('left')
                         clearid(sp,'Left')
-                        return reconcILS(tr,sp,sp_copy,sp_)
+                        sp.rightChild =sp.rightChild
+                        sp.leftChild= reconcILS(tr,sp.leftChild,sp_copy,sp_)
+                        return sp
                     
 
                     if len(set(sp.leftChild.taxa).intersection(set(tr.leftChild.taxa)))>=len(set(sp.rightChild.taxa).intersection(set(tr.leftChild.taxa))):
@@ -545,20 +548,36 @@ def reconcILS(tr,sp,sp_copy,sp_):
                     #print('1283',to_newick(sp))
                     
                     return sp
+            elif sp.evolve!=None:
+                if len(set(sp.leftChild.taxa).intersection(set(tr.leftChild.taxa)))>=len(set(sp.rightChild.taxa).intersection(set(tr.leftChild.taxa))):
+                        sp.leftChild= reconcILS(tr.leftChild,sp.leftChild,sp_copy,sp_)
+                        sp.rightChild =reconcILS(tr.rightChild,sp.rightChild,sp_copy,sp_)
+                else:
+
+                        sp.leftChild= reconcILS(tr.rightChild,sp.leftChild,sp_copy,sp_)
+                        sp.rightChild =reconcILS(tr.leftChild,sp.rightChild,sp_copy,sp_)                        
+                    
+                    
+                return sp
+             
             else:
                     sp.evolve= 'Speciation'
       
                     if len(set(sp.leftChild.taxa).intersection(set(tr.taxa)))==0:
-                        print('left')
+                        print('left1')
                         sp.leftChild.evolve='Loss'
                         clearid(sp,'right')
-                        return reconcILS(tr,sp,sp_copy,sp_)
+                        sp.leftChild =sp.leftChild
+                        sp.rightChild= reconcILS(tr,sp.rightChild,sp_copy,sp_)
+                        return sp
                     
                     if len(set(sp.rightChild.taxa).intersection(set(tr.taxa)))==0:
-                        print('right')
+                        print('right1')
                         sp.rightChild.evolve='Loss'
                         clearid(sp,'Left')
-                        return reconcILS(tr,sp,sp_copy,sp_)
+                        sp.leftChild =reconcILS(tr,sp.leftChild,sp_copy,sp_)
+                        sp.rightChild= sp.rightChild
+                        return sp
                     
 
                     if len(set(sp.leftChild.taxa).intersection(set(tr.leftChild.taxa)))>=len(set(sp.rightChild.taxa).intersection(set(tr.leftChild.taxa))):
@@ -727,7 +746,7 @@ def reconcILS(tr,sp,sp_copy,sp_):
                         clearid(sp,'Left')
                         clearid(sp,'Right')
 
-                        #return reconcILS(new_topo,sp,sp_copy,sp_)
+                        return reconcILS(new_topo,sp,sp_copy,sp_)
 
                         
                        
@@ -1067,7 +1086,7 @@ def main():
     new_dic= dict(zip(node_,taxa_))
     print(new_dic)
     
-    #make_table(lis_paralogy,lis_NNI,sorted_dict_LC,sp_copy_1)
+    make_table(lis_paralogy,lis_NNI,sorted_dict_LC,sp_copy_1)
     Keys = list(new_dic.keys())
     Keys.sort()
     sorted_dict = {i: new_dic[i] for i in Keys}
