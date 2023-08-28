@@ -1,7 +1,10 @@
 Replicate: 1
-Total duplications: 0
+Total duplications: 1
 Total losses: 0
 Deep Coalescence in the parent tree: 0
 Deep Coalescence in the daughter trees: 0
 Copy Number Hemiplasy: 0
-Deep Coalescences when joining daughter trees: 0
+Deep Coalescence due to placing mutations: 0
+Deep Coalescences when joining daughter trees: 1
+Deep Coalescences when joining daughter trees (only count once for each subtree, DLCPar counting): 1
+Deep Coalescences due only to branch mismatch joining daughter trees: 0

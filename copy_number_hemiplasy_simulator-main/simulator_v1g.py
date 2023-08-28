@@ -70,7 +70,7 @@ def write_mutated(trees, outputdir, rep):
             f.write(thestring)
 
 
-def write_log(total_dups, total_losses, outputdir, rep, len_trees, table, annotated, ils_parent, hemiplasy, ils_daughter, ils_joining):
+def write_log(total_dups, total_losses, outputdir, rep, len_trees, table, annotated, ils_parent, hemiplasy, ils_daughter, ils_mutation, ils_joining, ils_joining_dlcpar, dc_branch_mismatch):
     output_log_name = '%s/rep_%s.log' % (outputdir, rep)
     output_log = open(output_log_name, 'w')
     output_log.write("Replicate: %s\n" % rep)
@@ -79,7 +79,10 @@ def write_log(total_dups, total_losses, outputdir, rep, len_trees, table, annota
     output_log.write("Deep Coalescence in the parent tree: %s\n" % str(ils_parent))
     output_log.write("Deep Coalescence in the daughter trees: %s\n" % str(ils_daughter))
     output_log.write("Copy Number Hemiplasy: %s\n" % str(hemiplasy))
+    output_log.write("Deep Coalescence due to placing mutations: %s\n" % str(ils_mutation))
     output_log.write("Deep Coalescences when joining daughter trees: %s\n" % str(ils_joining))
+    output_log.write("Deep Coalescences when joining daughter trees (only count once for each subtree, DLCPar counting): %s\n" % str(ils_joining_dlcpar))
+    output_log.write("Deep Coalescences due only to branch mismatch joining daughter trees: %s\n" % str(dc_branch_mismatch))
     if len_trees == 0:
         output_log.write("All copies were lost.\n")
     output_log.close()
@@ -149,7 +152,7 @@ def add_duplication(event_time, sp_leaves, new_subtree):
     subtree.annotations['age'] = float(event_time)
     return(subtree)
     
-def lose_a_copy(event_time, sp_leaves, all_trees):
+def lose_a_copy(event_time, sp_leaves, all_trees, sp_tree):
     # find the potential edges that exist in all available trees
     potential_edges = []
     edge_trees = []
@@ -187,6 +190,9 @@ def lose_a_copy(event_time, sp_leaves, all_trees):
     the_edge = potential_edges[the_edge_index]
     the_tree = edge_trees[the_edge_index]
     the_tree_index = edge_tree_indices[the_edge_index]
+
+    # check for hemiplasy on this edge.
+    hemiplasy_count, mutation_dc_count = check_loss_hemiplasy(the_edge, sp_tree)
                 
     # remove any daughters of the selected edge
     taxa_to_remove = []
@@ -208,7 +214,7 @@ def lose_a_copy(event_time, sp_leaves, all_trees):
     except:
         all_trees.pop(the_tree_index)
         #print('Throwing a tree out.')
-    return(all_trees)
+    return(all_trees, hemiplasy_count, mutation_dc_count)
 
 def get_adjacent_copy_numbers(adjacent_edges, all_trees):
     """Figure out how many copies are in each edge using the gene trees."""
@@ -231,31 +237,84 @@ def get_adjacent_copy_numbers(adjacent_edges, all_trees):
     #print(N_adjacent_edges)
     return(N_adjacent_edges)
 
-def check_hemiplasy(mutated_subtree, sp_tree):
+def check_loss_hemiplasy(edge, sp_tree):
+    
+    dc_count = 0 # count CNH
+    dc_2_count = 0 # count mutation deep coalescences
 
-    dc_count = 0
+
+    leaves = get_leaves(edge)
+    leaves = [x.split()[0] for x in leaves]
+
+    time_of_duplication = edge.head_node.age + edge.length
+        
+    found_in_sp_tree = False
+    exact_branch = False # use this to track whether the duplication is placed on the branch of the gene tree matching the branch of the species tree.
+
+    for spedge in sp_tree.preorder_edge_iter():
+        spleaves = get_leaves(spedge)
+        current_check = check_lists_equality(spleaves, leaves)
+        if current_check == True:
+            found_in_sp_tree = True
+            
+        # check whether the matching branch exists at the time of duplication.
+        try:
+            sp_relevant_time_frame = [spedge.head_node.age, spedge.head_node.age + spedge.length]
+        except: 
+            sp_relevant_time_frame = [spedge.head_node.age, np.inf]
+
+        if current_check == True and time_of_duplication > sp_relevant_time_frame[0] and time_of_duplication < sp_relevant_time_frame[1]:
+            exact_branch = True
+        
+    if found_in_sp_tree == False:
+        dc_count += 1
+    elif exact_branch == False:
+        dc_2_count += 1
+    
+
+
+    return(dc_count, dc_2_count)
+
+def check_hemiplasy(mutated_subtree, sp_tree):
+    
+    dc_count = 0 # count CNH
+    dc_2_count = 0 # count mutation deep coalescences
 
     for edge in mutated_subtree.preorder_edge_iter():
 
         leaves = get_leaves(edge)
         leaves = [x.split()[0] for x in leaves]
+
+        time_of_duplication = edge.head_node.age + edge.length
         
         found_in_sp_tree = False
+        exact_branch = False # use this to track whether the duplication is placed on the branch of the gene tree matching the branch of the species tree.
 
         for spedge in sp_tree.preorder_edge_iter():
             spleaves = get_leaves(spedge)
             current_check = check_lists_equality(spleaves, leaves)
             if current_check == True:
                 found_in_sp_tree = True
+            
+            # check whether the matching branch exists at the time of duplication.
+            try:
+                sp_relevant_time_frame = [spedge.head_node.age, spedge.head_node.age + spedge.length]
+            except: 
+                sp_relevant_time_frame = [spedge.head_node.age, np.inf]
+
+            if current_check == True and time_of_duplication > sp_relevant_time_frame[0] and time_of_duplication < sp_relevant_time_frame[1]:
+                exact_branch = True
         
         if found_in_sp_tree == False:
             dc_count += 1
+        elif exact_branch == False:
+            dc_2_count += 1
     
         break
 
 
 
-    return(dc_count)
+    return(dc_count, dc_2_count)
 
 def count_dc(gene_tree, sp_tree):
 
@@ -335,6 +394,8 @@ def birth_death(sp_tree, lambda_par, mu_par):
     ils_1 = 0 # dc in parent tree
     ils_2 = 0 # CNH
     ils_3 = 0 # dc in daughter tree
+    ils_4 = 0 # dc leading to mutation placement
+    
 
     # sample the parent tree from the MSC
     parent_tree = get_gene_tree(sp_tree)
@@ -424,8 +485,9 @@ def birth_death(sp_tree, lambda_par, mu_par):
                     #print(mutated_subtree)
 
                     #check whether branches of the mutated subtree are present in the species tree.
-                    hemiplasy_count = check_hemiplasy(mutated_subtree, sp_tree)
+                    hemiplasy_count,mutation_dc_count = check_hemiplasy(mutated_subtree, sp_tree)
                     ils_2 += hemiplasy_count
+                    ils_4 += mutation_dc_count
                     #print(mutated_subtree)
                     #print("This is my hemiplasy indicator: ", hemiplasy_count)
                     daughter_dc = count_dc_daughter(gene_tree = mutated_subtree, sp_tree=sp_tree)
@@ -446,9 +508,12 @@ def birth_death(sp_tree, lambda_par, mu_par):
                     N = N - 1
 
                     # decide what to lose and drop it
-                    all_trees = lose_a_copy(event_time, sp_leaves, all_trees)
+                    all_trees, hemiplasy_count, mutation_dc_count = lose_a_copy(event_time, sp_leaves, all_trees, sp_tree)
+                    ils_2 += hemiplasy_count
+                    ils_4 += mutation_dc_count
                     #for tree in all_trees:
                     #    print(tree)
+
 
                     # add info on loss to edge annotations
                     edge.annotations['loss_%s' % total_losses] = [(edge.length - tc) + edge.head_node.age]
@@ -467,7 +532,7 @@ def birth_death(sp_tree, lambda_par, mu_par):
     
     #print(total_ils)
 
-    return(sp_tree, total_dups, total_losses, all_trees, unmodified_trees, ils_1, ils_2, ils_3)
+    return(sp_tree, total_dups, total_losses, all_trees, unmodified_trees, ils_1, ils_2, ils_3, ils_4)
 
 def create_table(sp_tree, unmodified_trees, all_subtrees):
 
@@ -518,11 +583,25 @@ def create_table(sp_tree, unmodified_trees, all_subtrees):
 
     return(all_branch_data, newly_annotated, unmodified_trees)
         
-            
+def check_dc_branch_mismatch(the_coalesced_edge, spleaves):
+
+    dc_branch = 0
+    # joining leaves
+    joining_leaves = [x.split()[0] for x in get_leaves(the_coalesced_edge)]
+
+    # check for match
+    match = check_lists_equality(joining_leaves, spleaves)
+    print(joining_leaves, spleaves, match)
+    if match == False:
+        dc_branch = 1
+
+    return dc_branch
 
 def coalesce_subtrees(all_subtrees, annotated_sp_tree):
 
     final_dc = 0
+    final_dc_dlcpar = 0
+    dc_branch_mismatch = 0
 
     # get the parent subtree
     parent_subtree = all_subtrees.pop(0)
@@ -558,6 +637,8 @@ def coalesce_subtrees(all_subtrees, annotated_sp_tree):
 
     # iterate over the subtrees in decreasing order of age
     for thesubtree in range(len(sorted_subtrees)):
+        count_dc_branch_mismatch = True
+        dlcpar_track = 0
         #print('Coalesce this subtree')
         #print(sorted_subtrees[thesubtree])
         #print('To this parent!')
@@ -659,6 +740,11 @@ def coalesce_subtrees(all_subtrees, annotated_sp_tree):
                 # select an edge from available at random
                 the_coalesced_edge_info = random.sample(possible_edges_to_coalesce, k=1)[0]
                 the_coalesced_edge = the_coalesced_edge_info[0]
+
+                # check for deep coalescence due to branch mismatch
+                if count_dc_branch_mismatch == True:
+                    dc_branch_mismatch_current = check_dc_branch_mismatch(the_coalesced_edge, original_branch_leaves)
+                    dc_branch_mismatch += dc_branch_mismatch_current
     
                 # update taxon namespace of new tree
                 for leaf in subtree.leaf_node_iter():
@@ -750,9 +836,13 @@ def coalesce_subtrees(all_subtrees, annotated_sp_tree):
             else:
                 age = branch_to_coalesce[3]
                 final_dc += 1
+                count_dc_branch_mismatch = False
+                if dlcpar_track == 0:
+                    final_dc_dlcpar += 1
+                    dlcpar_track  = 1
                 del branch_to_coalesce
 
-    return(parent, final_dc)
+    return(parent, final_dc, final_dc_dlcpar, dc_branch_mismatch)
       
 def main():
              
@@ -780,7 +870,7 @@ def main():
         sp_tree = sp_tree_main.clone()
 
         # perform top-down birth death
-        annotated_sp_tree, dup_count, loss_count, all_trees, unmodified_trees, ils_parent, hemiplasy, ils_daughter = birth_death(sp_tree, lambda_par, mu_par)
+        annotated_sp_tree, dup_count, loss_count, all_trees, unmodified_trees, ils_parent, hemiplasy, ils_daughter, ils_mutation = birth_death(sp_tree, lambda_par, mu_par)
 
         # make table
         table, annotated_towrite, sorted_unmodified_subtrees = create_table(sp_tree.clone(), unmodified_trees, all_trees)
@@ -790,6 +880,7 @@ def main():
 
         if len(all_trees) == 0:
             print('replicate: %s' % i)
+            ils_joining, ils_joining_dlcpar, dc_branch_mismatch = [np.nan, np.nan, np.nan]
             #print('All copies lost.')
             #write_log_alllost(dup_count, loss_count, args.output, str(i))
 
@@ -799,14 +890,14 @@ def main():
 
             # coalesce
             all_the_trees = [x.clone() for x in all_trees]
-            simulated_gene_family_tree, ils_joining = coalesce_subtrees(all_the_trees, annotated_sp_tree)
+            simulated_gene_family_tree, ils_joining, ils_joining_dlcpar, dc_branch_mismatch = coalesce_subtrees(all_the_trees, annotated_sp_tree)
 
 
             # print
             write_trees(simulated_gene_family_tree, args.output, str(i))
             del simulated_gene_family_tree
 
-        write_log(dup_count, loss_count, args.output, str(i), len(all_trees), table, annotated_towrite, ils_parent, hemiplasy, ils_daughter, ils_joining)
+        write_log(dup_count, loss_count, args.output, str(i), len(all_trees), table, annotated_towrite, ils_parent, hemiplasy, ils_daughter, ils_mutation, ils_joining, ils_joining_dlcpar, dc_branch_mismatch)
 
         # remove everything but the species tree
         del annotated_sp_tree
