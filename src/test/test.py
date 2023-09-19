@@ -16,62 +16,16 @@ import pandas as pd
 
 
 
-dic={'Process':[],'Replicate':[],'Gene_tree':[],'Species_Tree':[],'Duplication':[],'NNI':[],'Loss':[]}
+dic={'Process':[],'Replicate':[],'Gene_tree':[],'Species_Tree':[],'Duplication':[],'NNI':[],'Loss':[],'Hemiplasy':[]}
     
 from collections import Counter
 
 
-sp_string='(A,(B,C));'
-
-tr='(((A,A),C),B);'
-
-genetree = PhyloTree(tr)
-sptree = PhyloTree(sp_string)
-
-recon_tree_ete, events = genetree.reconcile(sptree)
-
-for ev in events:
-    if ev.etype == "S":
-        print('ORTHOLOGY RELATIONSHIP:', ','.join(ev.inparalogs), "<====>", ','.join(ev.orthologs))
-    elif ev.etype == "D":
-        print('PARALOGY RELATIONSHIP:', ','.join(ev.inparalogs), "<====>", ','.join(ev.outparalogs))
-recon_tree_ete.show()
+sp_string='(((A,(B,C)),D),(E,F));'
 
 
 
-exit()
-'''
-gene_tree='((A,C),B);'
-tr=parse(gene_tree)
-
-sp=parse(sp_string)
-sp_copy= copy.deepcopy(sp)
-sp_copy.reset()
-
-tr.order_gene(sp)
-
-tr.label_internal()
-sp.label_internal()
-
-
-
-tr.map_gene(sp)
-
-setCost(sp)
-sp.isRoot=True
-tr.isRoot=True
-sp_copy.isRoot=True
-reconcILS(tr,sp,sp_copy,sp)
-#print('######################33')
-#print(to_newick(sp))
-
-li =sp_event(sp,[])
-
-print(Counter(li))
-exit()
-'''
-
-gene_folder='7_28'
+gene_folder='8_28'
 #gene_tre= open('./output_gene/gene_tree.txt')
 #trees =gene_tre.read().strip().split('\n')
 #gene_tre.close()
@@ -158,7 +112,7 @@ for i in dic:
     print(len(dic[i]))
 df = pd.DataFrame(dic)
 
-df.to_csv('result_7_30.csv', index=False)
+df.to_csv('result_8_28.csv', index=False)
 '''
 
 Initial_multiple_mapping=1

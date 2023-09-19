@@ -36,8 +36,16 @@ def read_log(flag,i,dic,folder):
             dic['NNI'][-1]+=int(val[1])
         elif val[0] in ['Deep Coalescences when joining daughter trees']:
             dic['NNI'][-1]+=int(val[1])
+        elif val[0] in ['Deep Coalescence due to placing mutations']:
+            dic['NNI'][-1]+=int(val[1])
+        elif val[0] in ['Deep Coalescences when joining daughter trees (only count once for each subtree, DLCPar counting)']:
+            dic['NNI'][-1]+=int(val[1])
+        elif val[0] in ['Deep Coalescences due only to branch mismatch joining daughter trees']:
+            dic['NNI'][-1]+=int(val[1])
         elif val[0]=='Total losses':
             dic['Loss']+=[int(val[1])]
+        elif val[0]=='Copy Number Hemiplasy':
+            dic['Hemiplasy']+=[int(val[1])]
         else:
             continue
    
@@ -46,18 +54,35 @@ def read_log(flag,i,dic,folder):
 
 
 
-def Create_pd(flag,i,o,dic):
+def Create_pd(flag,i,oo,dic):
+    from collections import Counter
+    o_list=[]
+
+    for k in oo:
+        if type(k)==list:
+            o_list+=k
+        else:
+            o_list.append(k)
+
+    o= dict(Counter(o_list))
+            
+
+
     
     dic['Process']+=[flag]
     dic['Replicate']+=[i]
     dic['Duplication'].append(0)
     dic['NNI'].append(0)
     dic['Loss'].append(0)
+    dic['Hemiplasy'].append(0)
 
 
     for i in o:
          if i in ['Duplication','NNI','Loss']:
               dic[i][-1]=o[i]
+
+
+
               
          
     
@@ -71,7 +96,7 @@ def Create_pd_ete3(flag,i,o,dic):
     dic['Duplication'].append(0)
     dic['NNI'].append(0)
     dic['Loss'].append(0)
-
+    dic['Hemiplasy'].append(0)
 
     for i in o:
          if i in ['D','L']:
@@ -214,14 +239,13 @@ def find_parent_child(root,child):
 
     if len(root.refTo)>1:
             #root.refTo.reverse()
-            print('ref',root.refTo)
+
             for tre in root.refTo:
                 for tree1 in root.refTo:
-                    if tree1.parent:
-                        print(tre.children,tree1,tree1.taxa,tree1.parent,tree1.parent.taxa,tree1.parent.children)
+                    
                     if (tree1 in tre.children):
                         if tree1==tre.leftChild:
-                            print('match_left')
+                            #print('match_left')
                             child.append([tre,tree1,'Left'])
                         else:
                             child.append([tre,tree1,'Right'])
@@ -235,24 +259,155 @@ def clear_ref(root):
         clear_ref(root.rightChild)
         root.refTo=[]
         root.tag = None
+
+def find_bipartitions(bi,sp):
+
+    if sp:
+        if sp.isLeaf:
+            return bi
+        else:
+            bi.append(sp.taxa_list)
+        bi1 =find_bipartitions(bi,sp.leftChild)
+        bi2 =find_bipartitions(bi1,sp.rightChild)
+    return bi2
+
+def find_biparition_cost(sp,tr):
+
+    print(sp,tr)
+    merged = sp+tr
+
+
+
+    difference= 0
+
+    diff_parition=[]
+    for i in merged:
+        if i in tr and i not in sp:
+            diff_parition.append(i)
+            difference= difference+1
+ 
+    print('diff_partion',diff_parition)
+    return difference
+    
+
+
+def pick_first_edge(child,gene_tree,tr):
+
+    if len(child)==0:
+            return 
+    else:
+            pool={}
+            tre_pool={}
             
+            for k in range(len(child)):
+                    
+                    ch1=child[k]
+                    
+                    gene_tree.reset()
+
+                    ch = copy.deepcopy(ch1[0])
+                    ch.reset()
+
+                    print(ch1[2])
+    
+
+
+                    list_tree= ch.NNI(gene_tree,ch1[2])
+
+
+                    for li in list_tree:
+                        
+                            print('top_0',to_newick(li[0]))
+                            print('topo_1',to_newick(li[1]))
+
+                            print('##############################')
+                            
+
+                    
+                            
+                            tr.reset()
+                            li[0].reset()
+                            li[0].order_gene(tr)
+
+                            li[0].label_internal()
+                            tr.label_internal()
+                            bi_sp=find_bipartitions([],tr)
+                            bi_li_0_l=find_bipartitions([],li[0].leftChild)
+                            bi_li_0_r=find_bipartitions([],li[0].rightChild)
+                            bi_score_left=find_biparition_cost(bi_sp,bi_li_0_l)
+                            bi_score_right=find_biparition_cost(bi_sp,bi_li_0_r)
+
+                            tr.reset()
+                            tr.cost=0
+                            li[0].reset()
+
+                            li[0].leftChild.order_gene(tr)
+                            li[0].leftChild.label_internal()
+                            tr.label_internal()
+  
+                            li[0].leftChild.map_gene(tr)
+                            tr.find_loss_sp(tr)
+                            loss_left = tr.cost
+
+
+                            
+                            tr.reset()
+                            tr.cost=0
+                            li[0].rightChild.order_gene(tr)
+                            li[0].rightChild.label_internal()
+                            tr.label_internal()
+
+                            
+                            li[0].rightChild.map_gene(tr)
+                            tr.find_loss_sp(tr)
+                            loss_right = tr.cost
+                            loss_score=loss_left+loss_right
+
+                            print(loss_left,loss_right,bi_score_left,bi_score_right)
+ 
+                            if k not in pool.keys():
+                                pool[k]= loss_score+bi_score_left+bi_score_right
+                                tre_pool[k]=li[1]
+
+                            else:
+                                if pool[k]<(loss_score+bi_score_left+bi_score_right):
+                                    continue
+                                else:
+                                    pool[k] =loss_score+bi_score_left+bi_score_right
+                                    tre_pool[k]=li[1]
+                                
+            
+            print(pool)
+
+            return child[min(pool, key=pool.get)]
+
+
+
+
+
+
+                    
+                    
+
 def parent_child(root,child):
     if root:
         if root.isLeaf:
             return []
         else:
             child= find_parent_child(root,child)
+    
+
     return child
 
 
 def clearid(sp,ori):
     if sp:
         if ori=='Left':
-            sp.id =sp.id*5
+            sp.id =sp.id*2
 
 
         else:
-            sp.id =sp.id*7
+            sp.id =sp.id*3
 
         clearid(sp.leftChild,ori)
             
@@ -324,8 +479,13 @@ def ILS(gene_tree,tr,sp_copy,cost):
     child=[]
 
     child= parent_child(tr,child)
-    print(to_newick(gene_tree))
-    print(child)
+
+    if len(child)>1:
+        #print('ILS',pick_first_edge(child,gene_tree,tr).to_newick())
+
+        child= [pick_first_edge(child,gene_tree,tr)]
+
+
     #print(gene_tree.parent)
 
     if len(child)==0 or cost==0:
@@ -335,6 +495,7 @@ def ILS(gene_tree,tr,sp_copy,cost):
         new_topo=copy.deepcopy(gene_tree)
         geneTree =copy.deepcopy(new_topo)
         geneTree.reset()
+        
         
         
         for ch1 in child:
@@ -434,23 +595,11 @@ def ILS(gene_tree,tr,sp_copy,cost):
                         return ILS(new_topo,new_sp,sp_copy,cost)
                 
                 
-                '''
-
-
-
-                print(to_newick(new_topo))
-
-    
-            
-             
-               
-
-             
-                '''
     return new_topo,cost
         
 def reconcILS(tr,sp,sp_copy,sp_):
     if sp: 
+        
         #print(sp.taxa)
         #print(sp.children)
 
@@ -513,8 +662,8 @@ def reconcILS(tr,sp,sp_copy,sp_):
                     sp.evolve='Speciation'
                     return sp
             elif (sp.leftChild.isLeaf and sp.rightChild.isLeaf) :
-
-                    sp.evolve= 'Speciation'
+                    if sp.evolve==None:
+                        sp.evolve= 'Speciation'
                     print('species',to_newick(sp))
 
                     if len(set(sp.leftChild.taxa).intersection(set(tr.taxa)))==0:
@@ -609,7 +758,7 @@ def reconcILS(tr,sp,sp_copy,sp_):
 
                     new_topo,cost =(ILS(tr_copy_1,sp_1,sp_1,Initial_multiple_mapping))
                     #new_topo =parse(to_newick(new_topo))
-
+                    new_topo.reset()
 
                     recon_1 = copy.deepcopy(sp_1)
                     recon_1.reset()
@@ -618,61 +767,49 @@ def reconcILS(tr,sp,sp_copy,sp_):
 
                     new_gene_tree =copy.deepcopy(tr_copy_2)
                     new_gene_tree.reset()
+                    new_gene_tree.leftChild = parse(new_gene_tree.leftChild.to_newick())
+                    new_gene_tree.rightChild= parse(new_gene_tree.rightChild.to_newick())
 
 
-                    recon=Tree.Tree()
-                    recon= copy.deepcopy(sp_2)
                     
-
-                    recon.tag_species(new_gene_tree,tr_copy_2)
 
                     recon_left = copy.deepcopy(sp)
                     #recon_left.id =recon_left.id *10
                     recon_right = copy.deepcopy(sp)
                     #recon_right.id =recon_right.id *10
                     new_sp = copy.deepcopy(sp)
+                    recon_right = parse(recon_right.to_newick())
+                    recon_left= parse(recon_left.to_newick())
+
 
                     new_sp.leftChild=recon_left
                     new_sp.rightChild=recon_right
 
                     new_sp.reset()
-                    recon_left.label_internal()
 
-                    recon_right.label_internal()
-
-                    
-                    if recon.split_list!=None:
-                        recon.split_list[0].map_gene(recon_left)
-                    
-                        recon.split_list[0].map_recon(recon_left)
-                        
-                        recon.split_list[1].map_gene(recon_right)
-                    
-                        recon.split_list[1].map_recon(recon_right)
-                    else:
-                        tr_copy_2.map_recon(recon)
-
-
-                    recon.clean_up()
-                    recon.total_cost_()
-
-                    
                     recon_left.reset()
-
                     recon_right.reset()
-
                     recon_left.label_internal()
-
                     recon_right.label_internal()
 
+                    
+                    
                     
                     
                     print('new_gene',to_newick(new_gene_tree))
 
                     print('new_gene',to_newick(new_gene_tree.leftChild))
+                    print('sp_left',recon_left.to_newick())
+                    print('sp_right',recon_right.to_newick())
 
                     print('new_gene',to_newick(new_gene_tree.rightChild))
-                    new_gene_tree.label_internal()
+
+                    new_gene_tree.leftChild.order_gene(recon_left)
+                    new_gene_tree.rightChild.order_gene(recon_right)
+
+                    new_gene_tree.leftChild.label_internal()
+
+                    new_gene_tree.rightChild.label_internal()
 
                   
                     new_gene_tree.leftChild.map_gene(recon_left)
@@ -684,15 +821,15 @@ def reconcILS(tr,sp,sp_copy,sp_):
 
                     
 
-                    print(to_newick(recon_left))
-                    print(to_newick(recon_right))
+
                     
                     print(recon_left.cost)
                     print(recon_right.cost)
                     print(to_newick(recon_left))
                     print(to_newick(recon_right))
 
-                    recon_1_cost =recon_right.cost+recon_right.cost+1
+                    recon_1_cost =recon_right.cost+recon_left.cost+1
+                    print(recon_1_cost)
 
                     recon_left.reset()
 
@@ -700,19 +837,23 @@ def reconcILS(tr,sp,sp_copy,sp_):
                     
                     new_gene_tree.rightChild.reset()
                     new_gene_tree.leftChild.reset()
-                
+                    
+                    new_topo.order_gene(recon_1)
                     new_topo.label_internal()
                     new_topo.map_gene(recon_1)
 
                     
                     recon_1.find_loss_sp(recon_1)
-                    recon_1.cost= recon_1.cost+(Initial_multiple_mapping- cost) +len(recon_1.refTo)
+                    
 
+                    recon_1.cost= recon_1.cost+(Initial_multiple_mapping- cost)
                     
                     print('Duplication Cost',recon_1_cost)
 
                     print('NNI Cost',recon_1.cost)
-                    
+
+
+
                     NNI_cost=recon_1.cost
                     duplication_cost=recon_1_cost
     
@@ -740,11 +881,18 @@ def reconcILS(tr,sp,sp_copy,sp_):
                         #new_topo.id= new_topo.id*17
                         
                         sp.cost=Initial_multiple_mapping- cost
-                        sp.evolve='NNI'
+                        if sp.evolve!=None:
+                            if type(sp.evolve)==list:
+                                sp.evolve+=['NNI']
+                            else:
+                                sp.evolve=[sp.evolve,'NNI']
+                        else:
+                            sp.evolve='NNI'
                         print('NNI',to_newick(new_topo))
                         copy_event(sp_1,sp)
                         clearid(sp,'Left')
                         clearid(sp,'Right')
+                        
 
                         return reconcILS(new_topo,sp,sp_copy,sp_)
 
@@ -800,7 +948,13 @@ def reconcILS(tr,sp,sp_copy,sp_):
 
 
                         #recon_right.isLeaf=True
-                        sp.evolve='Duplication'
+                        if sp.evolve!=None:
+                            if type(sp.evolve)==list:
+                                sp.evolve+=['Duplication']
+                            else:
+                                sp.evolve=[sp.evolve,'Duplication']
+                        else:
+                            sp.evolve='Duplication'
                         #sp.refTo=sp.refTo[1:]
        
                         if 1==1:
@@ -1015,6 +1169,8 @@ def main():
     sp.isRoot=True
     tr.isRoot=True
     sp_copy.isRoot=True
+    child= parent_child(sp,[])
+
     reconcILS(tr,sp,sp_copy,sp)
     #print('######################33')
     
@@ -1077,8 +1233,10 @@ def main():
     
     color_=list(sorted_dict.values())
 
+    print(color_)
 
-    color_dict = {"Duplication": "blue", "Loss": "pink",'NNI':"red","Speciation":"yellow"}
+
+    color_dict = {"Duplication": "blue", "Loss": "pink",'NNI':"red","Speciation":"yellow",None:"yellow"}
     g.vs["color"] = [color_dict[evolve] for evolve in color_]
    
     
@@ -1086,7 +1244,7 @@ def main():
     new_dic= dict(zip(node_,taxa_))
     print(new_dic)
     
-    make_table(lis_paralogy,lis_NNI,sorted_dict_LC,sp_copy_1)
+    #make_table(lis_paralogy,lis_NNI,sorted_dict_LC,sp_copy_1)
     Keys = list(new_dic.keys())
     Keys.sort()
     sorted_dict = {i: new_dic[i] for i in Keys}
@@ -1113,12 +1271,12 @@ def main():
     print(to_newick(sp))
 
     #print(Counter(li))
-    dic={'Process':[],'Replicate':[],'Gene_tree':[],'Species_Tree':[],'Duplication':[],'NNI':[],'Loss':[]}
+    dic={'Process':[],'Replicate':[],'Gene_tree':[],'Species_Tree':[],'Duplication':[],'NNI':[],'Loss':[],'Hemiplasy':[]}
     
     dic['Gene_tree']+=[to_newick(tr)]
     dic['Species_Tree']+=[sp_string]
         
-    dic= Create_pd('reconcILS',0,dict(Counter(li)),dic)
+    dic= Create_pd('reconcILS',0,li,dic)
     
     df = pd.DataFrame(dic)
     print(dic)

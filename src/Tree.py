@@ -30,6 +30,7 @@ class Tree:
         self.li=[]
         self.paralogy=[]
         self.NNI_=[]
+        self.taxa_list=[]
 
 
 
@@ -38,6 +39,7 @@ class Tree:
             self.event=None
             self.tag = None
             self.evolve=None
+            self.taxa_list=[]
             if self.isLeaf==None:
                 self.taxa=None
             self.refTo=[]
@@ -167,7 +169,14 @@ class Tree:
         #print(root.taxa)
                         
         node_.append(int(root.id))
-        color_.append(root.evolve)   
+        if type(root.evolve)==list:
+            color_+=root.evolve
+        else:
+            if root.evolve==None:
+                root.evolve =root.parent.evolve
+                color_.append(root.parent.evolve)
+            else:
+                color_.append(root.evolve)   
         
         
         if root.isLeaf:
@@ -176,8 +185,17 @@ class Tree:
             taxa_.append(root.taxa+'_'+str(number_of_taxa))
         else:
             LC_.append(root.taxa)
-            number_of_taxa=''.join(taxa_).count(root.evolve)
-            taxa_.append(root.evolve+'_'+str(number_of_taxa+1))
+            if type(root.evolve)==list:
+                for re in root.evolve:
+                    number_of_taxa =''.join(taxa_).count(re)
+                    taxa_.append(re+'_'+str(number_of_taxa+1))
+            else:
+                if root.evolve==None:
+                    number_of_taxa=''.join(taxa_).count(root.parent.evolve)
+                    taxa_.append(root.parent.evolve+'_'+str(number_of_taxa+1))
+                else:
+                    number_of_taxa=''.join(taxa_).count(root.evolve)
+                    taxa_.append(root.evolve+'_'+str(number_of_taxa+1))
             #taxa_.append(root.evolve)
                  
       
@@ -253,6 +271,13 @@ class Tree:
                 if self.tag==None:
                     self.tag= [self.leftChild.tag]
                     self.taxa=set(self.leftChild.taxa)
+                    if self.leftChild.isLeaf:
+                        self.taxa_list.append(self.leftChild.taxa)
+                        self.taxa_list.sort()
+                    else:
+                        self.leftChild.taxa_list.sort()
+                        self.taxa_list.append(''.join(self.leftChild.taxa_list))
+                        self.taxa_list.sort()
 
             if  self.rightChild:
                 self.rightChild.label_internal()
@@ -260,6 +285,14 @@ class Tree:
                     self.tag+= [self.rightChild.tag]
                     #self.tag = list(set(self.tag))
                     self.taxa=self.taxa.union(self.rightChild.taxa)
+                    if self.rightChild.isLeaf:
+                        self.taxa_list.append(self.rightChild.taxa)
+                        self.taxa_list.sort()
+
+                    else:
+                        self.rightChild.taxa_list.sort()
+                        self.taxa_list.append(''.join(self.rightChild.taxa_list))  
+                        self.taxa_list.sort()               
 
     
 
@@ -484,16 +517,20 @@ class Tree:
 
     def find_loss_sp(self,root):
         if self:
-            print('tag',self.to_newick())
+            #print('tag',self.to_newick())
             if self.leftChild and self.rightChild:
                 if self.rightChild.isLeaf and len(self.rightChild.refTo)==0 and self.leftChild.isLeaf and len(self.leftChild.refTo)==0:
+                    root.cost+=root.cost+1
                     return 1
+            
+
             if self.leftChild:
                 root.cost+=self.leftChild.find_loss_sp(root)
             if self.rightChild:
                 root.cost+=self.rightChild.find_loss_sp(root)
             
             if len(self.refTo)==0:
+
                 return 1
             else:
                 return 0
