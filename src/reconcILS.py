@@ -378,7 +378,7 @@ def pick_first_edge(child,gene_tree,tr):
             
             print(pool)
 
-            return child[min(pool, key=pool.get)]
+            return child[min(pool, key=pool.get)],tre_pool[min(pool, key=pool.get)],pool[k]
 
 
 
@@ -482,11 +482,16 @@ def ILS(gene_tree,tr,sp_copy,cost):
     if len(child)>1:
         #print('ILS',pick_first_edge(child,gene_tree,tr).to_newick())
 
-        child= [pick_first_edge(child,gene_tree,tr)]
+        chil, trei , cos =pick_first_edge(child,gene_tree,tr)
+        if cos==0:
+            return trei, cost-1
+        else:
+            child=[chil]
+
 
 
     #print(gene_tree.parent)
-
+    print('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$')
     if len(child)==0 or cost==0:
         return gene_tree,cost
     else:
@@ -827,7 +832,7 @@ def reconcILS(tr,sp,sp_copy,sp_):
                     print(to_newick(recon_left))
                     print(to_newick(recon_right))
 
-                    recon_1_cost =recon_right.cost+recon_left.cost+1.1
+                    recon_1_cost =recon_right.cost+recon_left.cost+1
                     print(recon_1_cost)
 
 
@@ -847,7 +852,7 @@ def reconcILS(tr,sp,sp_copy,sp_):
                     recon_1.find_loss_sp(recon_1)
                     
 
-                    recon_1.cost= recon_1.cost+(Initial_multiple_mapping- cost)*I_cost
+                    recon_1.cost= recon_1.cost+(Initial_multiple_mapping- cost)*1
                     
                     print('Duplication Cost',recon_1_cost)
 
