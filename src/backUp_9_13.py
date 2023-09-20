@@ -1233,7 +1233,7 @@ def main():
     print(to_newick(sp))
 
     #print(Counter(li))
-    dic={'Process':[],'Replicate':[],'Gene_tree':[],'Species_Tree':[],'Duplication':[],'NNI':[],'Loss':[],'Hemiplasy':[]}
+    dic={'Process':[],'Replicate':[],'Gene_tree':[],'Species_Tree':[],'Duplication':[],'NNI':[],'DLCILS':[],'Loss':[],'Hemiplasy':[],'RHemiplasy':[]}
     
     dic['Gene_tree']+=[to_newick(tr)]
     dic['Species_Tree']+=[sp_string]

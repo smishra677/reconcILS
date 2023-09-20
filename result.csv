@@ -1,2 +1,2 @@
-Process,Replicate,Gene_tree,Species_Tree,Duplication,NNI,Loss,Hemiplasy
-reconcILS,0,"((((B,C),A),E),((((A,A),A),(((B,A),C),(B,A))),(((((B,C),C),D),C),D)));","(((A,(B,C)),D),(E,F));",9,4,8,0
+Process,Replicate,Gene_tree,Species_Tree,Duplication,NNI,DLCILS,Loss,Hemiplasy,RHemiplasy
+reconcILS,0,"((A,((D,D),(B,A))),((F,E),(((((D,D),D),(A,B)),(((B,B),C),(A,B))),(C,(A,B)))));","(((A,(B,C)),D),(E,F));",9,8,0,2,0,0

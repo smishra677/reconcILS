@@ -35,13 +35,10 @@ Simulate gene trees under a model that allows copy number hemiplasy.
 
 * Total duplications: number of duplications
 * Total losses: number of losses
-* Deep Coalescence in the parent tree: number of deep coalescences in the parent tree
-* Deep Coalescence in the daughter trees: number of deep coalescences in the daughter tree
-* Copy Number Hemiplasy: number of cases in which a mutation is placed on a branch that does not exist in the branch of the species tree on which the mutation occurred.
-* Deep Coalescence due to placing mutations: number of cases in which a mutation is placed on a branch that does exist in the species tree, but does not match the current branch of the species tree.
-* Deep Coalescences when joining daughter trees: number of deep coalescences that occur when joining parent and daughter subtrees.
-* Deep Coalescences when joining daughter trees (only count once for each subtree, DLCPar counting): number of deep coalescences that occur when joining parent and daughter subtrees. In this case, the maximum count for any subtree is 1. ILS either happened or did not. This is somewhat redundant with the above counter, except that it will be lower in some cases.
-* Deep Coalescences due only to branch mismatch joining daughter trees: number of deep coalescenses that occur when joining happens in the first available branch of the species tree, but is to a branch of another gene tree that does not match that branch of the species tree in terms of taxon composition.
+* Copy Number Hemiplasy (CNH): number of cases in which a mutation is placed on a branch that does not exist in the branch of the species tree on which the mutation occurred.
+* Rasmussen and Kellis CNH: number of cases in which a mutation is placed on a branch that does exist in the species tree, but does not match the current branch of the species tree. This is the phenomenon described as hemiplasy in Rasmussen and Kellis (2012, Figure 2B)
+* All ILS: This includes the number of discordant branches in the parent and daughter trees and the number of times that a subtree joined a branch that did not match it in terms of taxon composition.
+* All ILS (DLCPar): This includes the number of parent or daughter trees that are discordant and the number of times that a subtree joined a branch that did not match it in terms of taxon composition.
 
 # Example Usage
-python3 simulator_v1g.py --stree sp_tree.tre --mu_par 0 --lambda_par 0.3 --reps 10 --output example
+python3 simulator_v1h.py --stree sp_tree.tre --mu_par 0 --lambda_par 0.3 --reps 10 --output example

@@ -9,7 +9,9 @@ import argparse
 
 
 a= Tree.Tree()
-
+D_cost=  1
+I_cost= 1
+L_cost= 1
 def read_trees(i,folder):
      gene_tre= open('./'+folder+'/rep_'+str(i)+'.tre')
      tr =gene_tre.read().strip().split('\n')
@@ -26,22 +28,18 @@ def read_log(flag,i,dic,folder):
     dic['Process']+=[flag]
     dic['Replicate']+=[i]
     
+
+
     for i in o.split('\n'):
         val= (i.split(':'))
         if val[0]=='Total duplications':
             dic['Duplication']+=[int(val[1])]
-        elif val[0] in ['Deep Coalescence in the parent tree']:
+        elif val[0] in ['Rasmussen and Kellis hemiplasy']:
+            dic['RHemiplasy']+=[int(val[1])]
+        elif val[0] in ['All ILS']:
             dic['NNI']+=[int(val[1])]
-        elif val[0] in ['Deep Coalescence in the daughter trees']:
-            dic['NNI'][-1]+=int(val[1])
-        elif val[0] in ['Deep Coalescences when joining daughter trees']:
-            dic['NNI'][-1]+=int(val[1])
-        elif val[0] in ['Deep Coalescence due to placing mutations']:
-            dic['NNI'][-1]+=int(val[1])
-        elif val[0] in ['Deep Coalescences when joining daughter trees (only count once for each subtree, DLCPar counting)']:
-            dic['NNI'][-1]+=int(val[1])
-        elif val[0] in ['Deep Coalescences due only to branch mismatch joining daughter trees']:
-            dic['NNI'][-1]+=int(val[1])
+        elif val[0] in ['All ILS (DLCPar)']:
+            dic['DLCILS']+=[int(val[1])]
         elif val[0]=='Total losses':
             dic['Loss']+=[int(val[1])]
         elif val[0]=='Copy Number Hemiplasy':
@@ -67,7 +65,8 @@ def Create_pd(flag,i,oo,dic):
     o= dict(Counter(o_list))
             
 
-
+    dic['DLCILS']+=[0]
+    dic['RHemiplasy']+=[0]
     
     dic['Process']+=[flag]
     dic['Replicate']+=[i]
@@ -828,8 +827,10 @@ def reconcILS(tr,sp,sp_copy,sp_):
                     print(to_newick(recon_left))
                     print(to_newick(recon_right))
 
-                    recon_1_cost =recon_right.cost+recon_left.cost+1
+                    recon_1_cost =recon_right.cost+recon_left.cost+1.1
                     print(recon_1_cost)
+
+
 
                     recon_left.reset()
 
@@ -846,7 +847,7 @@ def reconcILS(tr,sp,sp_copy,sp_):
                     recon_1.find_loss_sp(recon_1)
                     
 
-                    recon_1.cost= recon_1.cost+(Initial_multiple_mapping- cost)
+                    recon_1.cost= recon_1.cost+(Initial_multiple_mapping- cost)*I_cost
                     
                     print('Duplication Cost',recon_1_cost)
 
@@ -1121,6 +1122,9 @@ def parse1():
     parser.add_argument('--spTree', type=str, help="Species_Tree")
     parser.add_argument('--gTree', type=str, help="gene_Tree")
     parser.add_argument('--output', type=str, help="Location and name to output")
+    parser.add_argument('--D', type=str, help="Duplication Cost")
+    parser.add_argument('--L', type=str, help="Loss Cost")
+    parser.add_argument('--I', type=str, help="ILS Cost")
     args= parser.parse_args()
     return(args)
 
@@ -1139,7 +1143,13 @@ def main():
     sp_string=parser.spTree
 
     gene_tree=parser.gTree
-
+    
+    if parser.D:
+        D_cost=  parser.D
+    if parser.I:
+        I_cost=parser.I
+    if parser.L:
+        L_cost=parser.L
     tr=parse(gene_tree)
 
     tr=parse(to_newick(tr))
@@ -1271,7 +1281,7 @@ def main():
     print(to_newick(sp))
 
     #print(Counter(li))
-    dic={'Process':[],'Replicate':[],'Gene_tree':[],'Species_Tree':[],'Duplication':[],'NNI':[],'Loss':[],'Hemiplasy':[]}
+    dic={'Process':[],'Replicate':[],'Gene_tree':[],'Species_Tree':[],'Duplication':[],'NNI':[],'DLCILS':[],'Loss':[],'Hemiplasy':[],'RHemiplasy':[]}
     
     dic['Gene_tree']+=[to_newick(tr)]
     dic['Species_Tree']+=[sp_string]
@@ -1284,4 +1294,5 @@ def main():
 
 
 if __name__ == "__main__":
+    
     main()
