@@ -400,13 +400,14 @@ def parent_child(root,child):
 
 
 def clearid(sp,ori):
+    import idmaker_
     if sp:
-        if ori=='Left':
-            sp.id =sp.id*2
+
+        sp.id =idmaker_.idmaker2().id
 
 
-        else:
-            sp.id =sp.id*3
+
+    
 
         clearid(sp.leftChild,ori)
             
@@ -540,7 +541,7 @@ def ILS(gene_tree,tr,sp_copy,cost):
 
                 
                     
-                    if best_cost>=new_cost and cost>0:
+                    if best_cost>new_cost and cost>0:
                         best_cost=new_cost
 
 
@@ -556,26 +557,35 @@ def ILS(gene_tree,tr,sp_copy,cost):
                             else:
                                 if len(new_topo.leftChild.taxa)==1:
                                     if tr.leftChild.rightChild:
-                                        tr.NNI_+=[(tr.id,tr.leftChild.rightChild.id)]
+                                        #print('1245')
+                                        tr.NNI_+=[(tr.id,tr.leftChild.id)]
                                     else:
+                                        #print('2345')
                                         tr.NNI_+=[(tr.id,tr.rightChild.id)]
                                 else:
+                                    #print(1245667)
                                     tr.NNI_+=[(tr.id,tr.leftChild.id)]
                         else:
                             if new_topo.rightChild.taxa==None:
                                 tr.NNI_+=[tr.id,tr.id]
                             else:
+                                #print(1222222222222222)
                                 if  len(new_topo.rightChild.taxa)==1:
                                     if tr.rightChild.leftChild:
+                                        #print(44444444444444444)
                                         #print('Taxa',tr.rightChild.rightChild.taxa)
-                                        tr.NNI_+=[(tr.id,tr.rightChild.leftChild.id)]
+                                        tr.NNI_+=[(tr.id,tr.rightChild.id)]
                                     else:
+                                        #print(6666666666666666666)
                                         tr.NNI_+=[(tr.id,tr.leftChild.id)]
                                 else:
+                                    #print(777777777777777777777)
                                     tr.NNI_+=[(tr.id,tr.rightChild.id)]
+
                             
-                    #print('new_topo',to_newick(new_topo))
+                   
                         imporvement=True
+
 
                 cost=cost-1
                 tr.visited.append([ch1[0],ch1[1]])
@@ -673,7 +683,7 @@ def reconcILS(tr,sp,sp_copy,sp_):
                     if len(set(sp.leftChild.taxa).intersection(set(tr.taxa)))==0:
                         sp.leftChild.evolve='Loss'
                         print('right')
-                        clearid(sp,'right')
+                        #clearid(sp,'right')
                         sp.leftChild =sp.leftChild
                         sp.rightChild= reconcILS(tr,sp.rightChild,sp_copy,sp_)
                         return sp
@@ -681,7 +691,7 @@ def reconcILS(tr,sp,sp_copy,sp_):
                     if len(set(sp.rightChild.taxa).intersection(set(tr.taxa)))==0:
                         sp.rightChild.evolve='Loss'
                         print('left')
-                        clearid(sp,'Left')
+                        #clearid(sp,'Left')
                         sp.rightChild =sp.rightChild
                         sp.leftChild= reconcILS(tr,sp.leftChild,sp_copy,sp_)
                         return sp
@@ -719,7 +729,7 @@ def reconcILS(tr,sp,sp_copy,sp_):
                     if len(set(sp.leftChild.taxa).intersection(set(tr.taxa)))==0:
                         print('left1')
                         sp.leftChild.evolve='Loss'
-                        clearid(sp,'right')
+                        #clearid(sp,'right')
                         sp.leftChild =sp.leftChild
                         sp.rightChild= reconcILS(tr,sp.rightChild,sp_copy,sp_)
                         return sp
@@ -727,7 +737,7 @@ def reconcILS(tr,sp,sp_copy,sp_):
                     if len(set(sp.rightChild.taxa).intersection(set(tr.taxa)))==0:
                         print('right1')
                         sp.rightChild.evolve='Loss'
-                        clearid(sp,'Left')
+                        #clearid(sp,'Left')
                         sp.leftChild =reconcILS(tr,sp.leftChild,sp_copy,sp_)
                         sp.rightChild= sp.rightChild
                         return sp
@@ -896,8 +906,8 @@ def reconcILS(tr,sp,sp_copy,sp_):
                             sp.evolve='NNI'
                         print('NNI',to_newick(new_topo))
                         copy_event(sp_1,sp)
-                        clearid(sp,'Left')
-                        clearid(sp,'Right')
+                        #clearid(sp,'Left')
+                        #clearid(sp,'Right')
                         
 
                         return reconcILS(new_topo,sp,sp_copy,sp_)
@@ -1086,7 +1096,12 @@ def per(sp,recon):
 
 def make_table(lis_paralogy,lis_NNI,dic,sp_1):
     #dic=sp_id(sp_1,dic)
+
     print('###############################')
+    print(lis_NNI)
+    print(lis_paralogy)
+    print(dic)
+    print('##############################')
     for i in lis_paralogy:
         if(i[0]  in dic.keys() and i[1] in dic.keys()):
             print('Duplication on edge between:',dic[i[0]],'---->',dic[i[1]])
@@ -1094,11 +1109,11 @@ def make_table(lis_paralogy,lis_NNI,dic,sp_1):
             key_0=-1
             key_1=-1
             for k in dic.keys():
-                if k%i[0]==0 and key_0==-1:
-                    key_0=k
-                if k%i[1]==0 and key_1==-1:
-                    key_1=k
-            print('Duplication on edge between:',dic[key_0],'---->',dic[key_1])
+                #if k%i[0]==0 and key_0==-1:
+                    #key_0=k
+                #if k%i[1]==0 and key_1==-1:
+                    #key_1=k
+                print('Duplication on edge between:',dic[i[0]],'---->',dic[i[1]])
                 
             
 
@@ -1109,11 +1124,11 @@ def make_table(lis_paralogy,lis_NNI,dic,sp_1):
                 key_0=-1
                 key_1=-1
                 for k in dic.keys():
-                    if k%i[0]==0 and key_0==-1:
-                        key_0=k
-                    if k%i[1]==0 and key_1==-1:
-                        key_1=k
-                print('ILS on edge between:',dic[key_0],'------->',dic[key_1])
+                    #if k%i[0]==0 and key_0==-1:
+                        #key_0=k
+                    #if k%i[1]==0 and key_1==-1:
+                        #key_1=k
+                    print('ILS on edge between:',dic[i[0]],'------->',dic[i[1]])
                     
                 
         
@@ -1259,7 +1274,7 @@ def main():
     new_dic= dict(zip(node_,taxa_))
     print(new_dic)
     
-    #make_table(lis_paralogy,lis_NNI,sorted_dict_LC,sp_copy_1)
+    make_table(lis_paralogy,lis_NNI,sorted_dict_LC,sp_copy_1)
     Keys = list(new_dic.keys())
     Keys.sort()
     sorted_dict = {i: new_dic[i] for i in Keys}

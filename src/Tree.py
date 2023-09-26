@@ -2,14 +2,14 @@ from itertools import count
 import copy
 import matplotlib.pyplot as plt
 import pydot
+import idmaker_
 
 
 
 
 class Tree:
-    new_id = count()
     def __init__(self):
-        self.id= next(Tree.new_id)
+        self.id= idmaker_.idmaker2().id
         self.taxa=None
         self.event=None
         self.evolve=None
