@@ -480,22 +480,26 @@ def ILS(gene_tree,tr,sp_copy,cost):
 
     child= parent_child(tr,child)
 
-    if len(child)>1:
-        #print('ILS',pick_first_edge(child,gene_tree,tr).to_newick())
-
-        chil, trei , cos =pick_first_edge(child,gene_tree,tr)
-        if cos==0:
-            return trei, cost-1
-        else:
-            child=[chil]
-
-
-
-    #print(gene_tree.parent)
-    print('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$')
+ 
     if len(child)==0 or cost==0:
         return gene_tree,cost
     else:
+        
+        if len(child)>1:
+            #print('ILS',pick_first_edge(child,gene_tree,tr).to_newick())
+
+            chil, trei , cos =pick_first_edge(child,gene_tree,tr)
+            
+            if cos==0:
+                return  ILS(trei,tr,sp_copy,cost-1)
+            else:
+                child=[chil]
+
+
+
+        #print(gene_tree.parent)
+        print('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$')
+
         #child =[child[0]]
         new_topo=copy.deepcopy(gene_tree)
         geneTree =copy.deepcopy(new_topo)
@@ -541,7 +545,7 @@ def ILS(gene_tree,tr,sp_copy,cost):
 
                 
                     
-                    if best_cost>new_cost and cost>0:
+                    if best_cost>=new_cost and cost>0:
                         best_cost=new_cost
 
 
@@ -604,7 +608,7 @@ def ILS(gene_tree,tr,sp_copy,cost):
                         
                         new_topo.map_gene(new_sp)
 
-                        #print(to_newick(new_sp))
+                        
 
                         return ILS(new_topo,new_sp,sp_copy,cost)
                 
@@ -1035,7 +1039,7 @@ def reconcILS(tr,sp,sp_copy,sp_):
                                 sp.leftChild.parent=sp
                                 sp.rightChild.parent=sp
                                 if sp.parent==None:
-                                    sp.paralogy+=[(-367,sp.id)]
+                                    sp.paralogy+=[(sp.id,sp.id)]
                                 else:
                                     if sp.isLeaf:
                                         sp.paralogy+=[(sp.id, sp.id)]  
@@ -1062,7 +1066,7 @@ def reconcILS(tr,sp,sp_copy,sp_):
                                 sp.rightChild.parent=sp
 
                                 if sp.parent==None:
-                                    sp.paralogy+=[(-367,sp.id)]
+                                    sp.paralogy+=[(sp.id,sp.id)]
                                 else:
                                     if sp.isLeaf:
                                         sp.paralogy+=[(sp.id, sp.id)]  
