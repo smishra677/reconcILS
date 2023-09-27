@@ -33,6 +33,8 @@ class Tally:
 
 
     def make_table(self,dic):
+        print(dic)
+        
         for i in self.list_Duplication:
             if(i[0]  in dic.keys() and i[1] in dic.keys()):
                 print('Duplication on edge between:',dic[i[0]],'---->',dic[i[1]])
@@ -81,6 +83,12 @@ class Tally:
         if sp:
             if sp.taxa==recon.taxa:
                 sp.li.append(recon.evolve)
+                if sp.isLeaf==None:
+                    if sp.evolve==None:
+                        sp.evolve=recon.evolve
+                else:
+                    sp.evolve='Speciation'
+                
             self.search_per(sp.leftChild,recon)
             self.search_per(sp.rightChild,recon)
 
@@ -93,14 +101,20 @@ class Tally:
         
 
 
-    def make_graph(self,sp,sp_string):
+
+    def make_graph(self,sp,sp_string,gene_tree):
         sp_1=sp.parse(sp_string)
-        sp_1.label_internal()
+        g_tree= sp_1.parse(gene_tree)
+        g_tree.label_internal()
         sp.label_internal()
 
-        self.per(sp_1,sp)
-        sp.map_gene(sp_1)
+        #self.per(g_tree,sp)
+
+
+        #sp.map_gene(sp_1)
+        #sp= g_tree
         self.get_Duplication_NNI(sp)
+
         g = ig.Graph(edges=self.edges)
         new_dic_LC= dict(zip(self.node_,self.LC_))
         Keys = list(new_dic_LC.keys())

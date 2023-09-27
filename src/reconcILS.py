@@ -566,8 +566,9 @@ def main():
     li =re_w.sp_event(sp,[])
            
    
-    Tally.Tally().make_graph(sp,sp_string)
+    Tally.Tally().make_graph(sp,sp_string,gene_tree)
     
+
 
 
     sp.reset()
