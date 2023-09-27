@@ -32,7 +32,14 @@ class Tree:
         self.NNI_=[]
         self.taxa_list=[]
 
-
+    def clear_ref(self):
+        if self:
+            if self.leftChild:
+                self.leftChild.clear_ref()
+            if self.rightChild:
+                self.rightChild.clear_ref()
+            self.refTo=[]
+            self.tag = None
 
     def reset(self):
         if self:
@@ -40,6 +47,7 @@ class Tree:
             self.tag = None
             self.evolve=None
             self.taxa_list=[]
+            self.NNI_=[]
             if self.isLeaf==None:
                 self.taxa=None
             self.refTo=[]
@@ -125,8 +133,7 @@ class Tree:
        
 
     def find_all_edges_sp(root,edges,node_,taxa_,color_,LC_):
-        #print(root.taxa)
-                        
+
         node_.append(int(root.id))
         color_.append(root.evolve)
     
@@ -141,10 +148,6 @@ class Tree:
         else:
             number_of_taxa=''.join(taxa_).count(root.evolve)
             taxa_.append(root.evolve+'_'+str(number_of_taxa+1))
-            #taxa_.append(root.evolve)
-                 
-      
-
 
         if root.rightChild:
             edges.append((root.id,root.rightChild.id))
@@ -155,19 +158,12 @@ class Tree:
             edges.append((root.id,root.leftChild.id))
             edges, node_,taxa_, color_,LC_ =root.leftChild.find_all_edges(edges,node_,taxa_,color_,LC_)
 
-
-        #print(node_)
-        #print(taxa_)
-        #print(color_)
-
         return edges, node_,taxa_, color_,LC_
 
 
 
 
     def find_all_edges(root,edges,node_,taxa_,color_,LC_):
-        #print(root.taxa)
-                        
         node_.append(int(root.id))
         if type(root.evolve)==list:
             color_+=root.evolve
