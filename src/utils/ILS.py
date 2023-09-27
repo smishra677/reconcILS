@@ -1,8 +1,8 @@
-import Tree
+import utils.Tree as Tree
 import re
 import os
 import copy
-import Tally
+import utils.Tally as Tally
 import argparse
 
 class ILS:

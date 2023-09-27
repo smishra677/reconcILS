@@ -1,10 +1,11 @@
-
-import Tree
+import sys
+sys.path.append("../")
+import utils.Tree as Tree
 import copy
-import Tally
+import utils.Tally as Tally
 import argparse
-import ILS
-import readWrite
+import utils.ILS as ILS
+import utils.readWrite as readWrite
 
 
 a= Tree.Tree()
@@ -14,7 +15,7 @@ L_cost= 1
 
 
 def clearid(sp,ori):
-    import idmaker_
+    import utils.idmaker_ as idmaker_
     if sp:
 
         sp.id =idmaker_.idmaker2().id

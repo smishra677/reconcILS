@@ -1,4 +1,4 @@
-import Tree
+import utils.Tree as Tree
 import argparse
 import copy
 import re
