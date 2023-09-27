@@ -135,6 +135,7 @@ class Tree:
     def find_all_edges_sp(root,edges,node_,taxa_,color_,LC_):
 
         node_.append(int(root.id))
+        
         color_.append(root.evolve)
     
         LC_.append(root.taxa)
