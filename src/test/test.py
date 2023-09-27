@@ -16,44 +16,16 @@ import pandas as pd
 
 
 
-dic={'Process':[],'Replicate':[],'Gene_tree':[],'Species_Tree':[],'Duplication':[],'NNI':[],'Loss':[]}
+dic={'Process':[],'Replicate':[],'Gene_tree':[],'Species_Tree':[],'Duplication':[],'NNI':[],'Loss':[],'Hemiplasy':[]}
     
 from collections import Counter
 
 
-sp_string='(A,(B,C));'
-
-gene_tree='((A,C),B);'
-tr=parse(gene_tree)
-
-sp=parse(sp_string)
-sp_copy= copy.deepcopy(sp)
-sp_copy.reset()
-
-tr.printorder_gene(sp)
-
-tr.label_internal()
-sp.label_internal()
+sp_string='(((A,(B,C)),D),(E,F));'
 
 
 
-tr.map_gene(sp)
-
-setCost(sp)
-sp.isRoot=True
-tr.isRoot=True
-sp_copy.isRoot=True
-reconcILS(tr,sp,sp_copy,sp)
-#print('######################33')
-#print(to_newick(sp))
-
-li =sp_event(sp,[])
-
-print(Counter(li))
-exit()
-'''
-
-gene_folder='output_simulation_sp'
+gene_folder='8_28'
 #gene_tre= open('./output_gene/gene_tree.txt')
 #trees =gene_tre.read().strip().split('\n')
 #gene_tre.close()
@@ -76,7 +48,7 @@ for i in range(100):
         tree= str(read_trees(i,gene_folder))
         #print('tree',tree)
         tr=parse(tree)
-        #tr=parse(to_newick(tr))
+        tr=parse(to_newick(tr))
 
 
         
@@ -85,7 +57,7 @@ for i in range(100):
         sp_copy= copy.deepcopy(sp)
         sp_copy.reset()
 
-        tr.printorder_gene(sp)
+        tr.order_gene(sp)
 
         tr.label_internal()
         sp.label_internal()
@@ -130,8 +102,9 @@ for i in range(100):
         dic= Create_pd_ete3('ETE3',i,dict(Counter(sp_event_ete3(recon_tree_ete))),dic)
     except:
         erro=1
-        continue
+        print(to_newick(tr))
 
+        continue
 #print(dic)
 if erro==1:
     dic=previous_dict
@@ -139,8 +112,8 @@ for i in dic:
     print(len(dic[i]))
 df = pd.DataFrame(dic)
 
-df.to_csv('result.csv', index=False)
-
+df.to_csv('result_8_28.csv', index=False)
+'''
 
 Initial_multiple_mapping=1
 #sp.find_cost(tr,0)

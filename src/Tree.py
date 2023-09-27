@@ -1,10 +1,15 @@
 from itertools import count
 import copy
+import matplotlib.pyplot as plt
+import pydot
+import idmaker_
+
+
+
 
 class Tree:
-    new_id = count()
     def __init__(self):
-        self.id= next(Tree.new_id)
+        self.id= idmaker_.idmaker2().id
         self.taxa=None
         self.event=None
         self.evolve=None
@@ -21,13 +26,28 @@ class Tree:
         self.cost=0
         self.inital_ref=0
         self.event_list=[]
+        self.visited=[]
+        self.li=[]
+        self.paralogy=[]
+        self.NNI_=[]
+        self.taxa_list=[]
 
+    def clear_ref(self):
+        if self:
+            if self.leftChild:
+                self.leftChild.clear_ref()
+            if self.rightChild:
+                self.rightChild.clear_ref()
+            self.refTo=[]
+            self.tag = None
 
     def reset(self):
         if self:
             self.event=None
             self.tag = None
             self.evolve=None
+            self.taxa_list=[]
+            self.NNI_=[]
             if self.isLeaf==None:
                 self.taxa=None
             self.refTo=[]
@@ -65,9 +85,137 @@ class Tree:
                 self.rightChild.reset()
 
 
+    def visualize_binary_tree(self, graph):
+        
+        if self.leftChild:
+            if len(str(self.leftChild.taxa))==0:
+                label='None'
+            else:
+                label=str(self.leftChild.taxa)
+            Node_left=pydot.Node(str(self.leftChild.id), label=label)
+            node2 = graph.add_node(Node_left)
+            if self.leftChild.evolve=='Loss':
+                graph.add_edge(pydot.Edge(str(self.id),str(self.leftChild.id), color='blue'))
+            else:
+                graph.add_edge(pydot.Edge(str(self.id), str(self.leftChild.id), color='green'))
+            self.leftChild.visualize_binary_tree(graph)
+        if self.rightChild:
+            if len(str(self.rightChild.taxa))==0:
+                label='None'
+            else:
+                label=str(self.rightChild.taxa)
+            Node_right=pydot.Node(str(self.rightChild.id), label=str(self.rightChild.taxa))
+            node3 = graph.add_node(Node_right)
+            if self.rightChild.evolve=='Loss':
+                graph.add_edge(pydot.Edge(str(self.id),str(self.rightChild.id), color='blue'))
+            else:
+                graph.add_edge(pydot.Edge(str(self.id), str(self.rightChild.id), color='green'))
+            self.rightChild.visualize_binary_tree(graph)
+
+        else:
+            return graph
+        
+        
+
+        
+        
+        return graph
 
 
+    def viz(self):
+        graph = pydot.Dot()
+        Node_root=pydot.Node(str(self.id), label=('None'))
+        node1 = graph.add_node(Node_root)
+        #graph.write_png("binary_tree.png")
+        graph= self.visualize_binary_tree(graph)
+        print(graph)
+        graph.write_png("binary_tree.png")
+       
+
+    def find_all_edges_sp(root,edges,node_,taxa_,color_,LC_):
+
+        node_.append(int(root.id))
+        
+        color_.append(root.evolve)
     
+        LC_.append(root.taxa)
+        
+        
+        if root.isLeaf:
+            
+            number_of_taxa=''.join(taxa_).count(root.taxa)
+            taxa_.append(root.taxa+'_'+str(number_of_taxa))
+            
+        else:
+            number_of_taxa=''.join(taxa_).count(root.evolve)
+            taxa_.append(root.evolve+'_'+str(number_of_taxa+1))
+
+        if root.rightChild:
+            edges.append((root.id,root.rightChild.id))
+            edges, node_,taxa_, color_,LC_=root.rightChild.find_all_edges(edges,node_,taxa_,color_,LC_)
+
+
+        if root.leftChild:
+            edges.append((root.id,root.leftChild.id))
+            edges, node_,taxa_, color_,LC_ =root.leftChild.find_all_edges(edges,node_,taxa_,color_,LC_)
+
+        return edges, node_,taxa_, color_,LC_
+
+
+
+
+    def find_all_edges(root,edges,node_,taxa_,color_,LC_):
+        node_.append(int(root.id))
+        if type(root.evolve)==list:
+            color_+=root.evolve
+        else:
+            if root.evolve==None:
+                root.evolve =root.parent.evolve
+                color_.append(root.parent.evolve)
+            else:
+                color_.append(root.evolve)   
+        
+        
+        if root.isLeaf:
+            LC_.append(set(root.taxa))
+            number_of_taxa=''.join(taxa_).count(root.taxa)
+            taxa_.append(root.taxa+'_'+str(number_of_taxa))
+        else:
+            LC_.append(root.taxa)
+            if type(root.evolve)==list:
+                for re in root.evolve:
+                    number_of_taxa =''.join(taxa_).count(re)
+                    taxa_.append(re+'_'+str(number_of_taxa+1))
+            else:
+                if root.evolve==None:
+                    number_of_taxa=''.join(taxa_).count(root.parent.evolve)
+                    taxa_.append(root.parent.evolve+'_'+str(number_of_taxa+1))
+                else:
+                    number_of_taxa=''.join(taxa_).count(root.evolve)
+                    taxa_.append(root.evolve+'_'+str(number_of_taxa+1))
+            #taxa_.append(root.evolve)
+                 
+      
+
+
+        if root.rightChild:
+            edges.append((root.id,root.rightChild.id))
+            edges, node_,taxa_, color_,LC_=root.rightChild.find_all_edges(edges,node_,taxa_,color_,LC_)
+
+
+        if root.leftChild:
+            edges.append((root.id,root.leftChild.id))
+            edges, node_,taxa_, color_,LC_ =root.leftChild.find_all_edges(edges,node_,taxa_,color_,LC_)
+
+
+        #print(node_)
+        #print(taxa_)
+        #print(color_)
+
+        return edges, node_,taxa_, color_,LC_
+    
+   
+                
     def __setNewick__(self,newick):
         self.taxa=None
 
@@ -120,6 +268,13 @@ class Tree:
                 if self.tag==None:
                     self.tag= [self.leftChild.tag]
                     self.taxa=set(self.leftChild.taxa)
+                    if self.leftChild.isLeaf:
+                        self.taxa_list.append(self.leftChild.taxa)
+                        self.taxa_list.sort()
+                    else:
+                        self.leftChild.taxa_list.sort()
+                        self.taxa_list.append(''.join(self.leftChild.taxa_list))
+                        self.taxa_list.sort()
 
             if  self.rightChild:
                 self.rightChild.label_internal()
@@ -127,6 +282,14 @@ class Tree:
                     self.tag+= [self.rightChild.tag]
                     #self.tag = list(set(self.tag))
                     self.taxa=self.taxa.union(self.rightChild.taxa)
+                    if self.rightChild.isLeaf:
+                        self.taxa_list.append(self.rightChild.taxa)
+                        self.taxa_list.sort()
+
+                    else:
+                        self.rightChild.taxa_list.sort()
+                        self.taxa_list.append(''.join(self.rightChild.taxa_list))  
+                        self.taxa_list.sort()               
 
     
 
@@ -349,6 +512,28 @@ class Tree:
 
     
 
+    def find_loss_sp(self,root):
+        if self:
+            #print('tag',self.to_newick())
+            if self.leftChild and self.rightChild:
+                if self.rightChild.isLeaf and len(self.rightChild.refTo)==0 and self.leftChild.isLeaf and len(self.leftChild.refTo)==0:
+                    root.cost+=root.cost+1
+                    return 1
+            
+
+            if self.leftChild:
+                root.cost+=self.leftChild.find_loss_sp(root)
+            if self.rightChild:
+                root.cost+=self.rightChild.find_loss_sp(root)
+            
+            if len(self.refTo)==0:
+
+                return 1
+            else:
+                return 0
+
+
+
                 
 
     def search_sp_loss(self,recon):
@@ -413,11 +598,11 @@ class Tree:
                 self.rightChild.total_cost_()
 
             if self.isLeaf:
-                if self.evolve !='Speciation':
+                if self.evolve =='Loss':
                     self.cost=1
             else:
                 self.cost = self.leftChild.cost+self.rightChild.cost
-                if self.evolve in ['Duplication','NNI','Loss']:
+                if self.evolve in ['Loss']:
                     self.cost = self.cost +1
                 
 
@@ -452,7 +637,21 @@ class Tree:
                 self.rightChild.sp_tag()
 
 
+    def add_edges(self,graph,node):
+        if node is not None:
+            if node.leftChild is not None:
+                graph.add_edge(node.taxa, node.leftChild.taxa)
+                self.add_edges(graph, node.leftChild)
+            if node.rightChild is not None:
+                graph.add_edge(node.taxa, node.rightChild.taxa)
+                self.add_edges(graph, node.rightChild)
 
+    def plot_tree(root):
+        graph = nx.DiGraph()
+        root.add_edges(graph, root)
+        pos = graphviz_layout(graph, prog='dot')
+        nx.draw(graph, pos, with_labels=True, arrows=False)
+        plt.show()
 
 
 
@@ -510,31 +709,121 @@ class Tree:
         #print(self.find_cost(node,0))
         return self.find_cost(node,0)
         pass
+    
+    def traverse(self, newick):
+        if self.leftChild and not self.rightChild:
+            newick = f"(,{self.leftChild.traverse(newick)}){self.taxa if self.isLeaf else ''}"
+        elif not self.leftChild and self.rightChild:
+            newick = f"({self.rightChild.traverse(newick)},){self.taxa if self.isLeaf else ''}"
+        elif self.leftChild and self.rightChild:
+            newick = f"({self.rightChild.traverse(newick)},{self.leftChild.traverse(newick)}){self.taxa if self.isLeaf else ''}"
+        elif not self.leftChild and not self.rightChild :
+            newick = f"{self.taxa if self.isLeaf else ''}"
+        else:
+            pass
+        return newick
 
 
+
+
+    def to_newick(self):
+        newick = ""
+        newick = self.traverse(newick)
+        newick = f"{newick};"
+        return newick
+
+
+
+    def parse(self,newick):
+        import re
+
+        tokens = re.finditer(r"([^:;,()\s]*)(?:\s*:\s*([\d.]+)\s*)?([,);])|(\S)", newick+";")
+
+        def recurse(tre,nextid = 0, parentid = -1): # one node
+            thisid = nextid
+            #tre.id= nextid
+            children = []
+
+            name, length, delim, ch = next(tokens).groups(0)
+            tre.taxa= name
+            if name!=0:
+                tre.taxa= name.split('_')[0]
+                tre.isLeaf= True
+            if ch == "(":
+                while ch in "(,":
+                    new_tre= Tree()
+                    node, ch, nextid,tre1 = recurse(new_tre,nextid+1, thisid)
+                    children.append(node)
+                    tre.children.append(tre1)
+
+
+
+                if len(tre.children)==1:
+                    tre.children =[]
+                    tre =tre1
+                else:
+                    tre.leftChild= tre.children[0]
+                    tre.children[0].parent =tre
+                    tre.children[1].parent =tre
+                    tre.rightChild=tre.children[1]
+                
+
+
+
+                    
+                name, length, delim, ch = next(tokens).groups(0)
+            return {"id": thisid, "name": name, "length": length if length else None, 
+                    "parentid": parentid, "children": children}, delim, nextid,tre
+
+        tre= Tree()
+        val =recurse(tre)
+
+        return val[-1]
+    
 
     def locate_copy(self,copy_tree,tree):
         if tree:
 
-            if tree.id==self.id:
-                print(tree.taxa)
-                if tree.parent==None:
-                    return
+            if self.id==tree.id:
+                print('###########################################################')
+                print(copy_tree.to_newick())
+                print(tree.to_newick())
+                print(tree.parent.children)
+                print(tree.parent.leftChild)
+                print(tree.parent.leftChild.to_newick())
+                print(tree.parent.rightChild)
+                print(tree.parent.rightChild.to_newick())
+                print(tree)
+                print('###########################################################')
+               
+
                 if tree.parent.leftChild == tree:
+                    
                     tree.parent.children.remove(tree.parent.leftChild)
                     tree.parent.leftChild =copy_tree
+                    tree.leftChild =copy_tree.leftChild
+                    tree.rightChild =copy_tree.rightChild
+                    copy_tree.parent=tree.parent
                     tree.parent.children.append(copy_tree)
 
                     #print('left_child',tree.children)
                     return
                 else:
+                    
+                    
                     tree.parent.children.remove(tree.parent.rightChild)
                     tree.parent.rightChild =copy_tree
+                    tree.leftChild =copy_tree.leftChild
+                    tree.rightChild =copy_tree.rightChild
+                    copy_tree.parent=tree.parent
                     tree.parent.children.append(copy_tree)
+                    #print('after1:',tree.parent.rightChild.to_newick())
                     #print('right_child',tree.children)
-                    return                  
-            self.locate_copy(copy_tree,tree.leftChild)
-            self.locate_copy(copy_tree,tree.rightChild)
+                    return
+            else:
+                self.locate_copy(copy_tree,tree.leftChild)
+                self.locate_copy(copy_tree,tree.rightChild)                 
+            
             
     
     def NNI(self,gene_tree,flag):
@@ -567,7 +856,7 @@ class Tree:
 
             copy_left.rightChild=new_tree_left
             copy_left.leftChild=copy_right_child
-            copy_left.children = [copy_left.rightChild, copy_left.leftChild]
+            copy_left.children= [copy_left.rightChild, copy_left.leftChild]
             new_tree_left.parent=copy_left
             copy_right_child.parent=copy_left
 
@@ -583,19 +872,22 @@ class Tree:
 
             copy_right.rightChild=new_tree_right
             copy_right.leftChild=copy_left_child
-            copy_right.children+= [copy_right.rightChild, copy_right.leftChild]
+            copy_right.children= [copy_right.rightChild, copy_right.leftChild]
             copy_right.rightChild.parent=copy_right
             copy_right.leftChild.parent=copy_right
         
         else:
             copy_right_child= copy.deepcopy(self.rightChild.rightChild)
+            print(copy_right_child.to_newick())
             copy_right_child.reset()
             copy_left_child= copy.deepcopy(self.rightChild.leftChild)
+            print(copy_left_child.to_newick())
             copy_left_child.reset()
             
             new_tree_left = Tree()
             new_tree_left.rightChild =copy_left_child
             new_tree_left.leftChild=copy_left.leftChild
+            print(new_tree_left.to_newick())
             new_tree_left.children =[new_tree_left.leftChild, new_tree_left.rightChild]
             new_tree_left.leftChild.parent=new_tree_left
             new_tree_left.rightChild.parent=new_tree_left
@@ -603,7 +895,7 @@ class Tree:
 
             copy_left.rightChild=new_tree_left
             copy_left.leftChild=copy_right_child
-            copy_left.children+= [copy_left.rightChild, copy_left.leftChild]
+            copy_left.children= [copy_left.rightChild, copy_left.leftChild]
             copy_left.rightChild.parent=copy_left
             copy_left.leftChild.parent=copy_left
 
@@ -611,20 +903,21 @@ class Tree:
             new_tree_right = Tree()
             new_tree_right.leftChild=copy_right_child
             new_tree_right.rightChild=copy_right.leftChild
+            print(new_tree_right.to_newick())
             new_tree_right.children= [new_tree_right.leftChild, new_tree_right.leftChild]
             new_tree_right.leftChild.parent=new_tree_right
             new_tree_right.leftChild.parent=new_tree_right
 
             copy_right.rightChild=new_tree_right
             copy_right.leftChild=copy_left_child
-            copy_right.children+= [copy_right.rightChild, copy_right.leftChild]
+            copy_right.children= [copy_right.rightChild, copy_right.leftChild]
             copy_right.rightChild.parent=copy_right
             copy_right.leftChild.parent=copy_right        
 
 
         if self.parent==None:
             #print('No_parent')
-            return [[copy_left,copy_left],[copy_right,copy_right]]
+            return [[self.parse(copy_left.to_newick()),self.parse(copy_left.to_newick()),'left'],[self.parse(copy_right.to_newick()),self.parse(copy_right.to_newick()),'right']]
         
         geneTree_left.label_internal()
         
@@ -633,8 +926,16 @@ class Tree:
         copy_left.label_internal()
         copy_right.label_internal()
 
+        #geneTree_left.rightChild=copy_left
 
+        #geneTree_right.leftChild=copy_right
+
+
+        print(geneTree_left)
+        print(geneTree_right)
+        
         self.locate_copy(copy_left,geneTree_left)
         self.locate_copy(copy_right,geneTree_right)
-        return [[copy_left,geneTree_left],[copy_right,geneTree_right]]
-
+        print('Left:',geneTree_left.to_newick())
+        print('Right:',geneTree_right.to_newick())
+        return [[self.parse(copy_left.to_newick()),self.parse(geneTree_left.to_newick()),'left'],[self.parse(copy_right.to_newick()),self.parse(geneTree_right.to_newick()),'right']]
