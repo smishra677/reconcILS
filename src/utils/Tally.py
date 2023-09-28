@@ -33,25 +33,27 @@ class Tally:
 
 
     def make_table(self,dic):
-        print(dic)
-        
+        print('##############################################################################')
+            
         for i in self.list_Duplication:
             if(i[0]  in dic.keys() and i[1] in dic.keys()):
-                print('Duplication on edge between:',dic[i[0]],'---->',dic[i[1]])
+                print('#Duplication on edge between:',dic[i[0]],'---->',dic[i[1]],'#')
             else:
                 for k in dic.keys():
-                    print('Duplication on edge between:',dic[i[0]],'---->',dic[i[1]])
+                    print('#Duplication on edge between:',dic[i[0]],'---->',dic[i[1]],'#')
                     
                 
-
+        print('##############################################################################')
+            
         for i in self.list_NNI:
             if(i[0]  in dic.keys() and i[1] in dic.keys()):
-                print('ILS on edge between:',dic[i[0]],'------->',dic[i[1]])
+                print('#ILS on edge between:',dic[i[0]],'------->',dic[i[1]],'#')
             else:
                 for k in dic.keys():
-                    print('ILS on edge between:',dic[i[0]],'------->',dic[i[1]])
+                    print('#ILS on edge between:',dic[i[0]],'------->',dic[i[1]],'#')
                         
-                    
+        print('##############################################################################')
+              
     def tally_NNI(self,tr,new_topo,orientation):
         if orientation=='Left':
             if new_topo.leftChild.taxa ==None:
@@ -138,7 +140,7 @@ class Tally:
    
         new_dic= dict(zip(self.node_,self.taxa_))
 
-        self.make_table(sorted_dict_LC)
+        #self.make_table(sorted_dict_LC)
         Keys = list(new_dic.keys())
         Keys.sort()
         sorted_dict = {i: new_dic[i] for i in Keys}

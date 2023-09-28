@@ -200,7 +200,7 @@ class ILS:
                         i[1].map_gene(cop)
                         new_cost = len(cop.refTo)
 
-                        if best_cost>new_cost and cost>0:
+                        if best_cost>=new_cost and cost>0:
                             best_cost=new_cost
 
 
@@ -210,7 +210,7 @@ class ILS:
                             else:
                                 new_topo=copy.deepcopy(i[1])
                             
-                            print(88888888888888888888888888)
+
                             Tally.Tally().tally_NNI(tr,new_topo,ch1[2])  
                     
                             imporvement=True

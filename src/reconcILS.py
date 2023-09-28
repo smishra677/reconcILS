@@ -59,48 +59,33 @@ def setCost(sp):
         
 def reconcILS(tr,sp,sp_copy,sp_):
     if sp: 
-        
-        #print(sp.taxa)
-        #print(sp.children)
-
         sp_copy = copy.deepcopy(sp)
-
-        ##print(sp.evolve)
-
-
         tr_copy_1 = copy.deepcopy(tr)
+
         sp_1 =copy.deepcopy(sp) 
-
         tr_copy_2 = copy.deepcopy(tr)
-        sp_2 =copy.deepcopy(sp) 
-
+        
 
         Initial_multiple_mapping=len(sp.refTo)
         
-        print('cost',Initial_multiple_mapping)
+        print('Multiple_mapping',Initial_multiple_mapping)
 
 
 
         if tr==None:
             if sp.isLeaf:
                 if sp.inital_ref==0:
-                    
-
                     sp = sp.parse(sp.to_newick(sp))
                     sp.evolve='Loss'
                 elif Initial_multiple_mapping>=2:
                     sp.evolve='Duplication'
                     sp = sp.parse(sp.to_newick(sp))
-                
                 return sp 
             else:
                 if Initial_multiple_mapping>=2:
                     sp.evolve= 'Duplication'
                 else:
                     sp.evolve='Speciation'
-                
-                #sp.leftChild= reconcILS(None,sp.leftChild,sp_copy,sp_)
-                #sp.rightChild =reconcILS(None,sp.rightChild,sp_copy,sp_)
                 return sp
 
 
@@ -109,113 +94,83 @@ def reconcILS(tr,sp,sp_copy,sp_):
         
             if sp.isLeaf:
                 if sp.inital_ref==0 and sp.parent.evolve!='Loss':
-                    sp.evolve='Loss'
-
                     sp.cost=0
                     sp = sp.parse(sp.to_newick(sp))
                     sp.evolve='Loss'
                     return sp
                 else:
-                    sp.evolve='Speciation'
                     sp = sp.parse(sp.to_newick())
                     sp.evolve='Speciation'
                     return sp
             elif (sp.leftChild.isLeaf and sp.rightChild.isLeaf) :
                     if sp.evolve==None:
                         sp.evolve= 'Speciation'
-
                     if len(set(sp.leftChild.taxa).intersection(set(tr.taxa)))==0:
                         sp.leftChild.evolve='Loss'
-                        print('right')
-                        #clearid(sp,'right')
                         sp.leftChild =sp.leftChild
                         sp.rightChild= reconcILS(tr,sp.rightChild,sp_copy,sp_)
                         return sp
                     
                     if len(set(sp.rightChild.taxa).intersection(set(tr.taxa)))==0:
                         sp.rightChild.evolve='Loss'
-                        print('left')
-                        #clearid(sp,'Left')
                         sp.rightChild =sp.rightChild
                         sp.leftChild= reconcILS(tr,sp.leftChild,sp_copy,sp_)
                         return sp
                     
 
                     if len(set(sp.leftChild.taxa).intersection(set(tr.leftChild.taxa)))>=len(set(sp.rightChild.taxa).intersection(set(tr.leftChild.taxa))):
-
-
                         sp.leftChild= reconcILS(tr.leftChild,sp.leftChild,sp_copy,sp_)
                         sp.rightChild =reconcILS(tr.rightChild,sp.rightChild,sp_copy,sp_)
                     else:
-
                         sp.leftChild= reconcILS(tr.rightChild,sp.leftChild,sp_copy,sp_)
                         sp.rightChild =reconcILS(tr.leftChild,sp.rightChild,sp_copy,sp_)                        
                     
                     sp.cost=0
-                    #print('1283',to_newick(sp))
-                    
                     return sp
+            
             elif sp.evolve!=None:
                 if len(set(sp.leftChild.taxa).intersection(set(tr.leftChild.taxa)))>=len(set(sp.rightChild.taxa).intersection(set(tr.leftChild.taxa))):
                         sp.leftChild= reconcILS(tr.leftChild,sp.leftChild,sp_copy,sp_)
                         sp.rightChild =reconcILS(tr.rightChild,sp.rightChild,sp_copy,sp_)
                 else:
-
                         sp.leftChild= reconcILS(tr.rightChild,sp.leftChild,sp_copy,sp_)
-                        sp.rightChild =reconcILS(tr.leftChild,sp.rightChild,sp_copy,sp_)                        
-                    
-                    
+                        sp.rightChild =reconcILS(tr.leftChild,sp.rightChild,sp_copy,sp_)                          
                 return sp
-             
             else:
                     sp.evolve= 'Speciation'
-      
                     if len(set(sp.leftChild.taxa).intersection(set(tr.taxa)))==0:
-                        print('left1')
                         sp.leftChild.evolve='Loss'
-                        #clearid(sp,'right')
                         sp.leftChild =sp.leftChild
                         sp.rightChild= reconcILS(tr,sp.rightChild,sp_copy,sp_)
                         return sp
                     
                     if len(set(sp.rightChild.taxa).intersection(set(tr.taxa)))==0:
-                        print('right1')
                         sp.rightChild.evolve='Loss'
-                        #clearid(sp,'Left')
                         sp.leftChild =reconcILS(tr,sp.leftChild,sp_copy,sp_)
                         sp.rightChild= sp.rightChild
                         return sp
                     
 
                     if len(set(sp.leftChild.taxa).intersection(set(tr.leftChild.taxa)))>=len(set(sp.rightChild.taxa).intersection(set(tr.leftChild.taxa))):
-
-                        
                         sp.leftChild= reconcILS(tr.leftChild,sp.leftChild,sp_copy,sp_)
                         sp.rightChild =reconcILS(tr.rightChild,sp.rightChild,sp_copy,sp_)
                     else:
-
                         sp.leftChild= reconcILS(tr.rightChild,sp.leftChild,sp_copy,sp_)
                         sp.rightChild =reconcILS(tr.leftChild,sp.rightChild,sp_copy,sp_)                        
-                    
-                    sp.cost=0
-                    #print('1283',to_newick(sp))
-                    
+                    sp.cost=0                    
                     return sp
            
 
 
 
         else:
-                
-
-                print(5)
                 if sp.isLeaf :
                     NNI_cost=1
                     duplication_cost=1
                 else:
 
                     new_topo,cost =ILS.ILS().ILS(tr_copy_1,sp_1,sp_1,Initial_multiple_mapping)
-                    #new_topo =parse(to_newick(new_topo))
+
                     new_topo.reset()
 
                     recon_1 = copy.deepcopy(sp_1)
@@ -232,9 +187,8 @@ def reconcILS(tr,sp,sp_copy,sp_):
                     
 
                     recon_left = copy.deepcopy(sp)
-                    #recon_left.id =recon_left.id *10
                     recon_right = copy.deepcopy(sp)
-                    #recon_right.id =recon_right.id *10
+                    
                     new_sp = copy.deepcopy(sp)
                     recon_right = sp.parse(recon_right.to_newick())
                     recon_left= sp.parse(recon_left.to_newick())
@@ -275,12 +229,10 @@ def reconcILS(tr,sp,sp_copy,sp_):
 
 
                     
-                    print(recon_left.cost)
-                    print(recon_right.cost)
 
 
                     recon_1_cost =recon_right.cost+recon_left.cost+1
-                    print(recon_1_cost)
+
 
 
 
@@ -306,11 +258,9 @@ def reconcILS(tr,sp,sp_copy,sp_):
                     NNI_cost=recon_1.cost
                     duplication_cost=recon_1_cost
     
- 
+                    
                 if  NNI_cost<=duplication_cost and  sp.isLeaf==None:
-                        #print('NNI')
-                        #print(to_newick(new_topo))
-                        #print(to_newick(tr))
+                       
                         sp.refTo=[]
                         
                         new_topo.reset()
@@ -325,9 +275,8 @@ def reconcILS(tr,sp,sp_copy,sp_):
 
                                         
                         new_topo.map_gene(sp)
-                        print(sp.leftChild.refTo)
-                        print(sp.rightChild.refTo)
-                        #new_topo.id= new_topo.id*17
+
+                        
                         
                         sp.cost=Initial_multiple_mapping- cost
                         if sp.evolve!=None:
@@ -337,11 +286,9 @@ def reconcILS(tr,sp,sp_copy,sp_):
                                 sp.evolve=[sp.evolve,'NNI']
                         else:
                             sp.evolve='NNI'
-                        #print('NNI',to_newick(new_topo))
-                        copy_event(sp_1,sp)
-                        #clearid(sp,'Left')
-                        #clearid(sp,'Right')
                         
+                        copy_event(sp_1,sp)
+
 
                         return reconcILS(new_topo,sp,sp_copy,sp_)
 
@@ -349,29 +296,10 @@ def reconcILS(tr,sp,sp_copy,sp_):
                        
 
 
-                        print('NNI',to_newick(new_topo))
-                        if len(set(new_topo.leftChild.taxa).intersection(set(sp.leftChild.taxa)))>len(set(new_topo.rightChild.taxa).intersection(set(sp.leftChild.taxa))):
-
-                            
-                            #sp.leftChild.optimize_cost(sp.leftChild,new_topo.leftChild)
-                            #sp.rightChild.optimize_cost(sp.rightChild,new_topo.rightChild)
-
-                            sp.leftChild = reconcILS(new_topo.leftChild,sp.leftChild,sp_copy,sp_) 
-                            sp.rightChild = reconcILS(new_topo.rightChild,sp.rightChild,sp_copy,sp_)
-                        else:
-                            #sp.leftChild.optimize_cost(sp.leftChild,new_topo.rightChild)
-                            #sp.rightChild.optimize_cost(sp.rightChild,new_topo.leftChild)
-
-                            sp.leftChild = reconcILS(new_topo.rightChild,sp.leftChild,sp_copy,sp_) 
-                            sp.rightChild = reconcILS(new_topo.leftChild,sp.rightChild,sp_copy,sp_)
-      
-                        #print('NNI',to_newick(sp))
-                    
-                        return sp
+                       
 
                 if  NNI_cost>=duplication_cost or  sp.isLeaf:
 
-                        print('Duplication')
                         
                         recon_left = copy.deepcopy(sp)
                         clearid(recon_left,'Left')
@@ -393,10 +321,7 @@ def reconcILS(tr,sp,sp_copy,sp_):
 
 
 
-                        #recon_left.isLeaf=True
-
-
-                        #recon_right.isLeaf=True
+                       
                         if sp.evolve!=None:
                             if type(sp.evolve)==list:
                                 sp.evolve+=['Duplication']
@@ -404,30 +329,14 @@ def reconcILS(tr,sp,sp_copy,sp_):
                                 sp.evolve=[sp.evolve,'Duplication']
                         else:
                             sp.evolve='Duplication'
-                        #sp.refTo=sp.refTo[1:]
+                        
        
                         if 1==1:
-                            print(1)
-
-                            
-    
-                            
-
-
-
                             tr.reset()
 
 
                             sp.clear_ref()
 
-
-
-                            
-  
-
-                            #clearcost_1(sp_copy,recon_left,recon_right)
-                           
-                            print(tr.isLeaf)
                             if tr.isLeaf:
                                 tr.order_gene(recon_left)
                                 tr.label_internal()
@@ -457,7 +366,7 @@ def reconcILS(tr,sp,sp_copy,sp_):
                             
 
 
-                            #print(sp.leftChild.refTo)
+                            
                             else:
                                 tr.leftChild.order_gene(recon_left)
                                 tr.rightChild.order_gene(recon_right)
@@ -479,12 +388,11 @@ def reconcILS(tr,sp,sp_copy,sp_):
                                         sp.paralogy+=[(sp.id, sp.id)]  
                                     else:  
                                         sp.paralogy+=[(sp.parent.id, sp.id)]
-                                    #sp.paralogy+=[(sp.parent.id, sp.id)]
+                                    
                                 sp.isLeaf=None
                             
                            
-                            #sp.leftChild=recon_left
-                            #sp.rightChild=recon_right
+
                         
                             return sp
                         
@@ -551,8 +459,7 @@ def main():
     print('-----------------')
 
 
-    #
-    print(red.to_newick(tr))
+
 
     setCost(sp)
     sp.isRoot=True

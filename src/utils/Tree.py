@@ -785,16 +785,7 @@ class Tree:
         if tree:
 
             if self.id==tree.id:
-                print('###########################################################')
-                print(copy_tree.to_newick())
-                print(tree.to_newick())
-                print(tree.parent.children)
-                print(tree.parent.leftChild)
-                print(tree.parent.leftChild.to_newick())
-                print(tree.parent.rightChild)
-                print(tree.parent.rightChild.to_newick())
-                print(tree)
-                print('###########################################################')
+
                
 
                 if tree.parent.leftChild == tree:
@@ -878,16 +869,16 @@ class Tree:
         
         else:
             copy_right_child= copy.deepcopy(self.rightChild.rightChild)
-            print(copy_right_child.to_newick())
+            #print(copy_right_child.to_newick())
             copy_right_child.reset()
             copy_left_child= copy.deepcopy(self.rightChild.leftChild)
-            print(copy_left_child.to_newick())
+            #print(copy_left_child.to_newick())
             copy_left_child.reset()
             
             new_tree_left = Tree()
             new_tree_left.rightChild =copy_left_child
             new_tree_left.leftChild=copy_left.leftChild
-            print(new_tree_left.to_newick())
+            #print(new_tree_left.to_newick())
             new_tree_left.children =[new_tree_left.leftChild, new_tree_left.rightChild]
             new_tree_left.leftChild.parent=new_tree_left
             new_tree_left.rightChild.parent=new_tree_left
@@ -903,7 +894,7 @@ class Tree:
             new_tree_right = Tree()
             new_tree_right.leftChild=copy_right_child
             new_tree_right.rightChild=copy_right.leftChild
-            print(new_tree_right.to_newick())
+            #print(new_tree_right.to_newick())
             new_tree_right.children= [new_tree_right.leftChild, new_tree_right.leftChild]
             new_tree_right.leftChild.parent=new_tree_right
             new_tree_right.leftChild.parent=new_tree_right
@@ -931,11 +922,11 @@ class Tree:
         #geneTree_right.leftChild=copy_right
 
 
-        print(geneTree_left)
-        print(geneTree_right)
+        #print(geneTree_left)
+        #print(geneTree_right)
         
         self.locate_copy(copy_left,geneTree_left)
         self.locate_copy(copy_right,geneTree_right)
-        print('Left:',geneTree_left.to_newick())
-        print('Right:',geneTree_right.to_newick())
+        #print('Left:',geneTree_left.to_newick())
+        #print('Right:',geneTree_right.to_newick())
         return [[self.parse(copy_left.to_newick()),self.parse(geneTree_left.to_newick()),'left'],[self.parse(copy_right.to_newick()),self.parse(geneTree_right.to_newick()),'right']]
