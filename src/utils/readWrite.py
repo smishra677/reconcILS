@@ -5,18 +5,18 @@ import re
 import os
 
 class readWrite:
-    def read_trees(i,folder):
-        gene_tre= open('./'+folder+'/rep_'+str(i)+'.tre')
+    def read_trees(self,i,folder):
+        gene_tre= open(folder+'/rep_'+str(i)+'.tre')
         tr =gene_tre.read().strip().split('\n')
         gene_tre.close()
         return str(tr[0])
 
-    def write_tree(i,folder,tree):
-        with open('./'+folder+'/rep_1_'+str(i)+'.tre', 'w') as f:
+    def write_trees(self,i,folder,tree):
+        with open(folder+'/rep_1_'+str(i)+'.tre', 'w') as f:
             f.write(tree)
         
 
-    def read_log(flag,i,dic,folder):
+    def read_log(self,flag,i,dic,folder):
         o= open('./'+folder+'/rep_'+str(i)+'.log').read()
         dic['Process']+=[flag]
         dic['Replicate']+=[i]

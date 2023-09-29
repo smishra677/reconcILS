@@ -37,7 +37,7 @@ class ILS:
         
 
 
-    def pick_first_edge(self,child,gene_tree,tr):
+    def pick_first_edge(self,child,gene_tree,tr,visited):
 
         if len(child)==0:
                 return 
@@ -86,7 +86,7 @@ class ILS:
                                 loss_left = tr.cost
 
 
-                                
+
                                 tr.reset()
                                 tr.cost=0
                                 li[0].rightChild.order_gene(tr)
@@ -99,7 +99,17 @@ class ILS:
                                 loss_right = tr.cost
                                 loss_score=loss_left+loss_right
 
-                        
+                                #print('##############################')
+                                #print('top_0',li[0].to_newick())
+                                #print('topo_1',li[1].to_newick())
+                                #print('sp',tr.to_newick())
+                                #print('left_loss_cost',loss_left)
+                                
+                                #print('right_loss_cost',loss_right)
+                                
+                                #print('left_bi_cost',bi_score_left)
+                                
+                                #print('right_bi_cost',bi_score_right)                        
                                 if k not in pool.keys():
                                     pool[k]= loss_score+bi_score_left+bi_score_right
                                     tre_pool[k]=li[1]
@@ -111,20 +121,32 @@ class ILS:
                                         pool[k] =loss_score+bi_score_left+bi_score_right
                                         tre_pool[k]=li[1]
                                     
+                
+                
+                min_key = min(pool, key=pool.get)
+                M=True
 
-                return child[min(pool, key=pool.get)],tre_pool[min(pool, key=pool.get)],pool[k]
+                '''
+                while M:
+
+                    if tre_pool[min_key].to_newick()  in visited:
+                        del pool[min_key]
+                        if len(pool)==0:
+                             return -1,-1,-1
+                        else:
+                            min_key = min(pool, key=pool.get)
+                    else:
+                '''
+                return child[min_key],tre_pool[min_key],pool[min_key]
 
     def find_parent_child(self,root,child):
-
         if len(root.refTo)>1:
-                #root.refTo.reverse()
-
                 for tre in root.refTo:
                     for tree1 in root.refTo:
                         
                         if (tree1 in tre.children):
                             if tree1==tre.leftChild:
-                                #print('match_left')
+                                ###print('match_left')
                                 child.append([tre,tree1,'Left'])
                             else:
                                 child.append([tre,tree1,'Right'])
@@ -140,39 +162,41 @@ class ILS:
                 child= self.find_parent_child(root,child)
         return child
 
-    def ILS(self,gene_tree,tr,sp_copy,cost):
+    def ILS(self,gene_tree,tr,sp_copy,cost,visited):
         list_tree=[]
         child=[]
 
         child= self.parent_child(tr,child)
-
-    
-        if len(child)==0 or cost==0:
+        
+        ##print(child)    
+        if len(child)==0 or cost<=0:
             return gene_tree,cost
         else:
             
             if len(child)>1:
-                chil, trei , cos =self.pick_first_edge(child,gene_tree,tr)
+                chil, trei , cos =self.pick_first_edge(child,gene_tree,tr,visited)
                 
                 if cos==0:
                         trei.label_internal()
                         Tally.Tally().tally_NNI(tr,trei,chil[2])
-                        return  self.ILS(trei,tr,sp_copy,cost-1)
+                        return  self.ILS(trei,tr,sp_copy,cost-1,visited)
+                elif cos==-1:
+                        return gene_tree,0
                 else:
                     child=[chil]
 
 
 
-           
+            ##print(child)
+
             new_topo=copy.deepcopy(gene_tree)
             geneTree =copy.deepcopy(new_topo)
             geneTree.reset()
-            
-            
+
             
             for ch1 in child:
                     if ch1 in tr.visited:
-                        print('visited')
+                        ##print('visited')
                         continue 
                     ch = copy.deepcopy(ch1[0])
                     ch.reset()
@@ -190,7 +214,10 @@ class ILS:
                         cop= copy.deepcopy(sp_copy)
                         cop.reset()
                             
-
+                        ##print('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$')
+                        ##print('top_0',i[0].to_newick())
+                        ##print('topo_1',i[1].to_newick())
+                        ##print('sp',cop.to_newick())
 
                         
                         #new_cost =cop.optimize_cost(i[0],i[1])
@@ -201,6 +228,10 @@ class ILS:
                         new_cost = len(cop.refTo)
 
                         if best_cost>=new_cost and cost>0:
+                            if best_cost!=new_cost:
+                                imporvement=True
+                            else:
+                                 imporvement=False
                             best_cost=new_cost
 
 
@@ -209,11 +240,12 @@ class ILS:
                                 new_topo=copy.deepcopy(i[1])
                             else:
                                 new_topo=copy.deepcopy(i[1])
-                            
+                            visited.append(new_topo.to_newick())
+                            visited.append(i[0].to_newick())
 
                             Tally.Tally().tally_NNI(tr,new_topo,ch1[2])  
-                    
-                            imporvement=True
+
+                           
 
 
                     cost=cost-1
@@ -235,7 +267,7 @@ class ILS:
 
                             
 
-                            return self.ILS(new_topo,new_sp,sp_copy,cost)
+                            return self.ILS(new_topo,new_sp,sp_copy,cost,visited)
                     
                     
         return new_topo,cost
