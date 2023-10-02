@@ -55,7 +55,7 @@ class ILS:
                         ch.reset()
 
                         list_tree= ch.NNI(gene_tree,ch1[2])
-
+                        #list_tree = ch.NNI1(gene_tree,ch1)
 
                         for li in list_tree:
                             
@@ -202,6 +202,7 @@ class ILS:
                     ch.reset()
                     
                     list_tree= ch1[0].NNI(geneTree,ch1[2])
+                    #list_tree = ch.NNI1(gene_tree,ch1)
                     best_cost=cost
                     imporvement=False
 

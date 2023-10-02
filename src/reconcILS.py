@@ -58,7 +58,7 @@ def setCost(sp):
 
         
 def reconcILS(tr,sp,sp_copy,sp_,visited):
-    if sp: 
+    if sp:
         sp_copy = copy.deepcopy(sp)
         tr_copy_1 = copy.deepcopy(tr)
 
@@ -92,7 +92,6 @@ def reconcILS(tr,sp,sp_copy,sp_,visited):
 
         if Initial_multiple_mapping in [0,1]:
 
-        
             if sp.isLeaf:
                 if sp.inital_ref==0 and sp.parent.evolve!='Loss':
                     sp.cost=0
@@ -254,16 +253,11 @@ def reconcILS(tr,sp,sp_copy,sp_,visited):
                     
 
                     recon_1.cost= recon_1.cost+(Initial_multiple_mapping- cost)*1
-                    
-                    print(Initial_multiple_mapping- cost,Initial_multiple_mapping,cost)
 
                     NNI_cost=recon_1.cost
                     duplication_cost=recon_1_cost
 
 
-                    print(NNI_cost)
-                    print(duplication_cost)
-                    print(new_multiple)
 
                 if  NNI_cost<duplication_cost and  sp.isLeaf==None and new_multiple<Initial_multiple_mapping:
                

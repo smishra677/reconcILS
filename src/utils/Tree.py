@@ -781,6 +781,18 @@ class Tree:
         return val[-1]
     
 
+    def find_address(self,node):
+        if self:
+            if self.id==node.id:
+                return self
+            if self.leftChild:
+                return self.leftChild.find_address(node)
+            if self.rightChild:
+                return self.rightChild.find_address(node)
+
+  
+        
+
     def locate_copy(self,copy_tree,tree):
         if tree:
 
@@ -815,7 +827,83 @@ class Tree:
                 self.locate_copy(copy_tree,tree.leftChild)
                 self.locate_copy(copy_tree,tree.rightChild)                 
             
+
+
+    def NNI1(self,gene_tree,node):
+
+        geneTree_left =copy.deepcopy(gene_tree)
+        geneTree_left.reset()
+
+        geneTree_right =copy.deepcopy(gene_tree)
+        geneTree_right.reset()
+
+        copy_left = copy.deepcopy(self)
+        copy_left.reset()
+
+        add_left,add_right=None,None
+        add_left = geneTree_left.find_address(node[0])
+
+        add_right = geneTree_right.find_address(node[0])
+
+        if node[2]=='Left':
+            new_tree_left = Tree()
+            new_tree_left.leftChild =node[1].leftChild
+            new_tree_left.rightChild=node[0].rightChild
             
+
+            new_tree_left.children =[new_tree_left.leftChild, new_tree_left.rightChild]
+            new_tree_left.leftChild.parent=new_tree_left
+            new_tree_left.rightChild.parent=new_tree_left
+            
+
+            add_left.rightChild= new_tree_left
+            add_left.leftChild= node[1].rightChild
+
+
+            new_tree_right = Tree()
+            new_tree_right.leftChild =node[1].rightChild
+            new_tree_right.rightChild=node[0].rightChild
+            
+
+            new_tree_right.children =[new_tree_right.leftChild, new_tree_right.rightChild]
+            new_tree_right.leftChild.parent=new_tree_right
+            new_tree_right.rightChild.parent=new_tree_right
+
+            add_right.rightChild= new_tree_right
+            add_right.leftChild= node[1].leftChild
+
+        else:
+            new_tree_left = Tree()
+            new_tree_left.leftChild =node[1].leftChild
+            new_tree_left.rightChild=node[0].leftChild
+            
+
+            new_tree_left.children =[new_tree_left.leftChild, new_tree_left.rightChild]
+            new_tree_left.leftChild.parent=new_tree_left
+            new_tree_left.rightChild.parent=new_tree_left
+            
+
+            add_left.leftChild= new_tree_left
+            add_left.rightChild= node[1].rightChild
+
+
+            new_tree_right = Tree()
+            new_tree_right.leftChild =node[1].rightChild
+            new_tree_right.rightChild=node[0].leftChild
+            
+
+            new_tree_right.children =[new_tree_right.leftChild, new_tree_right.rightChild]
+            new_tree_right.leftChild.parent=new_tree_right
+            new_tree_right.rightChild.parent=new_tree_right
+
+            add_right.leftChild= new_tree_right
+            add_right.rightChild= node[1].leftChild
+
+
+        
+        return [[self.parse(geneTree_left.to_newick()),self.parse(geneTree_left.to_newick()),'left'],[self.parse(geneTree_right.to_newick()),self.parse(geneTree_right.to_newick()),'right']]
+
+
     
     def NNI(self,gene_tree,flag):
 
