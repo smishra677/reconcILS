@@ -45,11 +45,11 @@ def dlcpar(gene_folder,i):
     os.system(command1)
     os.system(command2)
 
-sp_string='(((A,(B,C)),D),(E,F));'
+sp_string='(A,(B,C));'
 
 
 
-gene_folder='9_28_large'
+gene_folder='10_3_high_ILS'
 #gene_tre= open('./output_gene/gene_tree.txt')
 #trees =gene_tre.read().strip().split('\n')
 #gene_tre.close()
@@ -64,7 +64,7 @@ dlcparTime=[]
 reconcILSTime=[]
 li_gt=[]
 lis_rep=[]
-for i in range(1000):
+for i in range(100):
     red= readWrite.readWrite()
     sp=red.parse(sp_string)
     if erro==1:
@@ -140,13 +140,14 @@ for i in range(1000):
             sp_copy.isRoot=True
 
             starttime1 = timeit.default_timer()
-            reconcILS(tr,sp,sp_copy,sp,[])
+            #reconcILS(tr,sp,sp_copy,sp,[])
+            li=iterative_reconcILS(tr,sp,sp_copy,sp,[])
             reconcILSTime.append(timeit.default_timer()-starttime1)
             
       
             dic['Gene_tree']+=[tr.to_newick()]
             dic['Species_Tree']+=[sp_string]
-            li =red.sp_event(sp,[])
+            #li =red.sp_event(sp,[])
             #print(Counter(li))
             print(li)
             dic= red.Create_pd('Our_algorithm',i,li,dic)
