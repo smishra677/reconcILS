@@ -40,16 +40,16 @@ def write_trees(i,folder,tree):
 import timeit
 
 def dlcpar(gene_folder,i):
-    command1= 'python2 ./dlcpar dp -D 1.1 -L 1.0 -C 1.0 -K 1.0 -s ./sp_tree_large.tre -S ./001/001.mapsl  ./'+gene_folder+'/rep_1_'+str(i)+'.tre'
-    command2= 'python2 ./dlcpar events --lct -s ./sp_tree_large.tre -S ./001/001.mapsl ./'+gene_folder+'/rep_1_'+str(i)+'.tre.dlcdp.lct.tree > result_data'
+    command1= 'python2 ./dlcpar dp -D 1.1 -L 1.0 -C 1.0 -K 1.0 -s ./sp_tree.tre -S ./001/001.mapsl  ./'+gene_folder+'/rep_1_'+str(i)+'.tre'
+    command2= 'python2 ./dlcpar events --lct -s ./sp_tree.tre -S ./001/001.mapsl ./'+gene_folder+'/rep_1_'+str(i)+'.tre.dlcdp.lct.tree > result_data'
     os.system(command1)
     os.system(command2)
 
-sp_string='(A,(B,C));'
+sp_string='(A,(B,C));;'
 
 
 
-gene_folder='10_3_high_ILS'
+gene_folder='10_2'
 #gene_tre= open('./output_gene/gene_tree.txt')
 #trees =gene_tre.read().strip().split('\n')
 #gene_tre.close()
@@ -61,10 +61,11 @@ erro=0
 fil= open(gene_folder+'_error.txt','w+')
 #sp ='(((A,B),C),D);'
 dlcparTime=[]
-reconcILSTime=[]
+reconcILSTime_iterative=[]
+reconcILSTime_recurssive=[]
 li_gt=[]
 lis_rep=[]
-for i in range(100):
+for i in range(1000):
     red= readWrite.readWrite()
     sp=red.parse(sp_string)
     if erro==1:
@@ -84,12 +85,14 @@ for i in range(100):
         
         try:
             starttime = timeit.default_timer()
-            command1= 'python2 ./dlcpar dp -D 1.1 -L 1.0 -C 1.0 -K 1.0 -s ./sp_tree_large.tre -S ./001/001.mapsl  ./'+gene_folder+'/rep_1_'+str(i)+'.tre'
-            command2= 'python2 ./dlcpar events --lct -s ./sp_tree_large.tre -S ./001/001.mapsl ./'+gene_folder+'/rep_1_'+str(i)+'.tre.dlcdp.lct.tree > result_data'
+            command1= 'python2 ./dlcpar dp -D 1.1 -L 1.0 -C 1.0 -K 1.0 -s ./sp_tree.tre -S ./001/001.mapsl  ./'+gene_folder+'/rep_1_'+str(i)+'.tre'
+            command2= 'python2 ./dlcpar events --lct -s ./sp_tree.tre -S ./001/001.mapsl ./'+gene_folder+'/rep_1_'+str(i)+'.tre.dlcdp.lct.tree > result_data'
             os.system(command1)
             os.system(command2)
+
             dlcparTime.append(timeit.default_timer()-starttime)
             df = pd.read_csv('result_data',header=0, delimiter='\t')
+
             dic= red.read_log('True Process',i,dic,gene_folder)
             lis_rep.append(i)
             li_gt.append(tr.to_newick())
@@ -142,7 +145,7 @@ for i in range(100):
             starttime1 = timeit.default_timer()
             #reconcILS(tr,sp,sp_copy,sp,[])
             li=iterative_reconcILS(tr,sp,sp_copy,sp,[])
-            reconcILSTime.append(timeit.default_timer()-starttime1)
+            reconcILSTime_iterative.append(timeit.default_timer()-starttime1)
             
       
             dic['Gene_tree']+=[tr.to_newick()]
@@ -150,7 +153,48 @@ for i in range(100):
             #li =red.sp_event(sp,[])
             #print(Counter(li))
             print(li)
-            dic= red.Create_pd('Our_algorithm',i,li,dic)
+            dic= red.Create_pd('Our_algorithm_ite',i,li,dic)
+            print(dic)
+        except:
+            erro=1
+            dic=previous_dict
+
+
+            fil.write("reconcILS_iterative"+"   "+str(i)+"  "+tree+'\n')
+
+        try:
+            sp=red.parse(sp_string)
+            sp_copy= copy.deepcopy(sp)
+            sp_copy.reset()
+            sp.reset()
+            tr.reset()
+            tr.order_gene(sp)
+
+            tr.label_internal()
+            sp.label_internal()
+
+
+
+            tr.map_gene(sp)
+            setCost(sp)
+
+            sp.isRoot=True
+            tr.isRoot=True
+            sp_copy.isRoot=True
+
+            starttime1 = timeit.default_timer()
+            reconcILS(tr,sp,sp_copy,sp,[])
+
+            #li=iterative_reconcILS(tr,sp,sp_copy,sp,[])
+            reconcILSTime_recurssive.append(timeit.default_timer()-starttime1)
+            
+      
+            dic['Gene_tree']+=[tr.to_newick()]
+            dic['Species_Tree']+=[sp_string]
+            li =red.sp_event(sp,[])
+            #print(Counter(li))
+            print(li)
+            dic= red.Create_pd('Our_algorithm_recu',i,li,dic)
             print(dic)
         except:
             erro=1
@@ -184,9 +228,11 @@ print(dic)
 df = pd.DataFrame(dic)
 print(df)
 print(len(lis_rep),len(li_gt))
-time_dic={'Replicate':lis_rep,'Gene_tree':li_gt,'reconcILSTime':reconcILSTime,'dlcparTime':dlcparTime}
+time_dic={'Replicate':lis_rep,'Gene_tree':li_gt,'reconcILSTime_iterative':reconcILSTime_iterative,'reconcILSTime_recurssive':reconcILSTime_recurssive,'dlcparTime':dlcparTime}
 print(time_dic)
-print(len(reconcILSTime))
+print(len(reconcILSTime_iterative))
+print(len(reconcILSTime_recurssive))
+
 print(len(dlcparTime))
 df1 = pd.DataFrame(time_dic)
 

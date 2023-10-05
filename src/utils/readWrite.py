@@ -124,16 +124,20 @@ class readWrite:
         if root:
             self.sp_event(root.leftChild,li)
             self.sp_event(root.rightChild,li)
-            #print(root.taxa),
-            #print('event',root.evolve),
-            #print('cost',root.cost)
             if (root.evolve=='NNI'):
-                if root.cost==0:
+                if root.cost==1:
                     li.append(root.evolve)
                 else:
                     li+= ['NNI' for i in range(root.cost)]
             else:
-                li.append(root.evolve)
+                if type(root.evolve)==list:
+                    for i in root.evolve:
+                        if i=='NNI':
+                            li+=['NNI' for k in range(root.cost)]
+                        else:
+                            li.append(i)
+                else:
+                    li.append(root.evolve)
             ##print(root.isLeaf),
         return li
 

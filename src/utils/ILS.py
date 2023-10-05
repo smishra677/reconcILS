@@ -99,6 +99,14 @@ class ILS:
                                 loss_right = tr.cost
                                 loss_score=loss_left+loss_right
 
+                                li[1].order_gene(tr)
+
+                                tr.label_internal()
+                                li[1].label_internal()
+                                li[1].map_gene(tr)
+
+                                number_map= len(tr.refTo)
+                                tr.reset()
                                 #print('##############################')
                                 #print('top_0',li[0].to_newick())
                                 #print('topo_1',li[1].to_newick())
@@ -111,14 +119,14 @@ class ILS:
                                 
                                 #print('right_bi_cost',bi_score_right)                        
                                 if k not in pool.keys():
-                                    pool[k]= loss_score+bi_score_left+bi_score_right
+                                    pool[k]= number_map*(loss_score+bi_score_left+bi_score_right)
                                     tre_pool[k]=li[1]
 
                                 else:
-                                    if pool[k]<(loss_score+bi_score_left+bi_score_right):
+                                    if pool[k]<(loss_score+bi_score_left+bi_score_right)*number_map:
                                         continue
                                     else:
-                                        pool[k] =loss_score+bi_score_left+bi_score_right
+                                        pool[k] =(loss_score+bi_score_left+bi_score_right)*number_map
                                         tre_pool[k]=li[1]
                                     
                 
@@ -175,7 +183,7 @@ class ILS:
             
             if len(child)>1:
                 chil, trei , cos =self.pick_first_edge(child,gene_tree,tr,visited)
-                
+
                 if cos==0:
                         trei.label_internal()
                         Tally.Tally().tally_NNI(tr,trei,chil[2])

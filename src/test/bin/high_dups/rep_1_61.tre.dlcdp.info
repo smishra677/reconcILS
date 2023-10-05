@@ -1,9 +1,9 @@
 Version:	2.0.1
 Command:	dlcpar dp -D 1.1 -L 1.0 -C 1.0 -K 1.0 -s ./sp_tree_large.tre -S ./001/001.mapsl ./high_dups/rep_1_61.tre
 
-Seed:	5
+Seed:	13
 
 Feasibility:	feasible
-Runtime:	5.269086 sec
+Runtime:	2.554196 sec
 Optimal Cost:	15.000000
 Number of Solutions:	512

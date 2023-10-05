@@ -59,6 +59,7 @@ def setCost(sp):
         
 def reconcILS(tr,sp,sp_copy,sp_,visited):
     if sp:
+
         sp_copy = copy.deepcopy(sp)
         tr_copy_1 = copy.deepcopy(tr)
 
@@ -94,7 +95,7 @@ def reconcILS(tr,sp,sp_copy,sp_,visited):
 
             if sp.isLeaf:
                 if sp.inital_ref==0 and sp.parent.evolve!='Loss':
-                    sp.cost=0
+                    
                     sp = sp.parse(sp.to_newick(sp))
                     sp.evolve='Loss'
                     return sp
@@ -125,7 +126,7 @@ def reconcILS(tr,sp,sp_copy,sp_,visited):
                         sp.leftChild= reconcILS(tr.rightChild,sp.leftChild,sp_copy,sp_,visited)
                         sp.rightChild =reconcILS(tr.leftChild,sp.rightChild,sp_copy,sp_,visited)                        
                     
-                    sp.cost=0
+                    
                     return sp
             
             elif sp.evolve!=None:
@@ -157,7 +158,7 @@ def reconcILS(tr,sp,sp_copy,sp_,visited):
                     else:
                         sp.leftChild= reconcILS(tr.rightChild,sp.leftChild,sp_copy,sp_,visited)
                         sp.rightChild =reconcILS(tr.leftChild,sp.rightChild,sp_copy,sp_,visited)                        
-                    sp.cost=0                    
+                                        
                     return sp
            
 
@@ -252,17 +253,17 @@ def reconcILS(tr,sp,sp_copy,sp_,visited):
                     recon_1.find_loss_sp(recon_1)
                     
 
-                    recon_1.cost= recon_1.cost+(Initial_multiple_mapping- cost)*1
+                    #recon_1.cost= recon_1.cost+(Initial_multiple_mapping- cost)*1
 
-                    NNI_cost=recon_1.cost
+                    NNI_cost= recon_1.cost+(Initial_multiple_mapping- cost)*1
                     duplication_cost=recon_1_cost
 
 
 
-                if  NNI_cost<duplication_cost and  sp.isLeaf==None and new_multiple<Initial_multiple_mapping:
-               
+                if  NNI_cost<duplication_cost and  sp.isLeaf==None and (new_multiple<Initial_multiple_mapping or recon_1.cost==0):
+
                         sp.refTo=[]
-                        
+
                         new_topo.reset()
                         sp.clear_ref()
 
@@ -277,15 +278,19 @@ def reconcILS(tr,sp,sp_copy,sp_,visited):
                         new_topo.map_gene(sp)
 
                         
+                        print(new_topo.to_newick())
                         
+
                         sp.cost=Initial_multiple_mapping- cost
+
                         if sp.evolve!=None:
-                            if type(sp.evolve)==list:
-                                sp.evolve+=['NNI']
-                            else:
-                                sp.evolve=[sp.evolve,'NNI']
+                                if type(sp.evolve)==list:
+                                    sp.evolve+=['NNI']
+                                else:
+                                    sp.evolve=[sp.evolve,'NNI']
                         else:
                             sp.evolve='NNI'
+                        
                         
                         copy_event(sp_1,sp)
 
@@ -330,7 +335,7 @@ def reconcILS(tr,sp,sp_copy,sp_,visited):
                         else:
                             sp.evolve='Duplication'
                         
-       
+
                         if 1==1:
                             tr.reset()
 
@@ -403,9 +408,10 @@ def reconcILS(tr,sp,sp_copy,sp_,visited):
 def iterative_reconcILS(tr, sp, sp_copy, sp_, visited):
     stack = []
     eve=[]
-
+    
     while True:
         if sp:
+
             sp_copy = copy.deepcopy(sp)
             tr_copy_1 = copy.deepcopy(tr)
 
@@ -435,333 +441,317 @@ def iterative_reconcILS(tr, sp, sp_copy, sp_, visited):
                     eve.append(sp.evolve)
                     
 
-        if Initial_multiple_mapping in [0,1]:
+            if Initial_multiple_mapping in [0,1]:
 
-            if sp.isLeaf:
-                if sp.inital_ref==0 and sp.parent.evolve!='Loss':
-                    sp.cost=0
-                    sp = sp.parse(sp.to_newick(sp))
-                    sp.evolve='Loss'
-                    eve.append(sp.evolve)
-                    
+                if sp.isLeaf:
+                    if sp.inital_ref==0 and sp.parent.evolve!='Loss':
+                        
+                        sp = sp.parse(sp.to_newick(sp))
+                        sp.evolve='Loss'
+                        eve.append(sp.evolve)
+                        
+                    else:
+                        sp = sp.parse(sp.to_newick())
+                        sp.evolve='Speciation'
+                        eve.append(sp.evolve)
+                        
+                elif (sp.leftChild.isLeaf and sp.rightChild.isLeaf) :
+                        if sp.evolve==None:
+                            sp.evolve= 'Speciation'
+                        if len(set(sp.leftChild.taxa).intersection(set(tr.taxa)))==0:
+                            sp.leftChild.evolve='Loss'
+                            eve.append(sp.leftChild.evolve )
+                            
+                            stack.append((tr,sp.rightChild))
+
+                        
+                        elif len(set(sp.rightChild.taxa).intersection(set(tr.taxa)))==0:
+                            sp.rightChild.evolve='Loss'
+                            eve.append(sp.rightChild.evolve )
+                            stack.append((tr,sp.leftChild))
+                        
+
+                        elif len(set(sp.leftChild.taxa).intersection(set(tr.leftChild.taxa)))>=len(set(sp.rightChild.taxa).intersection(set(tr.leftChild.taxa))):
+                            stack.append((tr.leftChild,sp.leftChild))
+                            stack.append((tr.rightChild,sp.rightChild))
+                            
+                        else:
+                            stack.append((tr.rightChild,sp.leftChild))
+                            stack.append((tr.leftChild,sp.rightChild))
+                            
+
+                
+                elif sp.evolve!=None:
+                    if len(set(sp.leftChild.taxa).intersection(set(tr.leftChild.taxa)))>=len(set(sp.rightChild.taxa).intersection(set(tr.leftChild.taxa))):
+                            stack.append((tr.leftChild,sp.leftChild))
+                            stack.append((tr.rightChild,sp.rightChild))
+                            
+                    else:
+                            stack.append((tr.rightChild,sp.leftChild))
+                            stack.append((tr.leftChild,sp.rightChild))
+                            
                 else:
-                    sp = sp.parse(sp.to_newick())
-                    sp.evolve='Speciation'
-                    eve.append(sp.evolve)
-                    
-            elif (sp.leftChild.isLeaf and sp.rightChild.isLeaf) :
-                    if sp.evolve==None:
                         sp.evolve= 'Speciation'
-                    if len(set(sp.leftChild.taxa).intersection(set(tr.taxa)))==0:
-                        sp.leftChild.evolve='Loss'
-                        eve.append(sp.leftChild.evolve )
-                        stack.append((tr,sp.rightChild))
-
-                    
-                    elif len(set(sp.rightChild.taxa).intersection(set(tr.taxa)))==0:
-                        sp.rightChild.evolve='Loss'
-                        eve.append(sp.rightChild.evolve )
-                        stack.append((tr,sp.leftChild))
-                    
-
-                    elif len(set(sp.leftChild.taxa).intersection(set(tr.leftChild.taxa)))>=len(set(sp.rightChild.taxa).intersection(set(tr.leftChild.taxa))):
-                        stack.append((tr.leftChild,sp.leftChild))
-                        stack.append((tr.rightChild,sp.rightChild))
+                        if len(set(sp.leftChild.taxa).intersection(set(tr.taxa)))==0:
                         
-                    else:
-                        stack.append((tr.rightChild,sp.leftChild))
-                        stack.append((tr.leftChild,sp.rightChild))
+                            sp.leftChild.evolve='Loss'
+                            eve.append(sp.leftChild.evolve )
+                            stack.append((tr,sp.rightChild))
+                            
+                        elif len(set(sp.rightChild.taxa).intersection(set(tr.taxa)))==0:
+                            sp.rightChild.evolve='Loss'
+                            eve.append(sp.rightChild.evolve )
+                            stack.append((tr,sp.leftChild))
+    
+
                         
 
+
+                        elif len(set(sp.leftChild.taxa).intersection(set(tr.leftChild.taxa)))>=len(set(sp.rightChild.taxa).intersection(set(tr.leftChild.taxa))):
+                            stack.append((tr.leftChild,sp.leftChild))
+                            stack.append((tr.rightChild,sp.rightChild))
+                            
+                        else:
+                            stack.append((tr.rightChild,sp.leftChild))
+                            stack.append((tr.leftChild,sp.rightChild))
             
-            elif sp.evolve!=None:
-                if len(set(sp.leftChild.taxa).intersection(set(tr.leftChild.taxa)))>=len(set(sp.rightChild.taxa).intersection(set(tr.leftChild.taxa))):
-                        stack.append((tr.leftChild,sp.leftChild))
-                        stack.append((tr.rightChild,sp.rightChild))
-                        
-                else:
-                        stack.append((tr.rightChild,sp.leftChild))
-                        stack.append((tr.leftChild,sp.rightChild))
-                        
+
+
+
             else:
-                    sp.evolve= 'Speciation'
-                    if len(set(sp.leftChild.taxa).intersection(set(tr.taxa)))==0:
-                    
-                        sp.leftChild.evolve='Loss'
-                        eve.append(sp.leftChild.evolve )
-                        stack.append((tr,sp.rightChild))
-                        
-                    elif len(set(sp.rightChild.taxa).intersection(set(tr.taxa)))==0:
-                        sp.rightChild.evolve='Loss'
-                        eve.append(sp.rightChild.evolve )
-                        stack.append((tr,sp.leftChild))
- 
-
-                    
-
-
-                    elif len(set(sp.leftChild.taxa).intersection(set(tr.leftChild.taxa)))>=len(set(sp.rightChild.taxa).intersection(set(tr.leftChild.taxa))):
-                        stack.append((tr.leftChild,sp.leftChild))
-                        stack.append((tr.rightChild,sp.rightChild))
-                        
+                    if sp.isLeaf :
+                        NNI_cost=1
+                        duplication_cost=1
                     else:
-                        stack.append((tr.rightChild,sp.leftChild))
-                        stack.append((tr.leftChild,sp.rightChild))
-           
 
-
-
-        else:
-                if sp.isLeaf :
-                    NNI_cost=1
-                    duplication_cost=1
-                else:
-
-                    new_topo,cost =ILS.ILS().ILS(tr_copy_1,sp_1,sp_1,Initial_multiple_mapping,visited)
-
-                    new_topo.reset()
-
-                    recon_1 = copy.deepcopy(sp_1)
-                    recon_1.reset()
-                    recon_1.label_internal()
-
-
-                    new_gene_tree =copy.deepcopy(tr_copy_2)
-                    new_gene_tree.reset()
-                    new_gene_tree.leftChild = sp.parse(new_gene_tree.leftChild.to_newick())
-                    new_gene_tree.rightChild= sp.parse(new_gene_tree.rightChild.to_newick())
-
-
-                    
-
-                    recon_left = copy.deepcopy(sp)
-                    recon_right = copy.deepcopy(sp)
-                    
-                    new_sp = copy.deepcopy(sp)
-                    recon_right = sp.parse(recon_right.to_newick())
-                    recon_left= sp.parse(recon_left.to_newick())
-
-
-                    new_sp.leftChild=recon_left
-                    new_sp.rightChild=recon_right
-
-                    new_sp.reset()
-
-                    recon_left.reset()
-                    recon_right.reset()
-                    recon_left.label_internal()
-                    recon_right.label_internal()
-
-                    
-                    
-                    
-                    
-
-
-                    new_gene_tree.leftChild.order_gene(recon_left)
-                    new_gene_tree.rightChild.order_gene(recon_right)
-
-                    new_gene_tree.leftChild.label_internal()
-
-                    new_gene_tree.rightChild.label_internal()
-
-                  
-                    new_gene_tree.leftChild.map_gene(recon_left)
-
-                    
-                    new_gene_tree.rightChild.map_gene(recon_right)
-                    recon_left.find_loss_sp(recon_left)
-                    recon_right.find_loss_sp(recon_right)
-
-                    
-
-
-                    
-
-
-                    recon_1_cost =recon_right.cost+recon_left.cost+1.1
-
-
-
-
-                    recon_left.reset()
-
-                    recon_right.reset()
-                    
-                    new_gene_tree.rightChild.reset()
-                    new_gene_tree.leftChild.reset()
-                    
-                    new_topo.order_gene(recon_1)
-                    new_topo.label_internal()
-                    new_topo.map_gene(recon_1)
-                    new_multiple= len(recon_1.refTo)
-
-                    
-                    recon_1.find_loss_sp(recon_1)
-                    
-
-                    recon_1.cost= recon_1.cost+(Initial_multiple_mapping- cost)*1
-
-                    NNI_cost=recon_1.cost
-                    duplication_cost=recon_1_cost
-
-
-
-                if  NNI_cost<duplication_cost and  sp.isLeaf==None and new_multiple<Initial_multiple_mapping:
-               
-                        sp.refTo=[]
+                        new_topo,cost =ILS.ILS().ILS(tr_copy_1,sp_1,sp_1,Initial_multiple_mapping,visited)
                         
                         new_topo.reset()
-                        sp.clear_ref()
+
+                        recon_1 = copy.deepcopy(sp_1)
+                        recon_1.reset()
+                        recon_1.label_internal()
 
 
-                        new_topo.order_gene(sp)
+                        new_gene_tree =copy.deepcopy(tr_copy_2)
+                        new_gene_tree.reset()
+                        new_gene_tree.leftChild = sp.parse(new_gene_tree.leftChild.to_newick())
+                        new_gene_tree.rightChild= sp.parse(new_gene_tree.rightChild.to_newick())
 
-                                
-                        new_topo.label_internal()
-                    
-
-                                        
-                        new_topo.map_gene(sp)
 
                         
-                        
-                        sp.cost=Initial_multiple_mapping- cost
-                        if sp.evolve!=None:
-                            if type(sp.evolve)==list:
-                                sp.evolve+=['NNI']
-                            else:
-                                sp.evolve=[sp.evolve,'NNI']
-                        else:
-                            sp.evolve='NNI'
-                        
-                        copy_event(sp_1,sp)
 
-                        visited.append(new_topo.to_newick())
-
-                        eve.append( sp.evolve)
-                        stack.append((new_topo,sp))
-
-                        
-                       
-
-
-                       
-
-                if  NNI_cost>=duplication_cost or  sp.isLeaf or new_multiple>=Initial_multiple_mapping:
-
-                        
                         recon_left = copy.deepcopy(sp)
-                        clearid(recon_left,'Left')
-                        
-                        
-                        
                         recon_right = copy.deepcopy(sp)
-                        clearid(recon_right,'right')
                         
-                        
+                        new_sp = copy.deepcopy(sp)
+                        recon_right = sp.parse(recon_right.to_newick())
+                        recon_left= sp.parse(recon_left.to_newick())
+
+
+                        new_sp.leftChild=recon_left
+                        new_sp.rightChild=recon_right
+
+                        new_sp.reset()
+
                         recon_left.reset()
                         recon_right.reset()
-
                         recon_left.label_internal()
                         recon_right.label_internal()
 
-
-                        sp.taxa=''
-
-
-
-                       
-                        if sp.evolve!=None:
-                            if type(sp.evolve)==list:
-                                sp.evolve+=['Duplication']
-                            else:
-                                sp.evolve=[sp.evolve,'Duplication']
-                        else:
-                            sp.evolve='Duplication'
-                       
-                        eve.append(sp.evolve)
-                        if 1==1:
-                            tr.reset()
+                        
+                        
+                        
+                        
 
 
+                        new_gene_tree.leftChild.order_gene(recon_left)
+                        new_gene_tree.rightChild.order_gene(recon_right)
+
+                        new_gene_tree.leftChild.label_internal()
+
+                        new_gene_tree.rightChild.label_internal()
+
+                    
+                        new_gene_tree.leftChild.map_gene(recon_left)
+
+                        
+                        new_gene_tree.rightChild.map_gene(recon_right)
+                        recon_left.find_loss_sp(recon_left)
+                        recon_right.find_loss_sp(recon_right)
+
+                        
+
+
+                        
+
+
+                        recon_1_cost =recon_right.cost+recon_left.cost+1.1
+
+
+
+
+                        recon_left.reset()
+
+                        recon_right.reset()
+                        
+                        new_gene_tree.rightChild.reset()
+                        new_gene_tree.leftChild.reset()
+                        
+                        new_topo.order_gene(recon_1)
+                        new_topo.label_internal()
+                        new_topo.map_gene(recon_1)
+                        new_multiple= len(recon_1.refTo)
+
+                        
+                        recon_1.find_loss_sp(recon_1)
+                        
+
+                        NNI_cost=recon_1.cost+(Initial_multiple_mapping- cost)*1
+
+                        duplication_cost=recon_1_cost
+
+
+
+
+                    if  NNI_cost<duplication_cost and  sp.isLeaf==None and (new_multiple<Initial_multiple_mapping or recon_1.cost==0) :
+                            sp.refTo=[]
+                            
+                            new_topo.reset()
                             sp.clear_ref()
 
-                            if tr.isLeaf:
-                                tr.order_gene(recon_left)
-                                tr.label_internal()
-   
-                                tr.map_gene(recon_left)
-                                
-                                stack.append((tr,recon_left))
-                                tr.reset()
-                                tr.order_gene(recon_right)
-                                tr.label_internal()
-   
-                                tr.map_gene(recon_right)
-                                stack.append((tr,recon_right))
 
-                                sp.leftChild=recon_left
-                                sp.rightChild=recon_right
-                                sp.children+=[sp.leftChild ]
-                                sp.children+=[sp.rightChild]
-                                
-                                sp.leftChild.parent=sp
-                                sp.rightChild.parent=sp
-                                
-                                if sp.parent==None:
-                                    sp.paralogy+=[(sp.id,sp.id)]
-                                else:
-                                    if sp.isLeaf:
-                                        sp.paralogy+=[(sp.id, sp.id)]  
-                                    else:  
-                                        sp.paralogy+=[(sp.parent.id, sp.id)]  
-                                    sp.paralogy+[(sp.parent.id, sp.id)]
-                                sp.isLeaf=None
-                            
+                            new_topo.order_gene(sp)
 
-
-                            
-                            else:
-                                tr.leftChild.order_gene(recon_left)
-                                tr.rightChild.order_gene(recon_right)
-                                tr.label_internal()
-
-                                tr.leftChild.map_gene(recon_left)
-                                stack.append((tr.leftChild,recon_left)) 
-                                tr.rightChild.map_gene(recon_right)
-                                stack.append((tr.rightChild,recon_right)) 
-                                
-                                sp.children+=[sp.leftChild ]
-                                sp.children+=[sp.rightChild]
-                               
-
-                                if sp.parent==None:
-                                    sp.paralogy+=[(sp.id,sp.id)]
-                                else:
-                                    if sp.isLeaf:
-                                        sp.paralogy+=[(sp.id, sp.id)]  
-                                    else:  
-                                        sp.paralogy+=[(sp.parent.id, sp.id)]
                                     
-                                sp.isLeaf=None
+                            new_topo.label_internal()
+                        
+
+                                            
+                            new_topo.map_gene(sp)
+
                             
-                           
+                            
+                            sp.cost=Initial_multiple_mapping- cost
+
+         
+                            copy_event(sp_1,sp)
+
+                            visited.append(new_topo.to_newick())
+
+                            eve.append(['NNI' for i in range(Initial_multiple_mapping- cost)])
+                            stack.append((new_topo,sp))
+
+                            
+                        
+
+
+                        
+
+                    else:
+
+                            
+                            recon_left = copy.deepcopy(sp)
+                            clearid(recon_left,'Left')
+                            
+                            
+                            
+                            recon_right = copy.deepcopy(sp)
+                            clearid(recon_right,'right')
+                            
+                            
+                            recon_left.reset()
+                            recon_right.reset()
+
+                            recon_left.label_internal()
+                            recon_right.label_internal()
+
+
+                            sp.taxa=''
+
+
+
+                        
+                        
+                            eve.append('Duplication')
+                            if 1==1:
+                                tr.reset()
+
+
+                                sp.clear_ref()
+
+                                if tr.isLeaf:
+                                    tr.order_gene(recon_left)
+                                    tr.label_internal()
+    
+                                    tr.map_gene(recon_left)
+                                    
+                                    stack.append((tr,recon_left))
+                                    tr.reset()
+                                    tr.order_gene(recon_right)
+                                    tr.label_internal()
+    
+                                    tr.map_gene(recon_right)
+                                    stack.append((tr,recon_right))
+
+                                    sp.leftChild=recon_left
+                                    sp.rightChild=recon_right
+                                    sp.children+=[sp.leftChild ]
+                                    sp.children+=[sp.rightChild]
+                                    
+                                    sp.leftChild.parent=sp
+                                    sp.rightChild.parent=sp
+                                    
+                                    if sp.parent==None:
+                                        sp.paralogy+=[(sp.id,sp.id)]
+                                    else:
+                                        if sp.isLeaf:
+                                            sp.paralogy+=[(sp.id, sp.id)]  
+                                        else:  
+                                            sp.paralogy+=[(sp.parent.id, sp.id)]  
+                                        sp.paralogy+[(sp.parent.id, sp.id)]
+                                    sp.isLeaf=None
+                                
+
+
+                                
+                                else:
+                                    tr.leftChild.order_gene(recon_left)
+                                    tr.rightChild.order_gene(recon_right)
+                                    tr.label_internal()
+
+                                    tr.leftChild.map_gene(recon_left)
+                                    stack.append((tr.leftChild,recon_left)) 
+                                    tr.rightChild.map_gene(recon_right)
+                                    stack.append((tr.rightChild,recon_right)) 
+                                    
+                                    sp.children+=[sp.leftChild ]
+                                    sp.children+=[sp.rightChild]
+                                
+
+                                    if sp.parent==None:
+                                        sp.paralogy+=[(sp.id,sp.id)]
+                                    else:
+                                        if sp.isLeaf:
+                                            sp.paralogy+=[(sp.id, sp.id)]  
+                                        else:  
+                                            sp.paralogy+=[(sp.parent.id, sp.id)]
+                                        
+                                    sp.isLeaf=None
+                                
+                            
 
 
 
 
-        if not stack:
-            break
-        else:
-        
+            if not stack:
+                break
+            else:
             
-            tr, sp = stack.pop()
-            
-            print(tr.to_newick())
+                
+                tr, sp = stack.pop()
 
-            print(sp.to_newick())
-            
+                
 
     return eve
 
@@ -833,17 +823,25 @@ def main():
 
     #reconcILS(tr,sp,sp_copy,sp,[])
     print(tr.to_newick())
-    eve=iterative_reconcILS(tr,sp,sp_copy,sp,[])
+
+    from multiprocessing import Process,Pool
+
+
+    with Pool(4) as pool:
+        eve = pool.starmap(iterative_reconcILS, [(tr,sp,sp_copy,sp,[])])
+    #eve=iterative_reconcILS(tr,sp,sp_copy,sp,[])
     print(eve)
 
+  
     #print('######################33')
     
 
     re_w = readWrite.readWrite()
-    li =re_w.sp_event(sp,[])
+    #li =re_w.sp_event(sp,[])
+    print(sp.to_newick())
            
    
-    Tally.Tally().make_graph(sp,sp_string,gene_tree)
+    #Tally.Tally().make_graph(sp,sp_string,gene_tree)
     
 
 
@@ -859,7 +857,8 @@ def main():
     dic['Gene_tree']+=[tr.to_newick()]
     dic['Species_Tree']+=[sp_string]
         
-    dic= re_w.Create_pd('reconcILS',0,eve,dic)
+    #print(li)
+    dic= re_w.Create_pd('reconcILS',0,eve[0],dic)
     
     df = pd.DataFrame(dic)
     print(dic)
