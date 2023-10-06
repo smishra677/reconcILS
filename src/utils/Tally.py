@@ -58,26 +58,35 @@ class Tally:
         if orientation=='Left':
             if new_topo.leftChild.taxa ==None:
                 tr.NNI_+=[(tr.id,tr.id)]
+                #tr.NNI_id_list+=[(tr,tr)]
             else:
                 if len(new_topo.leftChild.taxa)==1:
                     if tr.leftChild.rightChild:            
                         tr.NNI_+=[(tr.id,tr.leftChild.id)]
+                        #tr.NNI_id_list+=[(tr,tr.leftChild)]
                     else:
                         tr.NNI_+=[(tr.id,tr.rightChild.id)]
+                        #tr.NNI_id_list+=[(tr,tr.rightChild)]
                 else:
                      tr.NNI_+=[(tr.id,tr.id)]
+                     #tr.NNI_id_list+=[(tr,tr)]
         else:
             if new_topo.rightChild.taxa==None:
                 tr.NNI_+=[(tr.id,tr.id)]
+                #tr.NNI_id_list+=[(tr,tr)]
             else:
                 if  len(new_topo.rightChild.taxa)==1:
                     if tr.rightChild.leftChild:
                         tr.NNI_+=[(tr.id,tr.rightChild.id)]
+                        #tr.NNI_id_list+=[(tr,tr.rightChild)]
                     else:
                         
                         tr.NNI_+=[(tr.id,tr.leftChild.id)]
+                        #tr.NNI_id_list+=[(tr,tr.leftChild)]
                 else:
                     tr.NNI_+=[(tr.id,tr.id)]
+                    #tr.NNI_id_list+=[(tr,tr)]
+                    
 
 
 

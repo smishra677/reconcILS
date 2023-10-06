@@ -125,7 +125,7 @@ class readWrite:
             self.sp_event(root.leftChild,li)
             self.sp_event(root.rightChild,li)
             if (root.evolve=='NNI'):
-                if root.cost==1:
+                if root.cost in [0,1]:
                     li.append(root.evolve)
                 else:
                     li+= ['NNI' for i in range(root.cost)]

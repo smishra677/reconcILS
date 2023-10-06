@@ -45,11 +45,12 @@ def dlcpar(gene_folder,i):
     os.system(command1)
     os.system(command2)
 
-sp_string='(A,(B,C));;'
+sp_string='(((A,(B,C)),D),(E,F));'
+#sp_string='(A,(B,C));'
 
 
 
-gene_folder='10_2'
+gene_folder='10_2_large'
 #gene_tre= open('./output_gene/gene_tree.txt')
 #trees =gene_tre.read().strip().split('\n')
 #gene_tre.close()
@@ -85,8 +86,8 @@ for i in range(1000):
         
         try:
             starttime = timeit.default_timer()
-            command1= 'python2 ./dlcpar dp -D 1.1 -L 1.0 -C 1.0 -K 1.0 -s ./sp_tree.tre -S ./001/001.mapsl  ./'+gene_folder+'/rep_1_'+str(i)+'.tre'
-            command2= 'python2 ./dlcpar events --lct -s ./sp_tree.tre -S ./001/001.mapsl ./'+gene_folder+'/rep_1_'+str(i)+'.tre.dlcdp.lct.tree > result_data'
+            command1= 'python2 ./dlcpar dp -D 1.1 -L 1.0 -C 1.0 -K 1.0 -s ./sp_tree_large.tre -S ./001/001.mapsl  ./'+gene_folder+'/rep_1_'+str(i)+'.tre'
+            command2= 'python2 ./dlcpar events --lct -s ./sp_tree_large.tre -S ./001/001.mapsl ./'+gene_folder+'/rep_1_'+str(i)+'.tre.dlcdp.lct.tree > result_data'
             os.system(command1)
             os.system(command2)
 
@@ -145,16 +146,16 @@ for i in range(1000):
             starttime1 = timeit.default_timer()
             #reconcILS(tr,sp,sp_copy,sp,[])
             li=iterative_reconcILS(tr,sp,sp_copy,sp,[])
+
             reconcILSTime_iterative.append(timeit.default_timer()-starttime1)
-            
+   
       
             dic['Gene_tree']+=[tr.to_newick()]
             dic['Species_Tree']+=[sp_string]
             #li =red.sp_event(sp,[])
-            #print(Counter(li))
-            print(li)
+
             dic= red.Create_pd('Our_algorithm_ite',i,li,dic)
-            print(dic)
+
         except:
             erro=1
             dic=previous_dict
@@ -193,9 +194,9 @@ for i in range(1000):
             dic['Species_Tree']+=[sp_string]
             li =red.sp_event(sp,[])
             #print(Counter(li))
-            print(li)
+
             dic= red.Create_pd('Our_algorithm_recu',i,li,dic)
-            print(dic)
+
         except:
             erro=1
             dic=previous_dict
