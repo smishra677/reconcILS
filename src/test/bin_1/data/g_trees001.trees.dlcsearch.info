@@ -1,0 +1,8 @@
+Version:	2.0.1
+Command:	dlcpar search -s ./data/s_tree.trees -S ./data/001.mapsl ./data/g_trees001.trees -i 100 --nprescreen 20
+
+Seed:	168146976120
+
+Feasibility:	feasible
+Runtime:	0.359435 sec
+Optimal Cost:	3.000000

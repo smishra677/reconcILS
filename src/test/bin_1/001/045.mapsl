@@ -1,0 +1,6 @@
+Lt_node	Lt_paralog	Lt_event	St_node
+'A_0'	0	Leaf	'A'
+'A_1'	1	Leaf	'A'
+2	0	Dup	'A'
+'B_0'	0	Leaf	'B'
+4	0	Sp	2

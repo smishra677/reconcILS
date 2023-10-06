@@ -1,0 +1,8 @@
+Version:	2.0.1
+Command:	dlcpar search -s ./001/s_tree.trees -S ./001/001.mapsl ./001/g_trees001.trees
+
+Seed:	168146939575
+
+Feasibility:	feasible
+Runtime:	0.039804 sec
+Optimal Cost:	3.000000
