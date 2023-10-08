@@ -96,7 +96,6 @@ def reconcILS(tr,sp,sp_copy,sp_,visited):
 
             if sp.isLeaf:
                 if sp.inital_ref==0 and sp.parent.evolve!='Loss':
-                    sp.cost=0
                     sp = sp.parse(sp.to_newick(sp))
                     sp.evolve='Loss'
                     return sp
@@ -127,7 +126,7 @@ def reconcILS(tr,sp,sp_copy,sp_,visited):
                         sp.leftChild= reconcILS(tr.rightChild,sp.leftChild,sp_copy,sp_,visited)
                         sp.rightChild =reconcILS(tr.leftChild,sp.rightChild,sp_copy,sp_,visited)                        
                     
-                    sp.cost=0
+
                     return sp
             
             elif sp.evolve!=None:
@@ -159,7 +158,7 @@ def reconcILS(tr,sp,sp_copy,sp_,visited):
                     else:
                         sp.leftChild= reconcILS(tr.rightChild,sp.leftChild,sp_copy,sp_,visited)
                         sp.rightChild =reconcILS(tr.leftChild,sp.rightChild,sp_copy,sp_,visited)                        
-                    sp.cost=0                    
+                  
                     return sp
            
 
@@ -280,15 +279,19 @@ def reconcILS(tr,sp,sp_copy,sp_,visited):
 
                         
                         
-                        sp.cost=Initial_multiple_mapping- cost
+                        sp.cost=1
+
                         if sp.evolve!=None:
                             if type(sp.evolve)==list:
-                                sp.evolve+=['NNI']
+                                sp.evolve+=['NNI' for i in range(Initial_multiple_mapping- cost)]
+                                sp.cost=1
                             else:
-                                sp.evolve=[sp.evolve,'NNI']
+                                sp.evolve=[sp.evolve]
+                                sp.evolve+=['NNI' for i in range(Initial_multiple_mapping- cost)]
+                                sp.cost=1
                         else:
-                            sp.evolve='NNI'
-                        
+                            sp.evolve=['NNI' for i in range(Initial_multiple_mapping- cost)]
+
                         copy_event(sp_1,sp)
 
                         visited.append(new_topo.to_newick())

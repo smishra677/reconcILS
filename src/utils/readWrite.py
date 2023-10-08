@@ -81,7 +81,10 @@ class readWrite:
 
         return dic
 
-    def Create_pd_ete3(flag,i,o,dic):
+    def Create_pd_ete3(self,flag,i,o,dic):
+        
+        dic['DLCILS']+=[0]
+        dic['RHemiplasy']+=[0]
         
         dic['Process']+=[flag]
         dic['Replicate']+=[i]
@@ -89,6 +92,7 @@ class readWrite:
         dic['NNI'].append(0)
         dic['Loss'].append(0)
         dic['Hemiplasy'].append(0)
+
 
         for i in o:
             if i in ['D','L']:
@@ -106,16 +110,16 @@ class readWrite:
             
 
 
-    def sp_event_ete3(root):
+    def sp_event_ete3(self,root):
         li=[]
+
         for node in root.traverse(strategy="postorder"):
             if len(node.children) != 0:
             ##print(dir(root))
-
-                print(li)
                 
                 li.append(node.evoltype)
             ##print(root.isLeaf),
+        
         return li
 
 

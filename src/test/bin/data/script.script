@@ -1,0 +1,3 @@
+dlcpar events --lct -s ./data/s_tree.trees -S ./data/001.mapsl ./data/g_trees001.trees.dlcdp.lct.tree
+
+dlcpar dp -s ./data/s_tree.trees -S ./data/001.mapsl ./data/g_trees001.trees
