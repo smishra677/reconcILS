@@ -1,6 +1,5 @@
-A	1	A_4,n2,n3
-A	2	n4
-A	3	A
-B	6	n8
-B	7	B_2,n9,B_1
-B	1	n6,n7
+B	2	n6,B_4,n7,B_3,n8,n9
+A	3	A_2,n4,A_1
+B	6	B
+1	1	n5
+A	1	n2,n3

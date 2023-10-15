@@ -99,6 +99,7 @@ class ILS:
                                 loss_right = tr.cost
                                 loss_score=loss_left+loss_right
 
+                                tr.reset()
                                 li[1].order_gene(tr)
 
                                 tr.label_internal()
@@ -107,7 +108,10 @@ class ILS:
 
                                 number_map= len(tr.refTo)
                                 tr.reset()
+
                                 #print('##############################')
+                                #print(li[1].to_newick())
+                                #print(tr.to_newick())
                                 #print('top_0',li[0].to_newick())
                                 #print('topo_1',li[1].to_newick())
                                 #print('sp',tr.to_newick())
@@ -117,9 +121,11 @@ class ILS:
                                 
                                 #print('left_bi_cost',bi_score_left)
                                 
-                                #print('right_bi_cost',bi_score_right)                        
+                                #print('right_bi_cost',bi_score_right)  
+
+                                #print(number_map)                      
                                 if k not in pool.keys():
-                                    pool[k]= number_map*(loss_score+bi_score_left+bi_score_right)
+                                    pool[k]= (loss_score+bi_score_left+bi_score_right)*number_map
                                     tre_pool[k]=li[1]
 
                                 else:
@@ -130,8 +136,11 @@ class ILS:
                                         tre_pool[k]=li[1]
                                     
                 
-                
+
+
                 min_key = min(pool, key=pool.get)
+
+            
                 M=True
 
                 '''
@@ -176,9 +185,10 @@ class ILS:
 
         child= self.parent_child(tr,child)
         
-        ##print(child)    
+        #print(child)
+
         if len(child)==0 or cost<=0:
-            return gene_tree,cost
+            return gene_tree,cost,-1
         else:
             
             if len(child)>1:
@@ -187,9 +197,11 @@ class ILS:
                 if cos==0:
                         trei.label_internal()
                         Tally.Tally().tally_NNI(tr,trei,chil[2])
-                        return  self.ILS(trei,tr,sp_copy,cost-1,visited)
+                        #return  self.ILS(trei,tr,sp_copy,cost-1,visited),cos
+                        return  trei,cost-1,cos
+
                 elif cos==-1:
-                        return gene_tree,0
+                        return gene_tree,0,-1
                 else:
                     child=[chil]
 
@@ -261,7 +273,7 @@ class ILS:
                     tr.visited.append([ch1[0],ch1[1]])
                     
                     if cost==0 or imporvement==False:
-                            return new_topo,cost
+                            return new_topo,cost,-1
                     else:
                             new_sp = copy.deepcopy(sp_copy)
                             new_sp.reset()
@@ -279,4 +291,4 @@ class ILS:
                             return self.ILS(new_topo,new_sp,sp_copy,cost,visited)
                     
                     
-        return new_topo,cost
+        return new_topo,cost,-1

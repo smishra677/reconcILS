@@ -170,7 +170,7 @@ def reconcILS(tr,sp,sp_copy,sp_,visited):
                     duplication_cost=1
                 else:
 
-                    new_topo,cost =ILS.ILS().ILS(tr_copy_1,sp_1,sp_1,Initial_multiple_mapping,visited)
+                    new_topo,cost,bi_cos =ILS.ILS().ILS(tr_copy_1,sp_1,sp_1,Initial_multiple_mapping,visited)
 
                     new_topo.reset()
 
@@ -260,7 +260,8 @@ def reconcILS(tr,sp,sp_copy,sp_,visited):
 
 
 
-                if  NNI_cost<duplication_cost and  sp.isLeaf==None and new_multiple<Initial_multiple_mapping:
+
+                if  NNI_cost<duplication_cost and  sp.isLeaf==None and (new_multiple<Initial_multiple_mapping or bi_cos==0) :
                
                         sp.refTo=[]
                         
@@ -276,6 +277,7 @@ def reconcILS(tr,sp,sp_copy,sp_,visited):
 
                                         
                         new_topo.map_gene(sp)
+                        
 
                         
                         
@@ -427,20 +429,22 @@ def iterative_reconcILS(tr, sp, sp_copy, sp_, visited):
                     if sp.inital_ref == 0:
                         sp = sp.parse(sp.to_newick(sp))
                         sp.evolve = 'Loss'
+                        eve.append('Loss')
                         
                     elif Initial_multiple_mapping >= 2:
                         sp.evolve = 'Duplication'
                         sp = sp.parse(sp.to_newick(sp))
-                    eve.append(sp.evolve)
+                        eve.append('Duplication')
 
     
                 else:
                     if Initial_multiple_mapping >= 2:
                         sp.evolve = 'Duplication'
+                        eve.append('Duplication')
                         
                     else:
                         sp.evolve = 'Speciation'
-                    eve.append(sp.evolve)
+                        eve.append('Speciation')
                     
 
             if Initial_multiple_mapping in [0,1]:
@@ -450,12 +454,12 @@ def iterative_reconcILS(tr, sp, sp_copy, sp_, visited):
                         
                         sp = sp.parse(sp.to_newick(sp))
                         sp.evolve='Loss'
-                        eve.append(sp.evolve)
+                        eve.append('Loss')
                         
                     else:
                         sp = sp.parse(sp.to_newick())
                         sp.evolve='Speciation'
-                        eve.append(sp.evolve)
+                        eve.append('Speciation')
                         
                 elif (sp.leftChild.isLeaf and sp.rightChild.isLeaf) :
                         if sp.evolve==None:
@@ -463,13 +467,13 @@ def iterative_reconcILS(tr, sp, sp_copy, sp_, visited):
                         if len(set(sp.leftChild.taxa).intersection(set(tr.taxa)))==0:
                             sp.leftChild.evolve='Loss'
 
-                            eve.append(sp.leftChild.evolve)
+                            eve.append('Loss')
                             stack.append((tr,sp.rightChild))
 
                         
                         elif len(set(sp.rightChild.taxa).intersection(set(tr.taxa)))==0:
                             sp.rightChild.evolve='Loss'
-                            eve.append(sp.rightChild.evolve)
+                            eve.append('Loss')
                             stack.append((tr,sp.leftChild))
                         
 
@@ -497,13 +501,13 @@ def iterative_reconcILS(tr, sp, sp_copy, sp_, visited):
                         if len(set(sp.leftChild.taxa).intersection(set(tr.taxa)))==0:
                         
                             sp.leftChild.evolve='Loss'
-                            eve.append(sp.leftChild.evolve)
+                            eve.append('Loss')
                            
                             stack.append((tr,sp.rightChild))
                             
                         elif len(set(sp.rightChild.taxa).intersection(set(tr.taxa)))==0:
                             sp.rightChild.evolve='Loss'
-                            eve.append(sp.rightChild.evolve)
+                            eve.append('Loss')
                       
                             stack.append((tr,sp.leftChild))
     
@@ -528,7 +532,7 @@ def iterative_reconcILS(tr, sp, sp_copy, sp_, visited):
                         duplication_cost=1
                     else:
 
-                        new_topo,cost =ILS.ILS().ILS(tr_copy_1,sp_1,sp_1,Initial_multiple_mapping,visited)
+                        new_topo,cost,bi_cos=ILS.ILS().ILS(tr_copy_1,sp_1,sp_1,Initial_multiple_mapping,visited)
                         
                         new_topo.reset()
 
@@ -616,9 +620,9 @@ def iterative_reconcILS(tr, sp, sp_copy, sp_, visited):
                         duplication_cost=recon_1_cost
 
 
+                        print('to_new',new_topo.to_newick())
 
-
-                    if  NNI_cost<duplication_cost and  sp.isLeaf==None and new_multiple<Initial_multiple_mapping :
+                    if  NNI_cost<duplication_cost and  sp.isLeaf==None and (new_multiple<Initial_multiple_mapping or bi_cos==0):
                             sp.refTo=[]
                             
                             new_topo.reset()
@@ -826,16 +830,17 @@ def main():
 
 
     reconcILS(tr,sp,sp_copy,sp,[])
-    print(tr.to_newick())
-    
-    from multiprocessing import Process,Pool
+    print(sp.to_newick())
 
-    '''
+    exit()
+    from multiprocessing import Process,Pool
+    
+ 
     with Pool(4) as pool:
         eve = pool.starmap(iterative_reconcILS, [(tr,sp,sp_copy,sp,[])])
     #eve=iterative_reconcILS(tr,sp,sp_copy,sp,[])
+    '''
     
-
     for i in eve[0].keys():
         if eve[0][i] in ['Duplication','Loss','NNI'] or type(eve[0][i])==list:
             if type(i)==tuple:
@@ -850,14 +855,15 @@ def main():
     
 
     re_w = readWrite.readWrite()
-    li =re_w.sp_event(sp,[])
-
+    #li =re_w.sp_event(sp,[])
+    #exit()
     print(sp.to_newick())
            
    
-    Tally.Tally().make_graph(sp,sp_string,gene_tree)
+    #Tally.Tally().make_graph(sp,sp_string,gene_tree)
     
-
+    #print(Counter(eve[0]))
+    #exit()
 
 
     sp.reset()
@@ -872,7 +878,7 @@ def main():
     dic['Species_Tree']+=[sp_string]
         
     #print(li)
-    dic= re_w.Create_pd('reconcILS',0,li,dic)
+    dic= re_w.Create_pd('reconcILS',0,eve[0],dic)
     
     df = pd.DataFrame(dic)
     print(dic)

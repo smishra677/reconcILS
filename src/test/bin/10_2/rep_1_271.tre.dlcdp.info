@@ -1,9 +1,9 @@
 Version:	2.0.1
 Command:	dlcpar dp -D 1.1 -L 1.0 -C 1.0 -K 1.0 -s ./sp_tree.tre -S ./001/001.mapsl ./10_2/rep_1_271.tre
 
-Seed:	0
+Seed:	10
 
 Feasibility:	feasible
-Runtime:	0.011293 sec
+Runtime:	0.007743 sec
 Optimal Cost:	2.200000
 Number of Solutions:	4

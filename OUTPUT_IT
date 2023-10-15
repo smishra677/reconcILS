@@ -1,0 +1,3 @@
+((((F,F),(((((D,A),B),C),((B,C),D)),(D,C))),E),B);
+((F,E),(D,((C,B),A)));
+{'Process': ['reconcILS'], 'Replicate': [0], 'Gene_tree': ['((((F,F),(((((D,A),B),C),((B,C),D)),(D,C))),E),B);'], 'Species_Tree': ['(((A,(B,C)),D),(E,F));'], 'Duplication': [5], 'NNI': [6], 'DLCILS': [0], 'Loss': [8], 'Hemiplasy': [0], 'RHemiplasy': [0]}

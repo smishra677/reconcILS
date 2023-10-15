@@ -1,12 +1,12 @@
-B	B	3
-B_1	B	4
+B	B	4
+n6	2	1
 n2	A	1
 B_2	B	1
 n3	2	1
-A	A	2
+A	A	1
 C	C	1
-A_1	A	1
+A_1	A	2
 n1	1	1
 n4	B	3
 n5	2	1
-n6	2	3
+B_1	B	3
