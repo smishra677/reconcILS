@@ -55,7 +55,7 @@ sp_string='(A,(B,C));'
 
 
 
-gene_folder='10_9_no_loss'
+gene_folder='10_16'
 #gene_tre= open('./output_gene/gene_tree.txt')
 #trees =gene_tre.read().strip().split('\n')
 #gene_tre.close()

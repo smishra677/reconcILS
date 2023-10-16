@@ -1,6 +1,8 @@
 # Copy Number Hemiplasy Simulator
 Simulate gene trees under a model that allows copy number hemiplasy.
 
+For an extended description of the simulator, please see 'Extended_Description_v1a.pdf'.
+
 # Arguments
 * stree
     + type = str
@@ -37,7 +39,7 @@ Simulate gene trees under a model that allows copy number hemiplasy.
 * Total losses: number of losses
 * Copy Number Hemiplasy (CNH): number of cases in which a mutation is placed on a branch that does not exist in the branch of the species tree on which the mutation occurred.
 * Rasmussen and Kellis CNH: number of cases in which a mutation is placed on a branch that does exist in the species tree, but does not match the current branch of the species tree. This is the phenomenon described as hemiplasy in Rasmussen and Kellis (2012, Figure 2B)
-* All ILS: This includes the number of discordant branches in the parent and daughter trees and the number of times that a subtree joined a branch that did not match it in terms of taxon composition.
+* All NNI: This includes the number of discordant branches in the parent and daughter trees and the number of NNIs that should be needed to reconcile discordance that occurs when coalescing subtrees.
 * All ILS (DLCPar): This includes the number of parent or daughter trees that are discordant and the number of times that a subtree joined a branch that did not match it in terms of taxon composition.
 
 # Example Usage

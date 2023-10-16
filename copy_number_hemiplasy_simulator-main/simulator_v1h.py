@@ -26,6 +26,13 @@ def get_leaves(edge):
         leaves.append(str(leaf.taxon).strip("'"))
     return(leaves)
 
+def get_leaves_node(node):
+    leaves = []
+    for leaf in node.leaf_iter():
+        leaves.append(str(leaf.taxon).strip("'"))
+    return(leaves)
+
+
 def get_all_leaves(tree):
     leaves = []
     for leaf in tree.leaf_iter():
@@ -82,7 +89,7 @@ def write_log(total_dups, total_losses, outputdir, rep, len_trees, table, annota
     #output_log.write("ILS (DLCPar): %s\n" % str(ils_dlcpar))
     #output_log.write("ILS joining: %s\n" % str(ils_joining))
     #output_log.write("ILS joining (DLCPar): %s\n" % str(ils_joining_dlcpar))
-    output_log.write("All ILS: %s\n" % str(ils+ils_joining))
+    output_log.write("All NNI: %s\n" % str(ils+ils_joining))
     output_log.write("All ILS (DLCPar): %s\n" % str(ils_dlcpar+ils_joining_dlcpar))
     if len_trees == 0:
         output_log.write("All copies were lost.\n")
@@ -570,10 +577,73 @@ def check_ils_joining(the_coalesced_edge, subtreeleaves):
 
     return ils
 
+
+def check_nni_joining(the_coalesced_edge, subtreeleaves, ref_tree):
+    nni = 0
+    
+    # get leaf info
+    joining_leaves = [x.split()[0] for x in get_leaves(the_coalesced_edge)]
+    subtreeleaves = [x.split()[0] for x in subtreeleaves]
+    all_leaves_to_join = set(joining_leaves + subtreeleaves)
+    #print('Taxon sets:', joining_leaves, subtreeleaves)
+    #print('Reference tree:', ref_tree)
+    
+
+    # get mrca
+    count=0
+    for node in ref_tree.levelorder_node_iter():
+        
+        node_leaves = get_leaves_node(node)
+        #node_leaves = [x.strip("'").split()[0] for x in node_leaves]
+
+        if count == 0:
+            mrca_leaves = node_leaves
+            count+=1
+        elif set(all_leaves_to_join).issubset(set(node_leaves)):
+            mrca_leaves = node_leaves
+    #print('MRCA:', mrca_leaves)
+
+    for node in ref_tree.levelorder_node_iter():
+        node_leaves = get_leaves_node(node)
+        #print('iterating over node:', node_leaves)
+
+        # is it the mrca
+        if check_lists_equality(node_leaves, mrca_leaves):
+            #print('mrca')
+            nni+=1
+        elif set(mrca_leaves).issubset(set(node_leaves)):
+            continue
+        elif set(subtreeleaves).issubset(set(node_leaves)):
+            #print(subtreeleaves, node_leaves)
+            if not check_lists_equality(subtreeleaves, node_leaves):
+                #print('count it!')
+                nni+=1
+    
+    for node in ref_tree.levelorder_node_iter():
+        node_leaves = get_leaves_node(node)
+        #print('iterating over node:', node_leaves)
+
+        # is it the mrca
+        if check_lists_equality(node_leaves, mrca_leaves):
+            continue
+        elif set(mrca_leaves).issubset(set(node_leaves)):
+            continue
+        elif set(joining_leaves).issubset(set(node_leaves)):
+            if not check_lists_equality(joining_leaves, node_leaves):
+                #print('count it!')
+                nni+=1
+    
+    #print(nni)                    
+
+    return nni
+
+
 def coalesce_subtrees(all_subtrees, annotated_sp_tree):
+
 
     ils_joining = 0
     ils_joining_dlcpar = 0
+    nni_joining = 0 # count number of required nni moves
 
     # get the parent subtree
     parent_subtree = all_subtrees.pop(0)
@@ -715,6 +785,13 @@ def coalesce_subtrees(all_subtrees, annotated_sp_tree):
                 ils_joining_current = check_ils_joining(the_coalesced_edge, subtree_leaves)
                 ils_joining += ils_joining_current
                 ils_joining_dlcpar += ils_joining_current
+
+                # count number of nni moves
+                if ils_joining_current > 0:
+                    sp_copy = copy.deepcopy(annotated_sp_tree)
+                    nni_joining_current = check_nni_joining(the_coalesced_edge=the_coalesced_edge, subtreeleaves=subtree_leaves, ref_tree=sp_copy)
+                    nni_joining+=nni_joining_current
+
     
                 # update taxon namespace of new tree
                 for leaf in subtree.leaf_node_iter():
@@ -808,7 +885,7 @@ def coalesce_subtrees(all_subtrees, annotated_sp_tree):
                 del branch_to_coalesce
     
 
-    return(parent, ils_joining, ils_joining_dlcpar)
+    return(parent, nni_joining, ils_joining_dlcpar)
       
 def main():
              

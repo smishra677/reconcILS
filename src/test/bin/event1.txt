@@ -1,6 +1,0 @@
-nodeid	parentid	dist	genes	dup	loss	coal	appear
-C	2	0.0	2	1	0	0	0
-B	2	0.0	1	0	0	0	0
-2	1	0.0	1	0	0	1	0
-A	1	0.0	1	0	0	0	0
-1	-1	0.0	1	0	0	0	1
