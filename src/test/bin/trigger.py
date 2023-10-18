@@ -51,11 +51,12 @@ def dlcpar(gene_folder,i):
     os.system(command2)
 
 #sp_string='(((A,(B,C)),D),(E,F));'
-sp_string='(A,(B,C));'
+#sp_string='(A,(B,C));'
+sp_string='(B,C);'
 
 
 
-gene_folder='10_16'
+gene_folder='10_18_2_sp'
 #gene_tre= open('./output_gene/gene_tree.txt')
 #trees =gene_tre.read().strip().split('\n')
 #gene_tre.close()
@@ -115,6 +116,8 @@ for i in range(1000):
             dic['Gene_tree'].append(tr.to_newick())
             dic['Species_Tree'].append(sp_string)
             dic=convert(dic,df)
+            print('dlc',dic)
+
 
         
           
@@ -132,7 +135,7 @@ for i in range(1000):
             dic['Species_Tree']+=[sp_string]
         
             dic= red.Create_pd_ete3('ETE3',i,dict(Counter(red.sp_event_ete3(recon_tree_ete))),dic)
-
+            print('ete',dic)
 
             
         except:
@@ -180,6 +183,7 @@ for i in range(1000):
             #li =red.sp_event(sp,[])
 
             dic= red.Create_pd('Our_algorithm_ite',i,li,dic)
+            print('ite',dic)
 
         except:
             erro=1
@@ -221,6 +225,7 @@ for i in range(1000):
             #print(Counter(li))
 
             dic= red.Create_pd('Our_algorithm_recu',i,li,dic)
+            print('rec',dic)
 
         except:
             erro=1

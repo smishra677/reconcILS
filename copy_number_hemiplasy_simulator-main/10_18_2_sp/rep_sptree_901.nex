@@ -1,0 +1,14 @@
+#NEXUS
+
+BEGIN TAXA;
+    DIMENSIONS NTAX=2;
+    TAXLABELS
+        B
+        C
+  ;
+END;
+
+BEGIN TREES;
+    TREE 1 = (B:0.5[&label=1],C:0.5[&label=2])[&label=0];
+END;
+

@@ -832,14 +832,14 @@ def main():
     reconcILS(tr,sp,sp_copy,sp,[])
     print(sp.to_newick())
 
-    exit()
+    '''
     from multiprocessing import Process,Pool
     
  
     with Pool(4) as pool:
         eve = pool.starmap(iterative_reconcILS, [(tr,sp,sp_copy,sp,[])])
     #eve=iterative_reconcILS(tr,sp,sp_copy,sp,[])
-    '''
+    
     
     for i in eve[0].keys():
         if eve[0][i] in ['Duplication','Loss','NNI'] or type(eve[0][i])==list:
@@ -855,12 +855,12 @@ def main():
     
 
     re_w = readWrite.readWrite()
-    #li =re_w.sp_event(sp,[])
+    li =re_w.sp_event(sp,[])
     #exit()
     print(sp.to_newick())
            
    
-    #Tally.Tally().make_graph(sp,sp_string,gene_tree)
+    Tally.Tally().make_graph(sp,sp_string,gene_tree)
     
     #print(Counter(eve[0]))
     #exit()
@@ -878,7 +878,7 @@ def main():
     dic['Species_Tree']+=[sp_string]
         
     #print(li)
-    dic= re_w.Create_pd('reconcILS',0,eve[0],dic)
+    dic= re_w.Create_pd('reconcILS',0,li,dic)
     
     df = pd.DataFrame(dic)
     print(dic)

@@ -29,7 +29,7 @@ class readWrite:
                 dic['Duplication']+=[int(val[1])]
             elif val[0] in ['Rasmussen and Kellis hemiplasy']:
                 dic['RHemiplasy']+=[int(val[1])]
-            elif val[0] in ['All ILS']:
+            elif val[0] in ['All NNI']:
                 dic['NNI']+=[int(val[1])]
             elif val[0] in ['All ILS (DLCPar)']:
                 dic['DLCILS']+=[int(val[1])]
