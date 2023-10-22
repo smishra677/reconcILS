@@ -122,6 +122,16 @@ class readWrite:
         
         return li
 
+    def sp_event_gene(self,root,li):
+        from collections import Counter
+    
+        if root:
+            self.sp_event_gene(root.leftChild,li)
+            self.sp_event_gene(root.rightChild,li)
+            li.append(dict(Counter(root.event_list)))
+            
+        return li
+
 
     def sp_event(self,root,li):
     

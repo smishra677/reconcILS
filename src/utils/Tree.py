@@ -710,15 +710,23 @@ class Tree:
         return self.find_cost(node,0)
         pass
     
+    def write_events(self):
+        from collections import Counter
+
+        dic=dict(Counter(self.event_list))
+        val= [str(k) + ':' + str(v) for k,v in dic.items()]
+
+        return val if len(val)>0 else  ''
+
     def traverse(self, newick):
         if self.leftChild and not self.rightChild:
-            newick = f"(,{self.leftChild.traverse(newick)}){self.taxa if self.isLeaf else ''}"
+            newick = f"(,{self.leftChild.traverse(newick)}){self.taxa if self.isLeaf else self.write_events()}"
         elif not self.leftChild and self.rightChild:
-            newick = f"({self.rightChild.traverse(newick)},){self.taxa if self.isLeaf else ''}"
+            newick = f"({self.rightChild.traverse(newick)},){self.taxa if self.isLeaf else self.write_events()}"
         elif self.leftChild and self.rightChild:
-            newick = f"({self.rightChild.traverse(newick)},{self.leftChild.traverse(newick)}){self.taxa if self.isLeaf else ''}"
+            newick = f"({self.rightChild.traverse(newick)},{self.leftChild.traverse(newick)}){self.taxa if self.isLeaf else self.write_events()}"
         elif not self.leftChild and not self.rightChild :
-            newick = f"{self.taxa if self.isLeaf else ''}"
+            newick = f"{self.taxa if self.isLeaf else self.write_events()}"
         else:
             pass
         return newick
@@ -939,6 +947,10 @@ class Tree:
             new_tree_left.parent=copy_left
             copy_right_child.parent=copy_left
 
+            id_= copy_left_child.id
+            new_tree_left.id= id_
+            copy_left_child.id= new_tree_left.id
+
             new_tree_right = Tree()
             new_tree_right.leftChild=copy_right_child
             new_tree_right.rightChild=copy_right.rightChild
@@ -954,6 +966,11 @@ class Tree:
             copy_right.children= [copy_right.rightChild, copy_right.leftChild]
             copy_right.rightChild.parent=copy_right
             copy_right.leftChild.parent=copy_right
+
+
+            id_= copy_left_child.id
+            new_tree_right.id= id_
+            copy_left_child.id= new_tree_right.id
         
         else:
             copy_right_child= copy.deepcopy(self.rightChild.rightChild)
@@ -978,7 +995,11 @@ class Tree:
             copy_left.rightChild.parent=copy_left
             copy_left.leftChild.parent=copy_left
 
+            id_= copy_left_child.id
+            new_tree_left.id= id_
+            copy_left_child.id= new_tree_left.id
 
+            
             new_tree_right = Tree()
             new_tree_right.leftChild=copy_right_child
             new_tree_right.rightChild=copy_right.leftChild
@@ -993,10 +1014,14 @@ class Tree:
             copy_right.rightChild.parent=copy_right
             copy_right.leftChild.parent=copy_right        
 
+            id_= copy_left_child.id
+            new_tree_right.id= id_
+            copy_left_child.id= new_tree_right.id
 
         if self.parent==None:
             #print('No_parent')
-            return [[self.parse(copy_left.to_newick()),self.parse(copy_left.to_newick()),'left'],[self.parse(copy_right.to_newick()),self.parse(copy_right.to_newick()),'right']]
+            #return [[self.parse(copy_left.to_newick()),self.parse(copy_left.to_newick()),'left'],[self.parse(copy_right.to_newick()),self.parse(copy_right.to_newick()),'right']]
+            return [[copy_left,copy_left,'left'],[copy_right,copy_right,'right']]
         
         geneTree_left.label_internal()
         
@@ -1017,4 +1042,5 @@ class Tree:
         self.locate_copy(copy_right,geneTree_right)
         #print('Left:',geneTree_left.to_newick())
         #print('Right:',geneTree_right.to_newick())
-        return [[self.parse(copy_left.to_newick()),self.parse(geneTree_left.to_newick()),'left'],[self.parse(copy_right.to_newick()),self.parse(geneTree_right.to_newick()),'right']]
+        #return [[self.parse(copy_left.to_newick()),self.parse(geneTree_left.to_newick()),'left'],[self.parse(copy_right.to_newick()),self.parse(geneTree_right.to_newick()),'right']]
+        return [[copy_left,geneTree_left,'left'],[copy_right,geneTree_right,'right']]

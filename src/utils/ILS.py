@@ -185,11 +185,13 @@ class ILS:
 
         child= self.parent_child(tr,child)
         
+        
         #print(child)
 
         if len(child)==0 or cost<=0:
-            return gene_tree,cost,-1
+            return gene_tree,cost,-1,visited
         else:
+            chii=child[-1][0]
             
             if len(child)>1:
                 chil, trei , cos =self.pick_first_edge(child,gene_tree,tr,visited)
@@ -198,10 +200,10 @@ class ILS:
                         trei.label_internal()
                         Tally.Tally().tally_NNI(tr,trei,chil[2])
                         #return  self.ILS(trei,tr,sp_copy,cost-1,visited),cos
-                        return  trei,cost-1,cos
-
+                        visited.append(chil[0])
+                        return  trei,cost-1,cos,visited
                 elif cos==-1:
-                        return gene_tree,0,-1
+                        return gene_tree,0,-1,visited
                 else:
                     child=[chil]
 
@@ -212,6 +214,8 @@ class ILS:
             new_topo=copy.deepcopy(gene_tree)
             geneTree =copy.deepcopy(new_topo)
             geneTree.reset()
+
+            
 
             
             for ch1 in child:
@@ -228,16 +232,15 @@ class ILS:
 
                     new_topo=copy.deepcopy(geneTree)
                     
-
                     for i in list_tree:
                         i[1].reset()
                         i[0].reset()
                         cop= copy.deepcopy(sp_copy)
                         cop.reset()
                             
-                        ##print('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$')
-                        ##print('top_0',i[0].to_newick())
-                        ##print('topo_1',i[1].to_newick())
+                        #print('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$')
+                        #print('top_0',i[0].to_newick())
+                        #print('topo_1',i[1].to_newick())
                         ##print('sp',cop.to_newick())
 
                         
@@ -248,7 +251,7 @@ class ILS:
                         i[1].map_gene(cop)
                         new_cost = len(cop.refTo)
 
-                        if best_cost>=new_cost and cost>0:
+                        if best_cost>new_cost and cost>0:
                             if best_cost!=new_cost:
                                 imporvement=True
                             else:
@@ -261,8 +264,9 @@ class ILS:
                                 new_topo=copy.deepcopy(i[1])
                             else:
                                 new_topo=copy.deepcopy(i[1])
-                            visited.append(new_topo.to_newick())
-                            visited.append(i[0].to_newick())
+                            #visited.append(ch1[0])
+                            visited.append(chii)
+                            #visited.append(i[0].to_newick())
 
                             Tally.Tally().tally_NNI(tr,new_topo,ch1[2])  
 
@@ -273,7 +277,7 @@ class ILS:
                     tr.visited.append([ch1[0],ch1[1]])
                     
                     if cost==0 or imporvement==False:
-                            return new_topo,cost,-1
+                            return new_topo,cost,-1,visited
                     else:
                             new_sp = copy.deepcopy(sp_copy)
                             new_sp.reset()
@@ -291,4 +295,4 @@ class ILS:
                             return self.ILS(new_topo,new_sp,sp_copy,cost,visited)
                     
                     
-        return new_topo,cost,-1
+        return new_topo,cost,-1,visited
