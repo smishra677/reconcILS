@@ -20,8 +20,9 @@ def sp_event_ete3(root):
             ##print(root.isLeaf),
         return li
 
-genetree = PhyloTree('(((C,B),C),(((((C,B),C),((((C,B),B),(B,C)),B)),((A,A),((((A,A),(A,A)),A),A))),((((A,A),A),(((((C,B),B),C),(C,B)),B)),((((A,A),A),(((((C,C),B),(C,B)),((C,B),((C,C),((C,B),C)))),B)),((((B,C),B),B),(((C,B),((C,C),B)),(B,C)))))));')
-sptree = PhyloTree('(A,(B,C));')
+genetree = PhyloTree('((CCC_0,BBB_0),CCC_1);')
+sptree = PhyloTree("(BBB,CCC);")
+
 
 recon_tree_ete, events = genetree.reconcile(sptree)
 recon_tree_ete.show()

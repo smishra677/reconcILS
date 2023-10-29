@@ -1,0 +1,2 @@
+Process,Replicate,Gene_tree,Species_Tree,Duplication,NNI,DLCILS,Loss,Hemiplasy,RHemiplasy
+reconcILS,0,"(A,(A,C));","(A,(B,C));",1,1,0,1,0,0

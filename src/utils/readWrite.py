@@ -128,7 +128,7 @@ class readWrite:
         if root:
             self.sp_event_gene(root.leftChild,li)
             self.sp_event_gene(root.rightChild,li)
-            li.append(dict(Counter(root.event_list)))
+            li.append([root.taxa,dict(Counter(root.event_list[1]))])
             
         return li
 
@@ -154,8 +154,85 @@ class readWrite:
                     li.append(root.evolve)
             ##print(root.isLeaf),
         return li
+    
+    def label_lost_child(self,tree):
+        if tree:
+            tree.event_list.append([-2,['L']])
+            #print(tree.taxa)
+            #print(tree.isLeaf)
+            #print(tree.leftChild)
+            #print(tree.rightChild)
+            #print(tree)
+            print('---------------------------')
+
+        
+            self.label_lost_child(tree.leftChild)
+
+    
 
 
+            self.label_lost_child(tree.rightChild)
+
+
+
+
+
+    def write_events(self,tree):
+        from collections import Counter
+        if tree.isLeaf:
+            if len(tree.event_list)>0:
+                ev=''
+                for j in tree.event_list:
+                    if j[0] not in [-1,-2]:
+                        dic=dict(Counter(j[1]))
+                        val= [str(v)+str(k) for k,v in dic.items()]
+                        if len(ev)>0:
+                            ev+='+'+j[0]+' '+'+'.join(val)
+                        else:
+                            ev+=j[0]+' '+'+'.join(val)
+                    else:
+                        dic=dict(Counter(j[1]))
+                        val= [str(v)+str(k) for k,v in dic.items()]
+                        if len(ev)>0:
+                            ev+='+'+'+'.join(val)
+                        else:
+                            ev+='+'.join(val)
+
+
+                return tree.numbered_taxa+'  '+ev
+            else:
+                return tree.numbered_taxa+ ''
+            
+            
+        else:
+            if len(tree.event_list)>0:
+                ev=''
+                for j in tree.event_list:
+                    if j[0] not in [-1,-2]:
+                        dic=dict(Counter(j[1]))
+                        val= [str(v)+str(k) for k,v in dic.items()]
+                        
+                        if len(ev)>0:
+                            ev+='+'+j[0]+' '+'+'.join(val)
+                        else:
+                            ev+=j[0]+' '+'+'.join(val)
+                    else:
+                        dic=dict(Counter(j[1]))
+                        val= [str(v)+str(k) for k,v in dic.items()]
+                        if len(ev)>0:
+                            ev+='+'+'+'.join(val)
+                        else:
+                            ev+='+'.join(val)
+  
+
+  
+
+                    
+
+                return ev
+            else:
+                return ''
+        
 
     def to_newick(self,tree):
         newick = ""
@@ -165,16 +242,17 @@ class readWrite:
 
     def traverse(self,tree, newick):
         if tree.leftChild and not tree.rightChild:
-            newick = f"(,{self.traverse(tree.leftChild, newick)}){tree.taxa if tree.isLeaf else ''}"
+            newick = f"(,{self.traverse(tree.leftChild, newick)}){self.write_events(tree)}"
         elif not tree.leftChild and tree.rightChild:
-            newick = f"({self.traverse(tree.rightChild, newick)},){tree.taxa if tree.isLeaf else ''}"
+            newick = f"({self.traverse(tree.rightChild, newick)},){self.write_events(tree)}"
         elif tree.leftChild and tree.rightChild:
-            newick = f"({self.traverse(tree.rightChild, newick)},{self.traverse(tree.leftChild, newick)}){tree.taxa if tree.isLeaf else ''}"
+            newick = f"({self.traverse(tree.rightChild, newick)},{self.traverse(tree.leftChild, newick)}){self.write_events(tree)}"
         elif not tree.leftChild and not tree.rightChild :
-            newick = f"{tree.taxa if tree.isLeaf else ''}"
+            newick = f"{self.write_events(tree)}"
         else:
             pass
         return newick
+
 
 
 
@@ -192,6 +270,7 @@ class readWrite:
             tre.taxa= name
             if name!=0:
                 tre.taxa= name.split('_')[0]
+                tre.numbered_taxa=name
                 tre.isLeaf= True
             if ch == "(":
                 while ch in "(,":

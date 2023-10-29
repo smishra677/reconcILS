@@ -1,0 +1,125 @@
+((D,D),(((((F,F),E),(C,(B,(C,D)))),E),(A,B))); ((F,E),(D,((C,B),A)));
+Multiple_mapping 4
+2
+2
+1
+2
+1
+2
+1
+1
+new_topo (((E,(F,F)),E),(((B,A),(((D,C),B),C)),(D,D)));
+((D,D),(((((F,F),E),(C,(B,(C,D)))),E),(A,B)));
+1
+(((((F,F),E),(C,(B,(C,D)))),E),(A,B)); ((F,E),(D,((C,B),A)));
+Multiple_mapping 3
+2
+2
+2
+1
+new_topo ((E,((F,F),E)),((C,(B,(C,D))),(A,B)));
+(((((F,F),E),(C,(B,(C,D)))),E),(A,B));
+2
+(A,B); ((F,E),(D,((C,B),A)));
+Multiple_mapping 0
+367
+(A,B); (D,((C,B),A));
+Multiple_mapping 0
+367
+(A,B); ((C,B),A);
+Multiple_mapping 1
+A; A;
+Multiple_mapping 1
+B; (C,B);
+Multiple_mapping 0
+456
+367
+B; B;
+Multiple_mapping 1
+((((F,F),E),(C,(B,(C,D)))),E); ((F,E),(D,((C,B),A)));
+Multiple_mapping 2
+2
+new_topo ((((D,C),B),C),((E,(F,F)),E));
+new_top ((((D,C),B),C),((E,(F,F)),E));
+((((D,C),B),C),((E,(F,F)),E)); ((F,E),(D,((C,B),A)));
+Multiple_mapping 1
+(((D,C),B),C); (D,((C,B),A));
+Multiple_mapping 3
+2
+2
+2
+1
+new_topo (D,((C,B),C));
+(((D,C),B),C);
+11
+C; (D,((C,B),A));
+Multiple_mapping 0
+367
+C; ((C,B),A);
+Multiple_mapping 0
+459
+367
+367
+C; (C,B);
+Multiple_mapping 0
+456
+367
+367
+C; C;
+Multiple_mapping 1
+((D,C),B); (D,((C,B),A));
+Multiple_mapping 2
+2
+new_topo (D,(B,C));
+new_top (D,(B,C));
+(D,(B,C)); (D,((C,B),A));
+Multiple_mapping 1
+(B,C); ((C,B),A);
+Multiple_mapping 0
+459
+(B,C); (C,B);
+Multiple_mapping 1
+B; B;
+Multiple_mapping 1
+C; C;
+Multiple_mapping 1
+D; D;
+Multiple_mapping 1
+((E,(F,F)),E); (F,E);
+Multiple_mapping 2
+2
+new_topo ((F,F),(E,E));
+new_top ((F,F),(E,E));
+((F,F),(E,E)); (F,E);
+Multiple_mapping 1
+(E,E); E;
+Multiple_mapping 2
+(E,E);
+20
+E; E;
+Multiple_mapping 1
+E; E;
+Multiple_mapping 1
+(F,F); F;
+Multiple_mapping 2
+(F,F);
+22
+F; F;
+Multiple_mapping 1
+F; F;
+Multiple_mapping 1
+(D,D); ((F,E),(D,((C,B),A)));
+Multiple_mapping 0
+457
+(D,D); (D,((C,B),A));
+Multiple_mapping 0
+459
+457
+(D,D); D;
+Multiple_mapping 2
+(D,D);
+26
+D; D;
+Multiple_mapping 1
+D; D;
+Multiple_mapping 1

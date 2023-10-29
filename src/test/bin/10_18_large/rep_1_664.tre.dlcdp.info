@@ -4,6 +4,6 @@ Command:	dlcpar dp -D 1.1 -L 1.0 -C 1.0 -K 1.0 -s ./sp_tree_large.tre -S ./001/0
 Seed:	16
 
 Feasibility:	feasible
-Runtime:	0.025602 sec
+Runtime:	0.061861 sec
 Optimal Cost:	3.100000
 Number of Solutions:	2

@@ -4,6 +4,6 @@ Command:	dlcpar dp -D 1.1 -L 1.0 -C 1.0 -K 1.0 -s ./sp_tree.tre -S ./001/001.map
 Seed:	5
 
 Feasibility:	feasible
-Runtime:	0.003759 sec
+Runtime:	0.005875 sec
 Optimal Cost:	1.000000
 Number of Solutions:	1

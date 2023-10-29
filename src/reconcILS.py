@@ -32,9 +32,6 @@ class reconcils:
     
     def  address_dict(self,sp_gene):
         if sp_gene:
-            print(sp_gene.taxa)
-            print(sp_gene.refTo)
-              
 
             self.address_dict(sp_gene.leftChild)
             self.address_dict(sp_gene.rightChild)
@@ -71,55 +68,112 @@ class reconcils:
             self.search_event_(re.rightChild,sp)
 
 
+
+    def label_lost_child(self,tree):
+        if tree:
+            tree.event_list.append([-2,['L']])
+
+
+        
+            self.label_lost_child(tree.leftChild)
+
+    
+
+
+            self.label_lost_child(tree.rightChild)
+
+
+    def print_id(self,tree):
+        if tree:
+            print(tree.to_newick(),tree.id)
+            self.print_id(tree.leftChild)
+        
+            self.print_id(tree.rightChild)
+        
+
+
     def copy_loss(self,re,sp,new_topo):
         if sp:
+
             if sp.id==re.id:
+                print(sp.id)
                 if re.parent==None:
                         co= Tree.Tree()
                         co.leftChild= copy.deepcopy(sp)
-                        co.rightChild= new_topo
-                        co.rightChild.event_list.append('Loss')
+                        co.rightChild= copy.deepcopy(new_topo)
+                        #co.rightChild.event_list.append([-2,['L']])
+                        self.label_lost_child(co.rightChild)
+                        
                         sp.leftChild=copy.deepcopy(co.leftChild)
                         sp.rightChild=copy.deepcopy(co.rightChild)
                         sp.children=[sp.leftChild,sp.rightChild]
-                        id_= co.id
-                        new_topo.id= id_
-                        co.id= new_topo.id
-                        #print(sp.to_newick())
-                        #print(self.gene_tree.to_newick())
+                        sp.isLeaf=None
+
+                    
+                       
+                        print(456)
                         
 
                 
                 else:
-                
                     if re.parent.leftChild==re:
+                        print(new_topo.to_newick())
                         co= Tree.Tree()
                         co.leftChild= copy.deepcopy(sp)
-                        co.rightChild= new_topo
-                        co.rightChild.event_list.append('Loss')
-                        sp.leftChild=co.leftChild
-                        sp.rightChild=co.rightChild
-                        sp.children=[sp.leftChild,sp.rightChild]
-                        id_= co.id
-                        new_topo.id= id_
-                        co.id= new_topo.id
+                        co.rightChild= copy.deepcopy(new_topo)
+
+
+
+                        #co.rightChild.event_list.append([-2,['L']])
+                        self.label_lost_child(co.rightChild)
                         
 
+                        co.leftChild.parent =copy.deepcopy(co)
+                        co.rightChild.parent =copy.deepcopy(co)
+
+                        sp.parent.leftChild=copy.deepcopy(co)
+                        sp.parent.isLeaf=None
+                        sp.parent.righChild.parent=sp.parent
+                        sp.parent.leftChild.parent=sp.parent
+
+                        
+                        #sp.rightChild=co.rightChild
+                        sp.event_list=[]
+                        sp.children=[sp.leftChild,sp.rightChild]
+
                     else:
+
+                        print(new_topo.to_newick())
+                        self.print_id(self.gene_tree)
                         co= Tree.Tree()
                         co.leftChild= copy.deepcopy(sp)
-                        co.rightChild= new_topo
-                        sp.leftChild=co.leftChild
-                        sp.rightChild=co.rightChild
+                        co.rightChild= copy.deepcopy(new_topo)
+                        
 
-                        co.rightChild.event_list.append('Loss')
+
+                        self.label_lost_child(co.rightChild)
+                        
+                        co.leftChild.parent =copy.deepcopy(co)
+                        co.rightChild.parent =copy.deepcopy(co)
+
+                        sp.parent.rightChild=copy.deepcopy(co)
+                        sp.parent.leftChild.parent=sp.parent
+                        sp.parent.isLeaf=None
+
+
+                        print('co-p',sp.parent.to_newick())
+                        
+
+
+
+                        sp.event_list=[]
+
+
                         sp.children=[sp.leftChild,sp.rightChild]
-                        id_= co.id
-                        new_topo.id= id_
-                        co.id= new_topo.id
-
+                        print(458)
+                        print(self.gene_tree.to_newick())
                     sp.taxa=''
-                    
+
                     return
             else:
                 self.copy_loss(re,sp.leftChild,new_topo)
@@ -129,14 +183,10 @@ class reconcils:
 
     def copy_event_(self,re,sp,new_topo):
         if sp:
-            
             if sp.id==re.id:
-                    
 
-                    #sp.leftChild=new_topo.leftChild
-                    #sp.rightChild=new_topo.rightChild
-                    sp.event_list+= re.event_list
-                    sp.children=[sp.leftChild,sp.rightChild]
+                    sp.event_list.append(re.event_list)
+                
                 
                 
 
@@ -167,7 +217,7 @@ class reconcils:
     def reconcILS(self,tr,sp,sp_copy,sp_,visited):
 
         if sp:
-            print(tr.to_newick(),sp.to_newick())
+            print(sp.to_newick(),tr.to_newick())
             sp_copy = copy.deepcopy(sp)
             tr_copy_1 = copy.deepcopy(tr)
 
@@ -183,6 +233,7 @@ class reconcils:
 
 
             if tr==None:
+                print(545454)
                 if sp.isLeaf:
                     if sp.inital_ref==0:
                         sp = sp.parse(sp.to_newick(sp))
@@ -200,10 +251,10 @@ class reconcils:
 
 
             if Initial_multiple_mapping in [0,1]:
-
                 if sp.isLeaf:
                     if sp.inital_ref==0 and sp.parent.evolve!='Loss':
                         sp = sp.parse(sp.to_newick(sp))
+                        print(545000454)
                         sp.evolve='Loss'
                         return sp
                     else:
@@ -216,6 +267,7 @@ class reconcils:
                         if len(set(sp.leftChild.taxa).intersection(set(tr.taxa)))==0:
                             sp.leftChild.evolve='Loss'
                             sp.leftChild =sp.leftChild
+
                             self.copy_loss(tr,self.gene_tree,sp.leftChild)
                             sp.rightChild= self.reconcILS(tr,sp.rightChild,sp_copy,sp_,visited)
                             return sp
@@ -257,9 +309,11 @@ class reconcils:
                         
                         if len(set(sp.rightChild.taxa).intersection(set(tr.taxa)))==0:
                             sp.rightChild.evolve='Loss'
-                            sp.leftChild =self.reconcILS(tr,sp.leftChild,sp_copy,sp_,visited)
                             sp.rightChild= sp.rightChild
                             self.copy_loss(tr,self.gene_tree,sp.rightChild)
+                            sp.leftChild =self.reconcILS(tr,sp.leftChild,sp_copy,sp_,visited)
+
+                            
                             return sp
                         
 
@@ -282,7 +336,7 @@ class reconcils:
                     else:
 
                         new_topo,cost,bi_cos,child_ =ILS.ILS().ILS(tr_copy_1,sp_1,sp_1,Initial_multiple_mapping,[])
-
+                    
                         new_topo.reset()
 
                         recon_1 = copy.deepcopy(sp_1)
@@ -389,7 +443,7 @@ class reconcils:
                                             
                             new_topo.map_gene(sp)
                             
-
+                            
                             
                             
                             sp.cost=1
@@ -405,23 +459,30 @@ class reconcils:
                             else:
                                 sp.evolve=['NNI' for i in range(Initial_multiple_mapping- cost)]
 
+                            
+                            
+
 
                             
 
 
 
                             
-                            for i in list(set(child_)) :
-                                i.event_list+=['NNI' for x in range(Initial_multiple_mapping- cost)]
-                                self.copy_event_(i,self.gene_tree,new_topo)
+                            for i in list(child_):
+                                if type(i[1].numbered_taxa)==set:
+                                    li= '-'.join(list(i[1].numbered_taxa))
+                                else:
+                                    li =i[1].numbered_taxa
+                                li.replace(';','')
+
+
+                        
+                                i[0].event_list+=[li,['I' for i in range(Initial_multiple_mapping- cost)]]
+
+                                self.copy_event_(i[0],self.gene_tree,new_topo)
+
+                        
                             
-                            #tr.event_list+=['NNI' for x in range(Initial_multiple_mapping- cost)]
-
-                            
-
-
-                            self.copy_event(sp_1,sp)
-                           
 
 
                             
@@ -471,9 +532,17 @@ class reconcils:
                             else:
                                 sp.evolve='Duplication'
 
-                            tr.event_list+=['Duplication']
+
+                            tr.event_list+=[-1,['D']]
 
                             self.copy_event_(tr,self.gene_tree,tr)
+
+
+
+
+                           
+
+
 
                             
                             
@@ -672,7 +741,7 @@ class reconcils:
                             duplication_cost=1
                         else:
 
-                            new_topo,cost,bi_cos=ILS.ILS().ILS(tr_copy_1,sp_1,sp_1,Initial_multiple_mapping,visited)
+                            new_topo,cost,bi_cos,child_=ILS.ILS().ILS(tr_copy_1,sp_1,sp_1,Initial_multiple_mapping,visited)
                             
                             new_topo.reset()
 
@@ -942,15 +1011,16 @@ def main():
     red= readWrite.readWrite()
     tr= red.parse(gene_tree)
 
-    tr=red.parse(red.to_newick(tr))
+
+    #tr=red.parse(red.to_newick(tr))
 
 
     sp=red.parse(sp_string)
     
     sp_copy= copy.deepcopy(sp)
 
-    sp_copy_1= copy.deepcopy(sp)
-    sp_copy.reset()
+    #sp_copy_1= copy.deepcopy(sp)
+    #sp_copy.reset()
 
     tr.order_gene(sp)
 
@@ -970,18 +1040,30 @@ def main():
     sp_copy.isRoot=True
 
     reconcILS.gene_tree= copy.deepcopy(tr)
-   
-    reconcILS.reconcILS(tr,sp,sp_copy,sp,[])
-    print(reconcILS.gene_tree.to_newick())
 
+
+    reconcILS.reconcILS(tr,sp,sp_copy,sp,[])
+
+    #print()
+    #print()
+    #print()
+    #print()
+    print(red.to_newick(reconcILS.gene_tree))
+    #print()
+    #print()
+    #print()
+    #print()
+    #print(sp.to_newick())
+
+
+    
     '''
     from multiprocessing import Process,Pool
     
  
     with Pool(4) as pool:
-        eve = pool.starmap(iterative_reconcILS, [(tr,sp,sp_copy,sp,[])])
+        eve = pool.starmap(reconcILS.iterative_reconcILS, [(tr,sp,sp_copy,sp,[])])
     #eve=iterative_reconcILS(tr,sp,sp_copy,sp,[])
-    
     
     for i in eve[0].keys():
         if eve[0][i] in ['Duplication','Loss','NNI'] or type(eve[0][i])==list:
@@ -997,19 +1079,13 @@ def main():
     
 
     re_w = readWrite.readWrite()
-    li =re_w.sp_event_gene(reconcILS.gene_tree,[])
-    #print(li)
-    #print(reconcILS.gene_tree.to_newick())
+ 
     li =re_w.sp_event(sp,[])
-
-    #print(sp.to_newick())
-           
+    print(li)
    
     Tally.Tally().make_graph(sp,sp_string,gene_tree)
     
-    #print(Counter(eve[0]))
-    #exit()
-
+    
 
     sp.reset()
 
@@ -1026,8 +1102,8 @@ def main():
     dic= re_w.Create_pd('reconcILS',0,li,dic)
     
     df = pd.DataFrame(dic)
-    print(dic)
-    exit()
+    
+    
     df.to_csv(parser.output, index=False)
 
 

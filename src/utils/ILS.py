@@ -44,6 +44,7 @@ class ILS:
         else:
                 pool={}
                 tre_pool={}
+                orientation={}
                 
                 for k in range(len(child)):
                         
@@ -123,10 +124,12 @@ class ILS:
                                 
                                 #print('right_bi_cost',bi_score_right)  
 
-                                #print(number_map)                      
+                                number_map=1
+                                #print((loss_score+bi_score_left+bi_score_right)*number_map)              
                                 if k not in pool.keys():
                                     pool[k]= (loss_score+bi_score_left+bi_score_right)*number_map
                                     tre_pool[k]=li[1]
+                                    orientation[k]=li[2]
 
                                 else:
                                     if pool[k]<(loss_score+bi_score_left+bi_score_right)*number_map:
@@ -134,6 +137,7 @@ class ILS:
                                     else:
                                         pool[k] =(loss_score+bi_score_left+bi_score_right)*number_map
                                         tre_pool[k]=li[1]
+                                        orientation[k]=li[2]
                                     
                 
 
@@ -154,7 +158,7 @@ class ILS:
                             min_key = min(pool, key=pool.get)
                     else:
                 '''
-                return child[min_key],tre_pool[min_key],pool[min_key]
+                return child[min_key],tre_pool[min_key],pool[min_key],orientation[min_key]
 
     def find_parent_child(self,root,child):
         if len(root.refTo)>1:
@@ -163,7 +167,7 @@ class ILS:
                         
                         if (tree1 in tre.children):
                             if tree1==tre.leftChild:
-                                ###print('match_left')
+                                ####print('match_left')
                                 child.append([tre,tree1,'Left'])
                             else:
                                 child.append([tre,tree1,'Right'])
@@ -186,21 +190,31 @@ class ILS:
         child= self.parent_child(tr,child)
         
         
-        #print(child)
+        ##print(child)
 
         if len(child)==0 or cost<=0:
             return gene_tree,cost,-1,visited
         else:
-            chii=child[-1][0]
             
             if len(child)>1:
-                chil, trei , cos =self.pick_first_edge(child,gene_tree,tr,visited)
+                chil, trei , cos,orientation =self.pick_first_edge(child,gene_tree,tr,visited)
 
                 if cos==0:
                         trei.label_internal()
                         Tally.Tally().tally_NNI(tr,trei,chil[2])
                         #return  self.ILS(trei,tr,sp_copy,cost-1,visited),cos
-                        visited.append(chil[0])
+                        #print(chil)
+                        if chil[2]=='Left':
+                            if orientation=='left':
+                                chii=[chil[0].leftChild,chil[0].leftChild.leftChild]
+                            else:
+                                chii=[chil[0].leftChild,chil[0].leftChild.rightChild]
+                        else:
+                            if orientation=='left':
+                                    chii=[chil[0].rightChild,chil[0].rightChild.leftChild]
+                            else:
+                                chii=[chil[0].rightChild,chil[0].rightChild.rightChild]
+                        visited.append(chii)
                         return  trei,cost-1,cos,visited
                 elif cos==-1:
                         return gene_tree,0,-1,visited
@@ -208,19 +222,24 @@ class ILS:
                     child=[chil]
 
 
-
-            ##print(child)
+            
+                 
+            
+            ###print(child)
 
             new_topo=copy.deepcopy(gene_tree)
             geneTree =copy.deepcopy(new_topo)
             geneTree.reset()
+            
+            
+            
 
             
 
             
             for ch1 in child:
                     if ch1 in tr.visited:
-                        ##print('visited')
+                        ###print('visited')
                         continue 
                     ch = copy.deepcopy(ch1[0])
                     ch.reset()
@@ -241,7 +260,7 @@ class ILS:
                         #print('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$')
                         #print('top_0',i[0].to_newick())
                         #print('topo_1',i[1].to_newick())
-                        ##print('sp',cop.to_newick())
+                        #print('sp',cop.to_newick())
 
                         
                         #new_cost =cop.optimize_cost(i[0],i[1])
@@ -264,16 +283,27 @@ class ILS:
                                 new_topo=copy.deepcopy(i[1])
                             else:
                                 new_topo=copy.deepcopy(i[1])
-                            #visited.append(ch1[0])
+
+                            if child[0][2]=='Left':
+                                if i[2]=='left':
+                                    chii=[child[0][0].leftChild,child[0][0].leftChild.leftChild]
+                                else:
+                                    chii=[child[0][0].leftChild,child[0][0].leftChild.rightChild]
+                            else:
+                                if i[2]=='left':
+                                    chii=[child[0][0].rightChild,child[0][0].rightChild.leftChild]
+                                else:
+                                    chii=[child[0][0].rightChild,child[0][0].rightChild.rightChild]
                             visited.append(chii)
                             #visited.append(i[0].to_newick())
+                            cost=cost-1
 
                             Tally.Tally().tally_NNI(tr,new_topo,ch1[2])  
 
                            
 
 
-                    cost=cost-1
+                    #cost=cost-1
                     tr.visited.append([ch1[0],ch1[1]])
                     
                     if cost==0 or imporvement==False:

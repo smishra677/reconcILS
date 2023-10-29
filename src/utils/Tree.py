@@ -3,7 +3,7 @@ import copy
 import matplotlib.pyplot as plt
 import pydot
 import utils.idmaker_ as idmaker_
-
+import utils.readWrite  as readWrite
 
 
 
@@ -11,6 +11,7 @@ class Tree:
     def __init__(self):
         self.id= idmaker_.idmaker2().id
         self.taxa=None
+        self.numbered_taxa=None
         self.event=None
         self.evolve=None
         self.tag = None
@@ -268,6 +269,14 @@ class Tree:
                 if self.tag==None:
                     self.tag= [self.leftChild.tag]
                     self.taxa=set(self.leftChild.taxa)
+
+                    if type(self.leftChild.numbered_taxa)==set:
+                        self.numbered_taxa=set()
+                        self.numbered_taxa= self.numbered_taxa.union(self.leftChild.numbered_taxa)
+                    else:
+                        self.numbered_taxa=set()
+                        self.numbered_taxa.add(self.leftChild.numbered_taxa)
+                    
                     if self.leftChild.isLeaf:
                         self.taxa_list.append(self.leftChild.taxa)
                         self.taxa_list.sort()
@@ -282,6 +291,12 @@ class Tree:
                     self.tag+= [self.rightChild.tag]
                     #self.tag = list(set(self.tag))
                     self.taxa=self.taxa.union(self.rightChild.taxa)
+                    if type(self.rightChild.numbered_taxa)==set:
+                        self.numbered_taxa= self.numbered_taxa.union(self.rightChild.numbered_taxa)
+                    else:
+                        self.numbered_taxa.add(self.rightChild.numbered_taxa)
+
+
                     if self.rightChild.isLeaf:
                         self.taxa_list.append(self.rightChild.taxa)
                         self.taxa_list.sort()
@@ -314,9 +329,6 @@ class Tree:
     def printorder(self):
     
         if self:
-                print(self.taxa),
-                print(self.evolve),
-                print('###################'),
                 if self.leftChild:
                     self.leftChild.printorder()
                 if self.rightChild:
@@ -620,7 +632,13 @@ class Tree:
                 
 
 
-
+    def print_id(self):
+        if self:
+            print(self.id,self.taxa)
+            if self.leftChild:
+                self.leftChild.print_id()
+            if self.rightChild:
+                self.rightChild.print_id()
 
 
 
@@ -653,6 +671,39 @@ class Tree:
         nx.draw(graph, pos, with_labels=True, arrows=False)
         plt.show()
 
+    def find_id(self,id):
+        if self:
+            if self.id==id:
+                print(self.id,self.taxa)
+                return
+            if self.leftChild:
+                self.leftChild.find_id(id)
+            if self.rightChild:
+                self.rightChild.find_id(id)
+
+    def change_id(self,tree,new):
+        if tree:
+            tree.id= new.id
+            val_left=val_right=0
+
+
+            if tree.leftChild and new.leftChild:
+                val_left=len(set(tree.leftChild.taxa).intersection(set(new.leftChild.taxa)))
+            if tree.rightChild and new.leftChild:
+                val_right=len(set(tree.rightChild.taxa).intersection(set(new.leftChild.taxa)))
+
+  
+
+            
+            if val_left>val_right:
+                self.change_id(tree.rightChild,new.rightChild)
+                self.change_id(tree.leftChild,new.leftChild)
+            else:
+                self.change_id(tree.rightChild,new.leftChild)
+                self.change_id(tree.leftChild,new.rightChild)
+
+
+                
 
 
 
@@ -712,24 +763,34 @@ class Tree:
     
     def write_events(self):
         from collections import Counter
-
-        dic=dict(Counter(self.event_list))
-        val= [str(k) + ':' + str(v) for k,v in dic.items()]
-
-        return val if len(val)>0 else  ''
+        if self.isLeaf:
+            
+            dic=dict(Counter(self.event_list))
+            val= [str(k) + ':' + str(v) for k,v in dic.items()]
+            if len(val)>0:
+                return self.taxa+':'+"["+','.join(val)+"]"
+            else:
+                return self.taxa
+            
+        else:
+            dic=dict(Counter(self.event_list))
+            val= [str(k) + ':' + str(v) for k,v in dic.items()]
+            val1= "["+','.join(val)+"]"
+            return val1 if len(val)>0 else  ''
 
     def traverse(self, newick):
         if self.leftChild and not self.rightChild:
-            newick = f"(,{self.leftChild.traverse(newick)}){self.taxa if self.isLeaf else self.write_events()}"
+            newick = f"(,{self.leftChild.traverse(newick)}){self.taxa if self.isLeaf else ''}"
         elif not self.leftChild and self.rightChild:
-            newick = f"({self.rightChild.traverse(newick)},){self.taxa if self.isLeaf else self.write_events()}"
+            newick = f"({self.rightChild.traverse(newick)},){self.taxa if self.isLeaf else ''}"
         elif self.leftChild and self.rightChild:
-            newick = f"({self.rightChild.traverse(newick)},{self.leftChild.traverse(newick)}){self.taxa if self.isLeaf else self.write_events()}"
+            newick = f"({self.rightChild.traverse(newick)},{self.leftChild.traverse(newick)}){self.taxa if self.isLeaf else ''}"
         elif not self.leftChild and not self.rightChild :
-            newick = f"{self.taxa if self.isLeaf else self.write_events()}"
+            newick = f"{self.taxa if self.isLeaf else ''}"
         else:
             pass
         return newick
+
 
 
 
@@ -753,9 +814,11 @@ class Tree:
             children = []
 
             name, length, delim, ch = next(tokens).groups(0)
+            #print(name)
             tre.taxa= name
             if name!=0:
                 tre.taxa= name.split('_')[0]
+                tre.numbered_taxa=name
                 tre.isLeaf= True
             if ch == "(":
                 while ch in "(,":
@@ -838,6 +901,7 @@ class Tree:
 
 
     def NNI1(self,gene_tree,node):
+        
 
         geneTree_left =copy.deepcopy(gene_tree)
         geneTree_left.reset()
@@ -914,9 +978,12 @@ class Tree:
 
     
     def NNI(self,gene_tree,flag):
+        red = readWrite.readWrite()
 
         geneTree_left =copy.deepcopy(gene_tree)
         geneTree_left.reset()
+
+        
 
 
 
@@ -941,15 +1008,23 @@ class Tree:
             new_tree_left.leftChild.parent=new_tree_left
             new_tree_left.rightChild.parent=new_tree_left
 
+            #copy_left_child.id=new_tree_left.id
+            new_tree_left.id =self.leftChild.id
+
+            
+
+
             copy_left.rightChild=new_tree_left
             copy_left.leftChild=copy_right_child
             copy_left.children= [copy_left.rightChild, copy_left.leftChild]
             new_tree_left.parent=copy_left
             copy_right_child.parent=copy_left
 
-            id_= copy_left_child.id
-            new_tree_left.id= id_
-            copy_left_child.id= new_tree_left.id
+
+
+            #id_= copy_left_child.id
+            #new_tree_left.id= id_
+            #copy_left_child.id= new_tree_left.id
 
             new_tree_right = Tree()
             new_tree_right.leftChild=copy_right_child
@@ -960,6 +1035,10 @@ class Tree:
 
 
 
+            #new_tree_right.id= copy_right.id
+            
+            #copy_right_child.id=new_tree_right.id
+            new_tree_right.id =self.leftChild.id
 
             copy_right.rightChild=new_tree_right
             copy_right.leftChild=copy_left_child
@@ -968,9 +1047,7 @@ class Tree:
             copy_right.leftChild.parent=copy_right
 
 
-            id_= copy_left_child.id
-            new_tree_right.id= id_
-            copy_left_child.id= new_tree_right.id
+
         
         else:
             copy_right_child= copy.deepcopy(self.rightChild.rightChild)
@@ -989,15 +1066,20 @@ class Tree:
             new_tree_left.rightChild.parent=new_tree_left
 
 
+            #copy_left_child.id=new_tree_left.id
+            new_tree_left.id =self.rightChild.id
+
+
+
             copy_left.rightChild=new_tree_left
             copy_left.leftChild=copy_right_child
             copy_left.children= [copy_left.rightChild, copy_left.leftChild]
             copy_left.rightChild.parent=copy_left
             copy_left.leftChild.parent=copy_left
 
-            id_= copy_left_child.id
-            new_tree_left.id= id_
-            copy_left_child.id= new_tree_left.id
+            #id_= copy_left_child.id
+            #new_tree_left.id= id_
+            #copy_left_child.id= new_tree_left.id
 
             
             new_tree_right = Tree()
@@ -1008,20 +1090,58 @@ class Tree:
             new_tree_right.leftChild.parent=new_tree_right
             new_tree_right.leftChild.parent=new_tree_right
 
+            #copy_right_child.id=new_tree_right.id
+            new_tree_right.id =self.rightChild.id
+
+
             copy_right.rightChild=new_tree_right
             copy_right.leftChild=copy_left_child
             copy_right.children= [copy_right.rightChild, copy_right.leftChild]
             copy_right.rightChild.parent=copy_right
             copy_right.leftChild.parent=copy_right        
 
-            id_= copy_left_child.id
-            new_tree_right.id= id_
-            copy_left_child.id= new_tree_right.id
+
 
         if self.parent==None:
+
             #print('No_parent')
             #return [[self.parse(copy_left.to_newick()),self.parse(copy_left.to_newick()),'left'],[self.parse(copy_right.to_newick()),self.parse(copy_right.to_newick()),'right']]
-            return [[copy_left,copy_left,'left'],[copy_right,copy_right,'right']]
+            #return [[copy_left,copy_left,'left'],[copy_right,copy_right,'right']]
+            #l_t= self.parse(copy_left.to_newick())
+            #r_t=self.parse(copy_right.to_newick())
+
+            l_t= red.parse(red.to_newick(copy_left))
+            r_t=red.parse(red.to_newick(copy_right))
+
+
+            #print('kt1',l_t.id)
+            #print('kt2',r_t.id)
+
+
+            l_t.label_internal()
+            r_t.label_internal()
+            copy_left.label_internal()
+            copy_right.label_internal()
+                
+            #exit()
+            
+        
+            
+            l_t.change_id(l_t,copy_left)
+            r_t.change_id(r_t,copy_right)
+            
+            r_t.reset()
+            copy_right.reset()
+            
+            l_t.reset()
+            copy_left.reset()
+            
+
+
+            #print('kt',l_t.id)
+            #print('kt0',r_t.id)
+
+            return [[l_t,l_t,'left'],[r_t,r_t,'right']]
         
         geneTree_left.label_internal()
         
@@ -1040,7 +1160,58 @@ class Tree:
         
         self.locate_copy(copy_left,geneTree_left)
         self.locate_copy(copy_right,geneTree_right)
-        #print('Left:',geneTree_left.to_newick())
-        #print('Right:',geneTree_right.to_newick())
+
+        #l_t= self.parse(copy_left.to_newick())
+        #l_t_1= self.parse(geneTree_left.to_newick())
+        
+        l_t= red.parse(red.to_newick(copy_left))
+        l_t_1=red.parse(red.to_newick(geneTree_left))
+
+        
+
+        #r_t=self.parse(copy_right.to_newick())
+        #r_t_1=self.parse(geneTree_right.to_newick())
+
+        r_t= red.parse(red.to_newick(copy_right))
+        r_t_1=red.parse(red.to_newick(geneTree_right))
+
+        
+
+
+        l_t.label_internal()
+        r_t.label_internal()
+        r_t_1.label_internal()
+        l_t_1.label_internal()
+
+        copy_left.label_internal()
+        copy_right.label_internal()
+        geneTree_left.label_internal()
+        geneTree_right.label_internal()
+
+        
+        
+        
+                
+            
+            
+        l_t.change_id(l_t,copy_left)
+        r_t.change_id(r_t,copy_right)
+        l_t_1.change_id(l_t_1,geneTree_left)
+        r_t_1.change_id(r_t_1,geneTree_right)
+        
+
+        r_t.reset()
+        copy_right.reset()
+        l_t_1.reset()
+        geneTree_left.reset()
+        r_t_1.reset()
+        geneTree_right.reset()
+        l_t.reset()
+        copy_left.reset()
+        #print('Parents')
+        #print('kt1',l_t.id)
+        #print('kt2',r_t.id)
+
         #return [[self.parse(copy_left.to_newick()),self.parse(geneTree_left.to_newick()),'left'],[self.parse(copy_right.to_newick()),self.parse(geneTree_right.to_newick()),'right']]
-        return [[copy_left,geneTree_left,'left'],[copy_right,geneTree_right,'right']]
+        #return [[copy_left,geneTree_left,'left'],[copy_right,geneTree_right,'right']]
+        return [[l_t,l_t_1,'left'],[r_t,r_t_1,'right']]

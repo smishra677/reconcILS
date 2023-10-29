@@ -51,12 +51,12 @@ def dlcpar(gene_folder,i):
     os.system(command2)
 
 #sp_string='(((A,(B,C)),D),(E,F));'
-#sp_string='(A,(B,C));'
-sp_string='(B,C);'
+sp_string='(A,(B,C));'
+#sp_string='(B,C);'
 
 
 
-gene_folder='10_18_2_sp'
+gene_folder='10_25_no_loss'
 #gene_tre= open('./output_gene/gene_tree.txt')
 #trees =gene_tre.read().strip().split('\n')
 #gene_tre.close()
@@ -74,6 +74,7 @@ ete_time=[]
 li_gt=[]
 lis_rep=[]
 for i in range(1000):
+    reco =reconcils()
     red= readWrite.readWrite()
     sp=red.parse(sp_string)
     if erro==1:
@@ -89,6 +90,7 @@ for i in range(1000):
         tree= str(read_trees(i,os.path.join(file_path, gene_folder)))
         tr=red.parse(tree)
         print(tr.to_newick())
+        print(i)
         write_trees(i,os.path.join(file_path, gene_folder),tr.to_newick())
 
         try:
@@ -116,7 +118,6 @@ for i in range(1000):
             dic['Gene_tree'].append(tr.to_newick())
             dic['Species_Tree'].append(sp_string)
             dic=convert(dic,df)
-            print('dlc',dic)
 
 
         
@@ -135,7 +136,6 @@ for i in range(1000):
             dic['Species_Tree']+=[sp_string]
         
             dic= red.Create_pd_ete3('ETE3',i,dict(Counter(red.sp_event_ete3(recon_tree_ete))),dic)
-            print('ete',dic)
 
             
         except:
@@ -165,7 +165,7 @@ for i in range(1000):
 
 
             tr.map_gene(sp)
-            setCost(sp)
+            reco.setCost(sp)
 
             sp.isRoot=True
             tr.isRoot=True
@@ -173,7 +173,7 @@ for i in range(1000):
 
             starttime1 = timeit.default_timer()
             #reconcILS(tr,sp,sp_copy,sp,[])
-            li=iterative_reconcILS(tr,sp,sp_copy,sp,[])
+            li=reco.iterative_reconcILS(tr,sp,sp_copy,sp,[])
 
             reconcILSTime_iterative.append(timeit.default_timer()-starttime1)
    
@@ -183,7 +183,7 @@ for i in range(1000):
             #li =red.sp_event(sp,[])
 
             dic= red.Create_pd('Our_algorithm_ite',i,li,dic)
-            print('ite',dic)
+
 
         except:
             erro=1
@@ -206,14 +206,17 @@ for i in range(1000):
 
 
             tr.map_gene(sp)
-            setCost(sp)
+            reco.setCost(sp)
 
             sp.isRoot=True
             tr.isRoot=True
             sp_copy.isRoot=True
 
+
+            reco.gene_tree= copy.deepcopy(tr)
+   
             starttime1 = timeit.default_timer()
-            reconcILS(tr,sp,sp_copy,sp,[])
+            reco.reconcILS(tr,sp,sp_copy,sp,[])
 
             #li=iterative_reconcILS(tr,sp,sp_copy,sp,[])
             reconcILSTime_recurssive.append(timeit.default_timer()-starttime1)
@@ -225,7 +228,7 @@ for i in range(1000):
             #print(Counter(li))
 
             dic= red.Create_pd('Our_algorithm_recu',i,li,dic)
-            print('rec',dic)
+
 
         except:
             erro=1
