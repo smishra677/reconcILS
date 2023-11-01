@@ -47,11 +47,10 @@ The tool generates a CSV output file with the following columns:
 - Number of Losses
 
 Example entry in the output file:
+| Process    | Replicate | Gene_tree      | Species_Tree   | Duplication | NNI | Loss |
+|------------|-----------|----------------|----------------|-------------|-----|------|
+| reconcILS  | 0         | "(B,(C,A)1I  C);" | "(A,(B,C));"   | 0           | 1   | 0    |
 
-```
-Process,   Replicate,  Gene_tree,   Species_Tree,    Duplication,   NNI,   Loss
-reconcILS,     0,     "(B,(C,A)1I  C);", "(A,(B,C));"    ,0,             1,     0
-```
 
 ## Example Usage
 
