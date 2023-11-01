@@ -187,19 +187,19 @@ class readWrite:
                         dic=dict(Counter(j[1]))
                         val= [str(v)+str(k) for k,v in dic.items()]
                         if len(ev)>0:
-                            ev+='+'+j[0]+' '+'+'.join(val)
+                            ev+='+'+''.join(val)+'  '+j[0]
                         else:
-                            ev+=j[0]+' '+'+'.join(val)
+                            ev+=''.join(val)+'  '+j[0]
                     else:
                         dic=dict(Counter(j[1]))
-                        val= [str(v)+str(k) for k,v in dic.items()]
+                        val= [str(k) for k,v in dic.items()]
                         if len(ev)>0:
                             ev+='+'+'+'.join(val)
                         else:
                             ev+='+'.join(val)
 
-
-                return tree.numbered_taxa+'  '+ev
+                
+                return (ev+'  '+tree.numbered_taxa)
             else:
                 return tree.numbered_taxa+ ''
             
@@ -213,12 +213,12 @@ class readWrite:
                         val= [str(v)+str(k) for k,v in dic.items()]
                         
                         if len(ev)>0:
-                            ev+='+'+j[0]+' '+'+'.join(val)
+                            ev+='+'+''.join(val)+'  '+j[0]
                         else:
-                            ev+=j[0]+' '+'+'.join(val)
+                            ev+=''.join(val)+'  '+j[0]
                     else:
                         dic=dict(Counter(j[1]))
-                        val= [str(v)+str(k) for k,v in dic.items()]
+                        val= [str(k) for k,v in dic.items()]
                         if len(ev)>0:
                             ev+='+'+'+'.join(val)
                         else:
