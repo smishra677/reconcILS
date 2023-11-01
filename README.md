@@ -47,9 +47,18 @@ The tool generates a CSV output file with the following columns:
 - Number of Losses
 
 Example entry in the output file:
+
+output.csv
 | Process    | Replicate | Gene_tree      | Species_Tree   | Duplication | NNI | Loss |
 |------------|-----------|----------------|----------------|-------------|-----|------|
 | reconcILS  | 0         | "(B,(C,A)1I  C);" | "(A,(B,C));"   | 0           | 1   | 0    |
+
+log.csv
+
+| Gene_Tree     | Species_Tree  | Duplication_cost | NNI_cost | Loss_cost |
+|-------------- | ------------- | ---------------- | --------  | --------- |
+| "(B,(C,A));"  | "(A,(B,C));" | 1.1              | 50.0     | 1         |
+
 
 
 ## Example Usage
