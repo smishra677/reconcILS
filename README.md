@@ -37,7 +37,7 @@ pip install .
 The tool generates a CSV output file with the following columns:
 
 - Process
-- Replicate
+- Replicate (By Default :0)
 - Labeled Gene_tree
 - Species_Tree
 - Number of Duplications
