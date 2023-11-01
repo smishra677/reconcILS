@@ -32,8 +32,7 @@ for i in range(1):
 
     sp=red.parse(sp_string)
     sp_copy= copy.deepcopy(sp)
-    sp_copy.reset()
-    sp.reset()
+
     
 
     tr.order_gene(sp)
@@ -44,6 +43,8 @@ for i in range(1):
     sp.isRoot=True
     tr.isRoot=True
     sp_copy.isRoot=True
+
+    
 
 
     reco.gene_tree= copy.deepcopy(tr)
