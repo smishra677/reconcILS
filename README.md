@@ -2,6 +2,17 @@
 
 ## Reconcile Gene Tree with Species Tree
 
+## Requirements
+This package has the following requirements:
+
+Python (3.x)
+Pandas
+Matplotlib
+uuid
+igraph
+
+
+
 
 ## Installation
 
