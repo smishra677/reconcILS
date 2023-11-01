@@ -1041,6 +1041,8 @@ def main():
         
     #print(li)
     dic= re_w.Create_pd('reconcILS',0,li,dic)
+
+
     
     df = pd.DataFrame(dic)
   
@@ -1048,7 +1050,9 @@ def main():
     
     df.to_csv(parser.output, index=False)
 
-
+    dic_log ={'Gene_Tree':[tr.to_newick()],'Species_Tree':[sp_string],'Duplication_cost':[str(reconcILS.D_cost)],'NNI_cost':[str(reconcILS.I_cost)],'Loss_cost':[str(reconcILS.L_cost)]}
+    df_log=pd.DataFrame(dic_log)
+    df_log.to_csv('log.csv',index=False)
 if __name__ == "__main__":
     
     main()
