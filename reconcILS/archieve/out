@@ -1,0 +1,203 @@
+{'C', 'B', 'A'}
+None
+None
+cost 3
+5
+None
+top_0 (((C,C),B),A);
+topo_1 ((B,B),(((C,C),B),A));
+Species ((C,B),A);
+##############################
+3
+3
+2
+top_0 (((C,C),A),B);
+topo_1 ((B,B),(((C,C),A),B));
+Species ((C,B),A);
+##############################
+2
+3
+3
+None
+No_parent
+top_0 (((B,B),A),((C,C),B));
+topo_1 (((B,B),A),((C,C),B));
+Species ((C,B),A);
+##############################
+2
+2
+2
+top_0 (((B,B),((C,C),B)),A);
+topo_1 (((B,B),((C,C),B)),A);
+Species ((C,B),A);
+##############################
+2
+2
+1
+None
+3
+3
+NNI
+(((B,B),((C,C),B)),A);
+((B,B),((C,C),(A,B)));
+A
+<Tree.Tree object at 0x7fc5bcefd0a0>
+None
+cost 1
+34
+23
+23 A;
+{'B', 'C'}
+<Tree.Tree object at 0x7fc5bcefd0a0>
+None
+cost 0
+22
+B
+<Tree.Tree object at 0x7fc5bcefd160>
+None
+cost 3
+5
+<Tree.Tree object at 0x7fc5bce3f1f0>
+3
+4
+Duplication
+B
+<Tree.Tree object at 0x7fc5bcefd190>
+None
+cost 1
+34
+23
+23 B;
+B
+<Tree.Tree object at 0x7fc5bcefd190>
+None
+cost 2
+5
+<Tree.Tree object at 0x7fc5bcdc3340>
+1
+2
+Duplication
+B
+<Tree.Tree object at 0x7fc5bcea5760>
+None
+cost 1
+34
+23
+23 B;
+B
+<Tree.Tree object at 0x7fc5bcea5760>
+None
+cost 1
+34
+23
+23 B;
+dups 23 (B,B)B;
+dups 23 ((B,B)B,B)B;
+C
+<Tree.Tree object at 0x7fc5bcefd160>
+None
+cost 2
+5
+<Tree.Tree object at 0x7fc5bccc5e80>
+1
+2
+Duplication
+C
+<Tree.Tree object at 0x7fc5bcefd1c0>
+None
+cost 2
+5
+<Tree.Tree object at 0x7fc5bcca0250>
+1
+2
+Duplication
+C
+<Tree.Tree object at 0x7fc5bccef3a0>
+None
+cost 0
+34
+23
+23 C;
+C
+<Tree.Tree object at 0x7fc5bccef3a0>
+None
+cost 2
+5
+<Tree.Tree object at 0x7fc5bcc037f0>
+1
+2
+Duplication
+C
+<Tree.Tree object at 0x7fc5bcd96dc0>
+None
+cost 1
+34
+23
+23 C;
+C
+<Tree.Tree object at 0x7fc5bcd96dc0>
+None
+cost 1
+34
+23
+23 C;
+dups 23 (C,C)C;
+dups 23 ((C,C)C,C)C;
+C
+<Tree.Tree object at 0x7fc5bcefd1c0>
+None
+cost 0
+34
+23
+23 C;
+dups 23 (C,((C,C)C,C)C)C;
+22 ((C,((C,C)C,C)C)C,((B,B)B,B)B);
+NNI (((C,((C,C)C,C)C)C,((B,B)B,B)B),A);
+######################33
+(((C,((C,C)C,C)C)C,((B,B)B,B)B),A);
+A
+event Speciation
+cost 0
+B
+event Speciation
+cost 0
+B
+event Speciation
+cost 0
+B
+event Speciation
+cost 0
+B
+event Duplication
+cost 0
+B
+event Duplication
+cost 1
+C
+event Speciation
+cost 0
+C
+event Speciation
+cost 0
+C
+event Speciation
+cost 0
+C
+event Duplication
+cost 0
+C
+event Duplication
+cost 0
+C
+event Speciation
+cost 0
+C
+event Duplication
+cost 0
+{'B', 'C'}
+event Speciation
+cost 0
+{'C', 'B', 'A'}
+event NNI
+cost 2
+Counter({'Speciation': 9, 'Duplication': 5, 'NNI': 2})

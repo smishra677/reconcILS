@@ -1,0 +1,94 @@
+#!/usr/bin/env python
+
+# python libraries
+import os, sys
+import argparse
+import importlib
+
+# dlcpar libraries
+import dlcpar
+from dlcpar import commands
+
+#==========================================================
+# parser
+
+VERSION = dlcpar.PROGRAM_VERSION_TEXT
+
+def parse_command():
+    """parse command"""
+
+    # make parser
+    parser = argparse.ArgumentParser(
+        usage = "%(prog)s [--version] [-h | --help] <command> [<args>]",
+
+        description =
+"""\
+%(prog)s is a phylogenetic program for inferring a most
+parsimonious reconciliation between a gene tree and species tree
+under the Duplication-Loss-Coalescence model.
+See http://www.cs.hmc.edu/~yjw/software/dlcpar/ for details.
+
+These are dlcpar commands used in various situations:
+
+main programs
+   dp                Solve the MPR problem using dynamic programming
+   ilp               Solve the MPR problem using integer linear programming
+   search            Solve the MPR problem using heuristic search
+   landscape         Find MPR landscapes across ranges of event costs
+
+utilities
+   convert           Convert between reconciliation structures
+   equal             Check for equality between reconciliation structures
+   events            Infer event counts in a reconciliation
+
+visualizations
+   view_lct          View the labeled coalescent tree
+   view_landscape    View landscape of equivalent regions
+
+See 'dlcpar <command> -h' to read about a specific subcommand.
+""",
+
+        epilog =
+"""\
+Written by Yi-Chieh Wu (yjw@cs.hmc.edu), Harvey Mudd College.
+(c) 2012-2019. Released under the terms of the GNU General Public License.
+""",
+
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+
+        add_help=False)
+
+    parser.add_argument("--version", action="version",
+                        version="%(prog)s "+ VERSION,
+                        help=argparse.SUPPRESS)
+    parser.add_argument("-h", "--help", action="help",
+                        help=argparse.SUPPRESS)
+
+    parser.add_argument("command", help=argparse.SUPPRESS)
+
+    # display help if no command
+    if len(sys.argv) == 1:
+        parser.print_help(sys.stderr)
+        parser.exit(1)
+
+    args = parser.parse_args(sys.argv[1:2]) # exclude rest of args
+    if args.command not in commands.__all__:
+        parser.error("'%s' is not a dlcpar command. See 'dlcpar --help'" % args.command)
+    return args.command
+
+
+#==========================================================
+# main function
+
+def main():
+    """main"""
+
+    # parse arguments
+    command = parse_command()
+
+    # run sub-command
+    mod = importlib.import_module("dlcpar.commands.%s" % command)
+    mod.run()
+
+if __name__ == "__main__":
+    sys.exit(main())
