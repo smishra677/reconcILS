@@ -5,11 +5,11 @@
 ## Requirements
 This package has the following requirements:
 
-Python (3.x)
-Pandas
-Matplotlib
-uuid
-igraph
+- Python (3.x)
+- Pandas
+- Matplotlib
+- uuid
+- igraph
 
 
 
