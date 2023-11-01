@@ -24,4 +24,4 @@ reconcILS,     0,     "(((B,C_1)C_1 1I+1D,C_2),A);", "(A,(B,C));"    ,0,        
 
 ## Example Usage
 
-python ./src/reconcILS.py --spTree '(A,(B,C));' --gTree '((A,C),B);' --output 'result.csv'
+python ./reconcILS/reconcILS.py --spTree '(A,(B,C));' --gTree '((A,C),B);' --output 'result.csv'
