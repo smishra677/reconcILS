@@ -1,0 +1,19 @@
+
+
+algorithm
+1)  we map each node to species tree
+2) then if we have multiple node mapped to the same node in the species tree than we take all the children below that node and perform 1 NNI move.(branch below it) .Always get 3 trees so  we pick the one which has 
+    lower one
+        a) goto step 1
+
+stopping criteria: If there is just speciation event in step 1.
+                   OR : for a given threshold t, we perform the NNI move < t
+                   OR : if parent tree cost is the same as children cost
+
+
+
+
+Driver
+1) first take a newick format string for species and gene trees --> from  a file and convert it to Tree data structure (done-->May 27)
+2) Then map the each external node based on the Taxa name (Done-->May 30)
+3) Then run the above algorithm (Done-->June 02)
