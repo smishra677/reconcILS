@@ -24,15 +24,15 @@ pip install .
 ```
 
 ## Arguments 
-
-Arguments  | Description |Required |Default Value
-- `--spTree`: Species tree in string| Yes |N/A.
-- `--gTree`: Gene tree in string| Yes |N/A.
-- `--output`: Name of the output file with the extension .csv| Yes |N/A. 
-- `--D`: Duplication Cost| No |1.1
-- `--L`: Loss Cost| No | 1.
-- `--I`: ILS Cost| No |1.
-- `--V`: Verbose Mode| No |0.
+| Argument       | Description                                       | Required | Default Value |
+| -------------- | ---------------------------------                 | -------- | ------------- |
+| `--spTree`     | Species tree in string                           | Yes      | N/A           |
+| `--gTree`      | Gene tree in string                              | Yes      | N/A           |
+| `--output`     | Name of the output file with the extension .csv | Yes      | N/A           |
+| `--D`          | Duplication Cost                                 | No       | 1.1           |
+| `--L`          | Loss Cost                                       | No       | 1.0           |
+| `--I`          | ILS Cost                                        | No       | 1.0           |
+| `--V`          | Verbose Mode                                    | No       | 0             |
 
 ## Output
 
