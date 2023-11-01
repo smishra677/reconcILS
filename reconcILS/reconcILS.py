@@ -94,6 +94,7 @@ class reconcils:
                         co= Tree.Tree()
                         co.leftChild= copy.deepcopy(sp)
                         co.rightChild= copy.deepcopy(new_topo)
+                        self.label_lost_child(co.rightChild)
 
                        
                         sp.leftChild=co.leftChild
@@ -1033,7 +1034,7 @@ def main():
     
 
     #print(Counter(li))
-    dic={'Process':[],'Replicate':[],'Gene_tree':[],'Species_Tree':[],'Duplication':[],'NNI':[],'DLCILS':[],'Loss':[],'Hemiplasy':[],'RHemiplasy':[]}
+    dic={'Process':[],'Replicate':[],'Gene_tree':[],'Species_Tree':[],'Duplication':[],'NNI':[],'Loss':[]}
     
     dic['Gene_tree']+=[red.to_newick(reconcILS.gene_tree)]
     dic['Species_Tree']+=[sp_string]
@@ -1042,6 +1043,7 @@ def main():
     dic= re_w.Create_pd('reconcILS',0,li,dic)
     
     df = pd.DataFrame(dic)
+  
     
     
     df.to_csv(parser.output, index=False)
