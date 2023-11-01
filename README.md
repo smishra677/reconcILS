@@ -14,6 +14,7 @@ This package has the following requirements:
 
 
 
+
 ## Installation
 
 You can install reconcILS using pip:
@@ -22,15 +23,16 @@ You can install reconcILS using pip:
 pip install .
 ```
 
-## Arguments
+## Arguments 
 
-- `--spTree`: Species tree in string.
-- `--gTree`: Gene tree in string.
-- `--output`: Name of the output file with the extension .csv.
-- `--D`: Duplication Cost.
-- `--L`: Loss Cost.
-- `--I`: ILS Cost.
-- `--V`: Verbose Mode[1=True].
+Arguments  | Description |Required |Default Value
+- `--spTree`: Species tree in string| Yes |N/A.
+- `--gTree`: Gene tree in string| Yes |N/A.
+- `--output`: Name of the output file with the extension .csv| Yes |N/A. 
+- `--D`: Duplication Cost| No |1.1
+- `--L`: Loss Cost| No | 1.
+- `--I`: ILS Cost| No |1.
+- `--V`: Verbose Mode| No |0.
 
 ## Output
 
