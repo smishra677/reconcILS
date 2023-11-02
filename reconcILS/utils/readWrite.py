@@ -58,15 +58,15 @@ class readWrite:
         o= dict(Counter(o_list))
                 
 
-        dic['DLCILS']+=[0]
-        dic['RHemiplasy']+=[0]
+        #dic['DLCILS']+=[0]
+        #dic['RHemiplasy']+=[0]
         
         dic['Process']+=[flag]
         dic['Replicate']+=[i]
         dic['Duplication'].append(0)
         dic['NNI'].append(0)
         dic['Loss'].append(0)
-        dic['Hemiplasy'].append(0)
+        #dic['Hemiplasy'].append(0)
 
 
         for i in o:
@@ -232,6 +232,7 @@ class readWrite:
                 return ev
             else:
                 return ''
+        
 
     def to_newick(self,tree):
         newick = ""
