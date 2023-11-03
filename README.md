@@ -33,6 +33,7 @@ pip install .
 | `--L`          | Loss Cost                                       | No       | 1.0           |
 | `--I`          | ILS Cost                                        | No       | 1.0           |
 | `--V`          | Verbose Mode                                    | No       | 0             |
+| `--F`          | Input as file                                   | No       | 0            |
 
 ## Output
 
@@ -53,7 +54,7 @@ output.csv
 |------------|-----------|----------------|----------------|-------------|-----|------|
 | reconcILS  | 0         | "(B,(C,A)1I  C);" | "(A,(B,C));"   | 0           | 1   | 0    |
 
-log.csv
+output_log.csv
 
 | Gene_Tree     | Species_Tree  | Duplication_cost | NNI_cost | Loss_cost |
 |-------------- | ------------- | ---------------- | --------  | --------- |
@@ -65,7 +66,13 @@ log.csv
 
 You can use reconcILS as follows:
 
+Input as String:
 ```bash
 python ./reconcILS/reconcILS.py --spTree '(A,(B,C));' --gTree '((A,C),B);' --output 'result.csv'
+```
+
+Input as file:
+```bash
+python ./reconcILS/reconcILS.py --spTree './spTree.tre' --gTree './gTree/tre' --output 'result.csv' --F 1
 ```
 
