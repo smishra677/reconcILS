@@ -26,8 +26,8 @@ pip install .
 ## Arguments 
 | Argument       | Description                                       | Required | Default Value |
 | -------------- | ---------------------------------                 | -------- | ------------- |
-| `--spTree`     | Species tree in string                           | Yes      | N/A           |
-| `--gTree`      | Gene tree in string                              | Yes      | N/A           |
+| `--spTree`     | Species tree in string // Location to Species Tree                        | Yes      | N/A           |
+| `--gTree`      | Gene tree in string // Location to Gene Tree                           | Yes      | N/A           |
 | `--output`     | Name of the output file with the extension .csv | Yes      | N/A           |
 | `--D`          | Duplication Cost                                 | No       | 1.1           |
 | `--L`          | Loss Cost                                       | No       | 1.0           |
