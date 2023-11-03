@@ -33,7 +33,7 @@ pip install .
 | `--L`          | Loss Cost                                       | No       | 1.0           |
 | `--I`          | ILS Cost                                        | No       | 1.0           |
 | `--V`          | Verbose Mode                                    | No       | 0             |
-| `--F`          | Input as file                                   | No       | 0            |
+| `--F`          | Input as file(--F 1 for file input)                                   | No       | 0            |
 
 ## Output
 
