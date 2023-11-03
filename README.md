@@ -24,7 +24,7 @@ pip install .
 ```
 
 ## Input
-reconcILS accepts gene trees in (B_1,(C_1,A_1)); or (B,(C,A)); format.
+reconcILS accepts gene trees in (B_1,(C_1,A_1)); or (B,(C,A)); or (B_2,(C_1,A));  format.
 
 
 ## Arguments 
