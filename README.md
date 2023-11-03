@@ -73,6 +73,6 @@ python ./reconcILS/reconcILS.py --spTree '(A,(B,C));' --gTree '((A,C),B);' --out
 
 Input as file:
 ```bash
-python ./reconcILS/reconcILS.py --spTree './spTree.tre' --gTree './gTree/tre' --output 'result.csv' --F 1
+python ./reconcILS/reconcILS.py --spTree './spTree.tre' --gTree './gTree.tre' --output 'result.csv' --F 1
 ```
 
