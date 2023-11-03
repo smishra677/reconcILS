@@ -23,6 +23,10 @@ You can install reconcILS using pip:
 pip install .
 ```
 
+## Input
+reconcILS accepts gene trees in (B_1,(C_1,A_1)); or (B,(C,A)); format.
+
+
 ## Arguments 
 | Argument       | Description                                       | Required | Default Value |
 | -------------- | ---------------------------------                 | -------- | ------------- |
