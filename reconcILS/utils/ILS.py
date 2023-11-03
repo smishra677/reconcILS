@@ -189,7 +189,7 @@ class ILS:
         
         ##print(child)
 
-        if len(child)==0 or cost<=0:
+        if len(child)==0 or cost<=1:
             return gene_tree,cost,-1,visited
         else:
             
@@ -303,7 +303,7 @@ class ILS:
                     #cost=cost-1
                     tr.visited.append([ch1[0],ch1[1]])
                     
-                    if cost==0 or imporvement==False:
+                    if cost<=0 or imporvement==False:
                             return new_topo,cost,-1,visited
                     else:
                             new_sp = copy.deepcopy(sp_copy)

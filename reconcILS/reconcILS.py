@@ -17,6 +17,7 @@ class reconcils:
         self.gene_tree=None
         self.address_dictionary=None
         self.V=False
+        self.F= False
 
 
 
@@ -99,6 +100,7 @@ class reconcils:
                        
                         sp.leftChild=co.leftChild
                         sp.rightChild=co.rightChild
+                        sp.id=co.id
 
                         co.leftChild.parent =sp
                         co.rightChild.parent =sp
@@ -375,8 +377,9 @@ class reconcils:
                         
 
 
-                        recon_1_cost =recon_right.cost+recon_left.cost+self.D_cost
-
+                        recon_1_cost =(recon_right.cost+recon_left.cost)*self.L_cost+self.D_cost
+  
+                        
 
 
 
@@ -396,7 +399,7 @@ class reconcils:
                         recon_1.find_loss_sp(recon_1)
                         
 
-                        recon_1.cost= recon_1.cost+(Initial_multiple_mapping- cost)*self.I_cost
+                        recon_1.cost= recon_1.cost*self.L_cost+(Initial_multiple_mapping- cost)*self.I_cost
 
                         NNI_cost=recon_1.cost
                         duplication_cost=recon_1_cost
@@ -949,6 +952,14 @@ class reconcils:
                     
 
         return eve
+    
+
+    def read_trees(self,file):
+        gene_tre= open(file)
+        tr =gene_tre.read().strip().split('\n')
+        gene_tre.close()
+        return str(tr[0])
+
 
 
 def parse1():
@@ -960,6 +971,7 @@ def parse1():
     parser.add_argument('--L', type=str, help="Loss Cost")
     parser.add_argument('--I', type=str, help="ILS Cost")
     parser.add_argument('--V', type=str, help="Verbose Mode")
+    parser.add_argument('--F', type=str, help="Read File Mode")
     args= parser.parse_args()
     return(args)
 
@@ -975,10 +987,9 @@ def main():
     import matplotlib.pyplot as plt
     
 
-
-    sp_string=parser.spTree
-    gene_tree=parser.gTree
-    
+    if parser.F:
+        if int(parser.F)==1:
+            reconcILS.F=True
     if parser.D:
         reconcILS.D_cost=float(parser.D)
     if parser.I:
@@ -988,6 +999,13 @@ def main():
     if parser.V:
         if int(parser.V)==1:
             reconcILS.V=True
+
+    if parser.F:
+        sp_string=reconcILS.read_trees(parser.spTree)
+        gene_tree=reconcILS.read_trees(parser.gTree)
+    else:
+        sp_string=parser.spTree
+        gene_tree=parser.gTree
 
     
     red= readWrite.readWrite()
@@ -1041,6 +1059,8 @@ def main():
         
     #print(li)
     dic= re_w.Create_pd('reconcILS',0,li,dic)
+
+
     
     df = pd.DataFrame(dic)
   
@@ -1048,7 +1068,9 @@ def main():
     
     df.to_csv(parser.output, index=False)
 
-
+    dic_log ={'Gene_Tree':[tr.to_newick()],'Species_Tree':[sp_string],'Duplication_cost':[str(reconcILS.D_cost)],'NNI_cost':[str(reconcILS.I_cost)],'Loss_cost':[str(reconcILS.L_cost)]}
+    df_log=pd.DataFrame(dic_log)
+    df_log.to_csv(parser.output[:-4]+'_log.csv',index=False)
 if __name__ == "__main__":
     
     main()
