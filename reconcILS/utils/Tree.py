@@ -777,6 +777,10 @@ class Tree:
             val1= "["+','.join(val)+"]"
             return val1 if len(val)>0 else  ''
 
+
+    # Got it From StackOverflow:
+    #https://stackoverflow.com/questions/61117131/how-to-convert-a-binary-tree-to-a-newick-tree-using-python
+    # https://stackoverflow.com/questions/61117131/how-to-convert-a-binary-tree-to-a-newick-tree-using-python
     def traverse(self, newick):
         if self.leftChild and not self.rightChild:
             newick = f"(,{self.leftChild.traverse(newick)}){self.taxa if self.isLeaf else ''}"
@@ -794,6 +798,9 @@ class Tree:
 
 
 
+    # Got it From StackOverflow:
+    #https://stackoverflow.com/questions/61117131/how-to-convert-a-binary-tree-to-a-newick-tree-using-python
+    # https://stackoverflow.com/questions/61117131/how-to-convert-a-binary-tree-to-a-newick-tree-using-python
     def to_newick(self):
         newick = ""
         newick = self.traverse(newick)
@@ -801,13 +808,16 @@ class Tree:
         return newick
 
 
+    #Got the framework of the code from StackOver FLow 
+    # https://stackoverflow.com/questions/51373300/how-to-convert-newick-tree-format-to-a-tree-like-hierarchical-object
+    # https://stackoverflow.com/questions/51373300/how-to-convert-newick-tree-format-to-a-tree-like-hierarchical-object
 
     def parse(self,newick):
         import re
 
         tokens = re.finditer(r"([^:;,()\s]*)(?:\s*:\s*([\d.]+)\s*)?([,);])|(\S)", newick+";")
 
-        def recurse(tre,nextid = 0, parentid = -1): # one node
+        def recurse(tre,nextid = 0, parentid = -1):
             thisid = nextid
             #tre.id= nextid
             children = []

@@ -232,13 +232,22 @@ class readWrite:
                 return ev
             else:
                 return ''
-        
+    
+
+    # Got it From StackOverflow:
+    #https://stackoverflow.com/questions/61117131/how-to-convert-a-binary-tree-to-a-newick-tree-using-python
+    # https://stackoverflow.com/questions/61117131/how-to-convert-a-binary-tree-to-a-newick-tree-using-python
 
     def to_newick(self,tree):
         newick = ""
         newick = self.traverse(tree, newick)
         newick = f"{newick};"
         return newick
+    
+
+    # Got it From StackOverflow:
+    #https://stackoverflow.com/questions/61117131/how-to-convert-a-binary-tree-to-a-newick-tree-using-python
+    # https://stackoverflow.com/questions/61117131/how-to-convert-a-binary-tree-to-a-newick-tree-using-python
 
     def traverse(self,tree, newick):
         if tree.leftChild and not tree.rightChild:
@@ -254,6 +263,10 @@ class readWrite:
         return newick
 
 
+
+    #Got the framework of the code from StackOver FLow 
+    # https://stackoverflow.com/questions/51373300/how-to-convert-newick-tree-format-to-a-tree-like-hierarchical-object
+    # https://stackoverflow.com/questions/51373300/how-to-convert-newick-tree-format-to-a-tree-like-hierarchical-object
 
 
 
