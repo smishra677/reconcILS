@@ -110,45 +110,90 @@ class reconcils:
             
                 else:
                     if sp.parent.leftChild==sp:
-                        co= Tree.Tree()
-                        co.leftChild= copy.deepcopy(sp)
-                        co.rightChild= copy.deepcopy(new_topo)
-                        self.label_lost_child(co.rightChild)
+                        if len(sp.event_list)<1:
+                            co= Tree.Tree()
+                            co.leftChild= copy.deepcopy(sp)
+                            co.rightChild= copy.deepcopy(new_topo)
+                            self.label_lost_child(co.rightChild)
+
+                            co.leftChild.parent =co
+                            co.rightChild.parent =co
+
+                            sp.parent.leftChild=co
+                            sp.parent.isLeaf=None
+                            
+                            sp.parent.rightChild=sp.parent.rightChild
+                            sp.parent.isLeaf=None
+                            sp.parent.rightChild.parent=sp.parent
+                            sp.parent.leftChild.parent=sp.parent
+                        
                         
 
-                        co.leftChild.parent =co
-                        co.rightChild.parent =co
+                            #sp.event_list=[]
+                            sp.parent.children=[sp.parent.leftChild,sp.parent.rightChild]
+                        else:
+                            co= Tree.Tree()
+                            co.leftChild= copy.deepcopy(sp.parent.rightChild)
+                            co.rightChild= copy.deepcopy(new_topo)
+                            self.label_lost_child(co.rightChild)
 
-                        sp.parent.leftChild=co
-                        sp.parent.isLeaf=None
-                        
-                        sp.parent.rightChild=sp.parent.rightChild
-                        sp.parent.isLeaf=None
-                        sp.parent.rightChild.parent=sp.parent
-                        sp.parent.leftChild.parent=sp.parent
-                       
-                     
+                            co.leftChild.parent =co
+                            co.rightChild.parent =co
 
-                        sp.event_list=[]
-                        sp.parent.children=[sp.parent.leftChild,sp.parent.rightChild]
+                            sp.parent.rightChild=co
+                            sp.parent.isLeaf=None
+                            
+                            sp.parent.leftChild=sp.parent.leftChild
+
+                            sp.parent.isLeaf=None
+                            sp.parent.rightChild.parent=sp.parent
+                            sp.parent.leftChild.parent=sp.parent
                         
+                        
+
+                            #sp.event_list=[]
+                            sp.parent.children=[sp.parent.leftChild,sp.parent.rightChild]
+                            
+                            
 
                     else:
-                        co= Tree.Tree()
-                        co.leftChild= copy.deepcopy(sp)
-                        co.rightChild= copy.deepcopy(new_topo)
+                        if len(sp.event_list)<1:
+                            co= Tree.Tree()
+                            co.leftChild= copy.deepcopy(sp)
+                            co.rightChild= copy.deepcopy(new_topo)
 
-                      
-                        self.label_lost_child(co.rightChild)
                         
-                        co.leftChild.parent =co
-                        co.rightChild.parent =co
+                            self.label_lost_child(co.rightChild)
+                            
+                            co.leftChild.parent =co
+                            co.rightChild.parent =co
 
-                        sp.parent.rightChild=co
-                        sp.parent.leftChild=sp.parent.leftChild
-                        sp.parent.isLeaf=None
-                        sp.parent.rightChild.parent=sp.parent
-                        sp.parent.leftChild.parent=sp.parent
+                            sp.parent.rightChild=co
+                            sp.parent.leftChild=sp.parent.leftChild
+                            sp.parent.isLeaf=None
+                            sp.parent.rightChild.parent=sp.parent
+                            sp.parent.leftChild.parent=sp.parent
+                        else:
+                            co= Tree.Tree()
+                            co.leftChild= copy.deepcopy(sp.parent.leftChild)
+                            co.rightChild= copy.deepcopy(new_topo)
+                            self.label_lost_child(co.rightChild)
+
+                            co.leftChild.parent =co
+                            co.rightChild.parent =co
+
+                            sp.parent.leftChild=co
+                            sp.parent.isLeaf=None
+                            
+                            sp.parent.rightChild=sp.parent.rightChild
+                            sp.parent.isLeaf=None
+                            sp.parent.rightChild.parent=sp.parent
+                            sp.parent.leftChild.parent=sp.parent
+                        
+                        
+
+                            
+                            sp.parent.children=[sp.parent.leftChild,sp.parent.rightChild]
                        
                      
                     
@@ -157,7 +202,7 @@ class reconcils:
 
 
 
-                        sp.event_list=[]
+                        #sp.event_list=[]
 
 
                         sp.parent.children=[sp.parent.leftChild,sp.parent.rightChild]
@@ -458,7 +503,8 @@ class reconcils:
 
 
                         
-                                i[0].event_list+=[li,['I' for i in range(Initial_multiple_mapping- cost)]]
+                                #i[0].event_list+=[li,['I' for i in range(Initial_multiple_mapping- cost)]]
+                                i[0].event_list+=[li,['I']]
 
                                 self.copy_event_(i[0],self.gene_tree,new_topo)
 
