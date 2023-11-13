@@ -182,6 +182,7 @@ class readWrite:
         if tree.isLeaf:
             if len(tree.event_list)>0:
                 ev=''
+                tree.event_list.reverse()
                 for j in tree.event_list:
                     if j[0] not in [-1,-2]:
                         dic=dict(Counter(j[1]))
@@ -207,6 +208,7 @@ class readWrite:
         else:
             if len(tree.event_list)>0:
                 ev=''
+                tree.event_list.reverse()
                 for j in tree.event_list:
                     if j[0] not in [-1,-2]:
                         dic=dict(Counter(j[1]))
