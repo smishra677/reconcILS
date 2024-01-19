@@ -42,19 +42,19 @@ class ILS:
                 pool={}
                 tre_pool={}
                 orientation={}
-                
+                super_list={}
                 for k in range(len(child)):
                         
                         ch1=child[k]
                         
                         gene_tree.reset()
 
-                        ch = copy.deepcopy(ch1[0])
+                        ch = ch1[0].deepcopy()
                         ch.reset()
 
                         list_tree= ch.NNI(gene_tree,ch1[2])
                         #list_tree = ch.NNI1(gene_tree,ch1)
-
+                        super_list[k]=list_tree
                         for li in list_tree:
                             
                                
@@ -155,7 +155,7 @@ class ILS:
                             min_key = min(pool, key=pool.get)
                     else:
                 '''
-                return child[min_key],tre_pool[min_key],pool[min_key],orientation[min_key]
+                return child[min_key],tre_pool[min_key],pool[min_key],orientation[min_key],super_list[min_key]
 
     def find_parent_child(self,root,child):
         if len(root.refTo)>1:
@@ -194,11 +194,11 @@ class ILS:
         else:
             
             if len(child)>1:
-                chil, trei , cos,orientation =self.pick_first_edge(child,gene_tree,tr,visited)
+                chil, trei , cos,orientation,list_tree =self.pick_first_edge(child,gene_tree,tr,visited)
 
                 if cos==0:
                         trei.label_internal()
-                        Tally.Tally().tally_NNI(tr,trei,chil[2])
+                        #Tally.Tally().tally_NNI(tr,trei,chil[2])
                         #return  self.ILS(trei,tr,sp_copy,cost-1,visited),cos
                         #print(chil)
                         if chil[2]=='Left':
@@ -224,13 +224,11 @@ class ILS:
             
             ###print(child)
 
-            new_topo=copy.deepcopy(gene_tree)
-            geneTree =copy.deepcopy(new_topo)
+            new_topo=gene_tree.deepcopy()
+            geneTree =new_topo.deepcopy()
             geneTree.reset()
             
             
-            
-
             
 
             
@@ -238,20 +236,21 @@ class ILS:
                     if ch1 in tr.visited:
                         ###print('visited')
                         continue 
-                    ch = copy.deepcopy(ch1[0])
+                    ch = ch1[0].deepcopy()
                     ch.reset()
+                    if len(child)<=1:
+                        list_tree= ch1[0].NNI(geneTree,ch1[2])
                     
-                    list_tree= ch1[0].NNI(geneTree,ch1[2])
                     #list_tree = ch.NNI1(gene_tree,ch1)
                     best_cost=cost
                     imporvement=False
 
-                    new_topo=copy.deepcopy(geneTree)
+                    new_topo=geneTree.deepcopy()
                     
                     for i in list_tree:
                         i[1].reset()
                         i[0].reset()
-                        cop= copy.deepcopy(sp_copy)
+                        cop= sp_copy.deepcopy()
                         cop.reset()
                             
                         #print('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$')
@@ -277,9 +276,9 @@ class ILS:
 
                             if tr.isRoot:
                                 
-                                new_topo=copy.deepcopy(i[1])
+                                new_topo=i[1].deepcopy()
                             else:
-                                new_topo=copy.deepcopy(i[1])
+                                new_topo=i[1].deepcopy()
 
                             if child[0][2]=='Left':
                                 if i[2]=='left':
@@ -295,7 +294,7 @@ class ILS:
                             #visited.append(i[0].to_newick())
                             cost=cost-1
 
-                            Tally.Tally().tally_NNI(tr,new_topo,ch1[2])  
+                            #Tally.Tally().tally_NNI(tr,new_topo,ch1[2])  
 
                            
 
@@ -306,7 +305,7 @@ class ILS:
                     if cost<=0 or imporvement==False:
                             return new_topo,cost,-1,visited
                     else:
-                            new_sp = copy.deepcopy(sp_copy)
+                            new_sp = sp_copy.deepcopy()
                             new_sp.reset()
                             new_topo.reset()
                             new_topo.order_gene(new_sp)

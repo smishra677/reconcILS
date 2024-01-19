@@ -1,2 +1,2 @@
 Gene_Tree,Species_Tree,Duplication_cost,NNI_cost,Loss_cost
-"((C,A),B);","(A,(B,C));",1.1,1,1
+"((F,F),(((((J,J),I),G),I),((L,L),(K,K))));","((((A,(B,C)),D),(E,F)), (((G,(H,I)),J),(K,L)));",1.1,1,1

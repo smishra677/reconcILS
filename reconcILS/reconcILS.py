@@ -6,6 +6,9 @@ import utils.Tally as Tally
 import argparse
 import utils.ILS as ILS
 import utils.readWrite as readWrite
+import pickle
+
+sys.setrecursionlimit(5000)
 
 
 class reconcils:
@@ -39,18 +42,6 @@ class reconcils:
             self.address_dict(sp_gene.leftChild)
             self.address_dict(sp_gene.rightChild)
 
-         
-         
-     
-                
-
-
-
-                
-
-
-
-
 
     def copy_event(self,re,sp):
         if sp:
@@ -69,6 +60,8 @@ class reconcils:
                 return
             self.search_event_(re.leftChild,sp)
             self.search_event_(re.rightChild,sp)
+
+            
 
 
 
@@ -93,8 +86,20 @@ class reconcils:
             if sp.id==re.id:
                 if re.parent==None:
                         co= Tree.Tree()
-                        co.leftChild= copy.deepcopy(sp)
-                        co.rightChild= copy.deepcopy(new_topo)
+                        
+
+                        serialized_instance = pickle.dumps(sp)
+                        co.leftChild = pickle.loads(serialized_instance)
+
+                        #co.leftChild= copy.deepcopy(sp)
+
+
+                        #co.rightChild= copy.deepcopy(new_topo)
+
+                        serialized_instance = pickle.dumps(new_topo)
+                        co.rightChild = pickle.loads(serialized_instance)
+
+
                         self.label_lost_child(co.rightChild)
 
                        
@@ -112,8 +117,23 @@ class reconcils:
                     if sp.parent.leftChild==sp:
                         if len(sp.event_list)<1:
                             co= Tree.Tree()
-                            co.leftChild= copy.deepcopy(sp)
-                            co.rightChild= copy.deepcopy(new_topo)
+
+
+                            #co.leftChild= copy.deepcopy(sp)
+
+                            serialized_instance = pickle.dumps(sp)
+                            co.leftChild = pickle.loads(serialized_instance)
+
+
+
+                            #co.rightChild= copy.deepcopy(new_topo)
+
+
+                            serialized_instance = pickle.dumps(new_topo)
+                            co.rightChild = pickle.loads(serialized_instance)
+
+
+
                             self.label_lost_child(co.rightChild)
 
                             co.leftChild.parent =co
@@ -133,8 +153,19 @@ class reconcils:
                             sp.parent.children=[sp.parent.leftChild,sp.parent.rightChild]
                         else:
                             co= Tree.Tree()
-                            co.leftChild= copy.deepcopy(sp.parent.rightChild)
-                            co.rightChild= copy.deepcopy(new_topo)
+
+
+                            #co.leftChild= copy.deepcopy(sp.parent.rightChild)
+                            serialized_instance = pickle.dumps(sp.parent.rightChild)
+                            co.leftChild = pickle.loads(serialized_instance)
+
+                            
+
+                            #co.rightChild= copy.deepcopy(new_topo)
+                            serialized_instance = pickle.dumps(new_topo)
+                            co.rightChild = pickle.loads(serialized_instance)
+
+
                             self.label_lost_child(co.rightChild)
 
                             co.leftChild.parent =co
@@ -159,8 +190,15 @@ class reconcils:
                     else:
                         if len(sp.event_list)<1:
                             co= Tree.Tree()
-                            co.leftChild= copy.deepcopy(sp)
-                            co.rightChild= copy.deepcopy(new_topo)
+                            #co.leftChild= copy.deepcopy(sp)
+                            #co.rightChild= copy.deepcopy(new_topo)
+                            serialized_instance = pickle.dumps(sp)
+                            co.leftChild = pickle.loads(serialized_instance)
+
+
+                            serialized_instance = pickle.dumps(new_topo)
+                            co.rightChild = pickle.loads(serialized_instance)
+
 
                         
                             self.label_lost_child(co.rightChild)
@@ -175,8 +213,18 @@ class reconcils:
                             sp.parent.leftChild.parent=sp.parent
                         else:
                             co= Tree.Tree()
-                            co.leftChild= copy.deepcopy(sp.parent.leftChild)
-                            co.rightChild= copy.deepcopy(new_topo)
+                            #co.leftChild= copy.deepcopy(sp.parent.leftChild)
+                            #co.rightChild= copy.deepcopy(new_topo)
+
+                            serialized_instance = pickle.dumps(sp.parent.leftChild)
+                            co.leftChild = pickle.loads(serialized_instance)
+
+                            
+
+                            serialized_instance = pickle.dumps(new_topo)
+                            co.rightChild = pickle.loads(serialized_instance)
+
+
                             self.label_lost_child(co.rightChild)
 
                             co.leftChild.parent =co
@@ -244,12 +292,28 @@ class reconcils:
     def reconcILS(self,tr,sp,sp_copy,sp_,visited):
 
         if sp:
-            sp_copy = copy.deepcopy(sp)
-            tr_copy_1 = copy.deepcopy(tr)
+            #sp_copy = copy.deepcopy(sp)
 
-            sp_1 =copy.deepcopy(sp) 
-            tr_copy_2 = copy.deepcopy(tr)
-            
+            serialized_instance = pickle.dumps(sp)
+            sp_copy = pickle.loads(serialized_instance)
+
+            #tr_copy_1 = copy.deepcopy(tr)
+
+            serialized_instance = pickle.dumps(tr)
+            tr_copy_1 = pickle.loads(serialized_instance)
+
+
+            #sp_1 =copy.deepcopy(sp) 
+
+            serialized_instance = pickle.dumps(sp)
+            sp_1 = pickle.loads(serialized_instance)
+
+
+            #tr_copy_2 = copy.deepcopy(tr)
+
+            serialized_instance = pickle.dumps(tr)
+            tr_copy_2 = pickle.loads(serialized_instance)
+
 
             Initial_multiple_mapping=len(sp.refTo)
             if self.V:
@@ -364,12 +428,20 @@ class reconcils:
                     
                         new_topo.reset()
 
-                        recon_1 = copy.deepcopy(sp_1)
+                        #recon_1 = copy.deepcopy(sp_1)
+
+                        serialized_instance = pickle.dumps(sp_1)
+                        recon_1 = pickle.loads(serialized_instance)
+
                         recon_1.reset()
                         recon_1.label_internal()
 
 
-                        new_gene_tree =copy.deepcopy(tr_copy_2)
+                        #new_gene_tree =copy.deepcopy(tr_copy_2)
+                        serialized_instance = pickle.dumps(tr_copy_2)
+                        new_gene_tree = pickle.loads(serialized_instance)
+
+
                         new_gene_tree.reset()
                         new_gene_tree.leftChild = sp.parse(new_gene_tree.leftChild.to_newick())
                         new_gene_tree.rightChild= sp.parse(new_gene_tree.rightChild.to_newick())
@@ -377,10 +449,20 @@ class reconcils:
 
                         
 
-                        recon_left = copy.deepcopy(sp)
-                        recon_right = copy.deepcopy(sp)
+                        #recon_left = copy.deepcopy(sp)
+                        serialized_instance = pickle.dumps(sp)
+                        recon_left = pickle.loads(serialized_instance)
                         
-                        new_sp = copy.deepcopy(sp)
+                        #recon_right = copy.deepcopy(sp)
+                        serialized_instance = pickle.dumps(sp)
+                        recon_right = pickle.loads(serialized_instance)
+                        
+                        
+                        #new_sp = copy.deepcopy(sp)
+                        serialized_instance = pickle.dumps(sp)
+                        new_sp = pickle.loads(serialized_instance)
+
+
                         recon_right = sp.parse(recon_right.to_newick())
                         recon_left= sp.parse(recon_left.to_newick())
 
@@ -529,13 +611,19 @@ class reconcils:
                     if  NNI_cost>=duplication_cost or  sp.isLeaf or new_multiple>=Initial_multiple_mapping:
 
                             
-                            recon_left = copy.deepcopy(sp)
+                            #recon_left = copy.deepcopy(sp)
+                            serialized_instance = pickle.dumps(sp)
+                            recon_left = pickle.loads(serialized_instance)
+
                             
                             self.clearid(recon_left,'Left')
                             
                             
                             
-                            recon_right = copy.deepcopy(sp)
+                            #recon_right = copy.deepcopy(sp)
+                            serialized_instance = pickle.dumps(sp)
+                            recon_right = pickle.loads(serialized_instance)
+
                             self.clearid(recon_right,'right')
                             
                             
@@ -650,11 +738,11 @@ class reconcils:
         while True:
             if sp:
 
-                sp_copy = copy.deepcopy(sp)
-                tr_copy_1 = copy.deepcopy(tr)
+                sp_copy = sp.deepcopy()
+                tr_copy_1 = tr.deepcopy()
 
-                sp_1 = copy.deepcopy(sp)
-                tr_copy_2 = copy.deepcopy(tr)
+                sp_1 = sp.deepcopy()
+                tr_copy_2 = tr.deepcopy()
 
                 Initial_multiple_mapping = len(sp.refTo)
 
@@ -772,12 +860,12 @@ class reconcils:
                             
                             new_topo.reset()
 
-                            recon_1 = copy.deepcopy(sp_1)
+                            recon_1 = sp_1.deepcopy()
                             recon_1.reset()
                             recon_1.label_internal()
 
 
-                            new_gene_tree =copy.deepcopy(tr_copy_2)
+                            new_gene_tree =tr_copy_2.deepcopy()
                             new_gene_tree.reset()
                             new_gene_tree.leftChild = sp.parse(new_gene_tree.leftChild.to_newick())
                             new_gene_tree.rightChild= sp.parse(new_gene_tree.rightChild.to_newick())
@@ -785,10 +873,10 @@ class reconcils:
 
                             
 
-                            recon_left = copy.deepcopy(sp)
-                            recon_right = copy.deepcopy(sp)
+                            recon_left = sp.deepcopy()
+                            recon_right = sp.deepcopy()
                             
-                            new_sp = copy.deepcopy(sp)
+                            new_sp = sp.deepcopy()
                             recon_right = sp.parse(recon_right.to_newick())
                             recon_left= sp.parse(recon_left.to_newick())
 
@@ -895,12 +983,12 @@ class reconcils:
                         else:
 
                                 
-                                recon_left = copy.deepcopy(sp)
+                                recon_left = sp.deepcopy()
                                 self.clearid(recon_left,'Left')
                                 
                                 
                                 
-                                recon_right = copy.deepcopy(sp)
+                                recon_right = sp.deepcopy()
                                 self.clearid(recon_right,'right')
                                 
                                 

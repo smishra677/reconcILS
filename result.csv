@@ -1,2 +1,2 @@
 Process,Replicate,Gene_tree,Species_Tree,Duplication,NNI,Loss
-reconcILS,0,"((C,A)1I  C,B);","(A,(B,C));",0,1,0
+reconcILS,0,"(((L  D,((L  C,L  B)L,L  A)L)L,(L  E,(F_1,F_2)D)),(((((J_3,J_6)D,(L  H,I_3))1I  I_3,G_3),(L  J,(L  G,(L  H,I_5))))D,((L_7,L_9)D,(K_4,K_8)D)));","((((A,(B,C)),D),(E,F)), (((G,(H,I)),J),(K,L)));",5,1,6

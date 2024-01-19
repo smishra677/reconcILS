@@ -3,7 +3,7 @@ import copy
 import matplotlib.pyplot as plt
 import utils.idmaker_ as idmaker_
 import utils.readWrite  as readWrite
-
+import pickle
 
 
 class Tree:
@@ -31,6 +31,12 @@ class Tree:
         self.paralogy=[]
         self.NNI_=[]
         self.taxa_list=[]
+
+    def deepcopy(self):
+        serialized_instance = pickle.dumps(self)
+        deep_copied_instance = pickle.loads(serialized_instance)
+        return deep_copied_instance
+
 
     def clear_ref(self):
         if self:
@@ -375,10 +381,10 @@ class Tree:
                 if len(self.refTo)>1 and self.parent.evolve not in ['Duplication','Speciation']:
 
                     self.refTo=[]
-                    new_recon_right=copy.deepcopy(self)
+                    new_recon_right=self.deepcopy()
                     
                     new_recon_right.reset()
-                    new_recon_left=copy.deepcopy(self)
+                    new_recon_left=self.deepcopy()
                     
                     new_recon_left.reset()
          
@@ -423,10 +429,10 @@ class Tree:
                 
                 if len(self.refTo)>1:
                     self.refTo=[]
-                    new_recon_right=copy.deepcopy(self)
+                    new_recon_right=self.deepcopy()
                     
                     new_recon_right.reset()
-                    new_recon_left=copy.deepcopy(self)
+                    new_recon_left=self.deepcopy()
                     
                     new_recon_left.reset()
 
@@ -989,24 +995,24 @@ class Tree:
     def NNI(self,gene_tree,flag):
         red = readWrite.readWrite()
 
-        geneTree_left =copy.deepcopy(gene_tree)
+        geneTree_left =gene_tree.deepcopy()
         geneTree_left.reset()
 
         
 
 
 
-        geneTree_right =copy.deepcopy(gene_tree)
+        geneTree_right =gene_tree.deepcopy()
         geneTree_right.reset()
 
-        copy_left = copy.deepcopy(self)
+        copy_left = self.deepcopy()
         copy_left.reset()
-        copy_right = copy.deepcopy(self)
+        copy_right = self.deepcopy()
         copy_right.reset()
         if flag=='Left':
-            copy_right_child= copy.deepcopy(self.leftChild.rightChild)
+            copy_right_child= self.leftChild.rightChild.deepcopy()
             copy_right_child.reset()
-            copy_left_child= copy.deepcopy(self.leftChild.leftChild)
+            copy_left_child= self.leftChild.leftChild.deepcopy()
             copy_left_child.reset()
 
 
@@ -1059,10 +1065,10 @@ class Tree:
 
         
         else:
-            copy_right_child= copy.deepcopy(self.rightChild.rightChild)
+            copy_right_child= self.rightChild.rightChild.deepcopy()
             #print(copy_right_child.to_newick())
             copy_right_child.reset()
-            copy_left_child= copy.deepcopy(self.rightChild.leftChild)
+            copy_left_child= self.rightChild.leftChild.deepcopy()
             #print(copy_left_child.to_newick())
             copy_left_child.reset()
             
