@@ -317,3 +317,50 @@ class readWrite:
         val =recurse(tre)
 
         return val[-1]
+
+
+    def parse_bio(self,newick):
+
+        tokens = re.finditer(r"([^:;,()\s]*)(?:\s*:\s*([\d.]+)\s*)?([,);])|(\S)", newick+";")
+
+        def recurse(tre,nextid = 0, parentid = -1): # one node
+            thisid = nextid
+            #tre.id= nextid
+            children = []
+
+            name, length, delim, ch = next(tokens).groups(0)
+            tre.taxa= name
+            if name!=0:
+                tre.taxa= ''.join(name.split('_')[:2])
+                tre.numbered_taxa=name
+                tre.isLeaf= True
+            if ch == "(":
+                while ch in "(,":
+                    new_tre= Tree.Tree()
+                    node, ch, nextid,tre1 = recurse(new_tre,nextid+1, thisid)
+                    children.append(node)
+                    tre.children.append(tre1)
+
+
+
+                if len(tre.children)==1:
+                    tre.children =[]
+                    tre =tre1
+                else:
+                    tre.leftChild= tre.children[0]
+                    tre.children[0].parent =tre
+                    tre.children[1].parent =tre
+                    tre.rightChild=tre.children[1]
+                
+
+
+
+                    
+                name, length, delim, ch = next(tokens).groups(0)
+            return {"id": thisid, "name": name, "length": length if length else None, 
+                    "parentid": parentid, "children": children}, delim, nextid,tre
+
+        tre= Tree.Tree()
+        val =recurse(tre)
+
+        return val[-1]

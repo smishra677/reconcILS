@@ -26,7 +26,8 @@ file_path = os.path.join(DATA_PATH)
 gene_folder='10_sp'
 
 n =1000 # number of gene tree replicate in the folder
-for i in range(100):
+for i in range(1):
+
         reco =reconcils()
         red= readWrite.readWrite()
         #dic= red.read_log('True Process',i,dic,gene_folder)
@@ -59,6 +60,16 @@ for i in range(100):
 
 
                 reco.gene_tree= copy.deepcopy(tr)
+
+                if len(tree)<50:
+                        reco.reconcILS(tr,sp,sp_copy,sp,[])
+                        
+                
+                        li =red.sp_event(sp,[])
+                else:
+                        print('Using Iterative Function')
+                        li= reco.iterative_reconcILS(tr,sp,sp_copy,sp,[])
+                
         
                 reco.reconcILS(tr,sp,sp_copy,sp,[])
 
@@ -68,7 +79,7 @@ for i in range(100):
                 
                 dic['Gene_tree']+=[red.to_newick(reco.gene_tree)]
                 dic['Species_Tree']+=[sp_string]
-                li =red.sp_event(sp,[])
+                #li =red.sp_event(sp,[])
 
                 dic= red.Create_pd('reconcILS',i,li,dic)
 

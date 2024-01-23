@@ -52,6 +52,7 @@ class ILS:
                         ch = ch1[0].deepcopy()
                         ch.reset()
 
+
                         list_tree= ch.NNI(gene_tree,ch1[2])
                         #list_tree = ch.NNI1(gene_tree,ch1)
                         super_list[k]=list_tree
@@ -185,15 +186,19 @@ class ILS:
         child=[]
 
         child= self.parent_child(tr,child)
-        
+        new_topo=gene_tree.deepcopy()
+        geneTree =new_topo.deepcopy()
+        geneTree.reset()
         
         ##print(child)
 
         if len(child)==0 or cost<=1:
             return gene_tree,cost,-1,visited
         else:
-            
-            if len(child)>1:
+            if len(child)<=1:
+                print('!')
+                list_tree= child[0][0].NNI(geneTree,child[0][2])        
+            else:
                 chil, trei , cos,orientation,list_tree =self.pick_first_edge(child,gene_tree,tr,visited)
 
                 if cos==0:
@@ -224,9 +229,7 @@ class ILS:
             
             ###print(child)
 
-            new_topo=gene_tree.deepcopy()
-            geneTree =new_topo.deepcopy()
-            geneTree.reset()
+
             
             
             
@@ -238,10 +241,7 @@ class ILS:
                         continue 
                     ch = ch1[0].deepcopy()
                     ch.reset()
-                    if len(child)<=1:
-                        list_tree= ch1[0].NNI(geneTree,ch1[2])
-                    
-                    #list_tree = ch.NNI1(gene_tree,ch1)
+                    #list_tree = ch1[0].NNI(geneTree,ch1[2])
                     best_cost=cost
                     imporvement=False
 
