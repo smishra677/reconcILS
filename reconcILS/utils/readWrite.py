@@ -83,15 +83,15 @@ class readWrite:
 
     def Create_pd_ete3(self,flag,i,o,dic):
         
-        dic['DLCILS']+=[0]
-        dic['RHemiplasy']+=[0]
-        
+        #dic['DLCILS']+=[0]
+        #dic['RHemiplasy']+=[0]
+       
         dic['Process']+=[flag]
         dic['Replicate']+=[i]
         dic['Duplication'].append(0)
         dic['NNI'].append(0)
         dic['Loss'].append(0)
-        dic['Hemiplasy'].append(0)
+        #dic['Hemiplasy'].append(0)
 
 
         for i in o:
@@ -319,48 +319,62 @@ class readWrite:
         return val[-1]
 
 
-    def parse_bio(self,newick):
+   
 
-        tokens = re.finditer(r"([^:;,()\s]*)(?:\s*:\s*([\d.]+)\s*)?([,);])|(\S)", newick+";")
+    def parse_bio(self, newick):
+        import random
+        tokens = re.finditer(r"([^:;,()\s]*)(?:\s*:\s*([\d.]+)\s*)?([,);])|(\S)", newick + ";")
 
-        def recurse(tre,nextid = 0, parentid = -1): # one node
+        def recurse(tre, nextid=0, parentid=-1):  # one node
             thisid = nextid
-            #tre.id= nextid
             children = []
 
             name, length, delim, ch = next(tokens).groups(0)
-            tre.taxa= name
-            if name!=0:
-                tre.taxa= ''.join(name.split('_')[:2])
-                tre.numbered_taxa=name
-                tre.isLeaf= True
+            tre.taxa = name
+            if name:
+                tre.taxa = ''.join(name.split('_')[:2])
+                tre.numbered_taxa = name
+                tre.isLeaf = True
+
             if ch == "(":
                 while ch in "(,":
-                    new_tre= Tree.Tree()
-                    node, ch, nextid,tre1 = recurse(new_tre,nextid+1, thisid)
+                    new_tre = Tree.Tree()
+                    node, ch, nextid, tre1 = recurse(new_tre, nextid + 1, thisid)
                     children.append(node)
                     tre.children.append(tre1)
 
-
-
-                if len(tre.children)==1:
-                    tre.children =[]
-                    tre =tre1
-                else:
-                    tre.leftChild= tre.children[0]
-                    tre.children[0].parent =tre
-                    tre.children[1].parent =tre
-                    tre.rightChild=tre.children[1]
-                
-
-
-
+                if len(tre.children) > 2:
+                    random.shuffle(tre.children)
                     
-                name, length, delim, ch = next(tokens).groups(0)
-            return {"id": thisid, "name": name, "length": length if length else None, 
-                    "parentid": parentid, "children": children}, delim, nextid,tre
+                    tre.leftChild = tre.children[0]
+                    tre.rightChild = tre.children[1]
+                    tre.children[0].parent = tre
+                    tre.children[1].parent = tre
+                    current = tre.rightChild
+                    for child in tre.children[2:]:
+                        ne_t = current.deepcopy()
+                        child.parent = current
+                        current.rightChild = child
+                        current.leftChild =ne_t
+                        current.taxa=''
+                        current.isLeaf=False
+                        current = child
 
-        tre= Tree.Tree()
-        val =recurse(tre)
+                elif len(tre.children) == 1:
+                    tre.leftChild = tre.children[0]
+                    tre.children[0].parent = tre
+                elif len(tre.children) == 2:
+                    tre.leftChild = tre.children[0]
+                    tre.rightChild = tre.children[1]
+                    tre.children[0].parent = tre
+                    tre.children[1].parent = tre
+
+                name, length, delim, ch = next(tokens).groups(0)
+
+            return {"id": thisid, "name": name, "length": length if length else None,
+                    "parentid": parentid, "children": children}, delim, nextid, tre
+
+        tre = Tree.Tree()
+        val = recurse(tre)
 
         return val[-1]

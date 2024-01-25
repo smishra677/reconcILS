@@ -1,6 +1,7 @@
 import os
 import copy
-
+from ete3 import PhyloTree  
+from collections import Counter
 import sys
 sys.path.append("../")
 from reconcILS import *
@@ -13,36 +14,97 @@ def read_trees(i,folder):
         gene_tre.close()
         return str(tr[0])
 
+def generate_species_codes(mapping,tree):
+    for species, letter in mapping.items():
+        tree = tree.replace(species, letter)
+    return tree
+species_to_letters = {
+    'Galeopterusvariegatus': 'A',
+    'Tupaiachinensis': 'B',
+    'Carlitosyrichta': 'C',
+    'Microcebusmurinus': 'D',
+    'Propithecuscoquereli': 'E',
+    'Otolemurgarnettii': 'F',
+    'Cebuscapucinus': 'G',
+    'Cercocebusatys': 'H',
+    'Macacafascicularis': 'I',
+    'Macacanemestrina': 'J',
+    'Theropithecusgelada': 'K',
+    'Papioanubis': 'L',
+    'Macacamulatta': 'M',
+    'Mandrillusleucophaeus': 'N',
+    'Chlorocebussabaeus': 'O',
+    'Colobusangolensis': 'P',
+    'Piliocolobustephrosceles': 'Q',
+    'Rhinopithecusbieti': 'R',
+    'Rhinopithecusroxellana': 'S',
+    'Gorillagorilla': 'T',
+    'Homosapiens': 'U',
+    'Panpaniscus': 'V',
+    'Pantroglodytes': 'W',
+    'Pongoabelii': 'X',
+    'Nomascusleucogenys': 'Y',
+    'Saimiriboliviensis': 'Z',
+    'Aotusnancymaae': 'AA',
+    'Callithrixjacchus': 'AB',
+    'Musmusculus': 'AC'
+}
 
-sp_string='((((A,(B,C)),D),(E,F)), (((G,(H,I)),J),(K,L)));' # species Tree string
-#dic={'Process':[],'Replicate':[],'Gene_tree':[],'Species_Tree':[],'Duplication':[],'NNI':[],'Loss':[]}
+sp_string=str(open('./sp.tre').read()) # species Tree string
+gT_list = open('./ZeroCol_ASTRAL_ML_ALLPARALOGS_MIN27.tre')
+gT_list_r= gT_list.read()
+gT_list.close()
+gT_list=gT_list_r.split(';')[:1]
 
 
-dic={'Process':[],'Replicate':[],'Gene_tree':[],'Species_Tree':[],'Duplication':[],'NNI':[],'DLCILS':[],'Loss':[],'Hemiplasy':[],'RHemiplasy':[]}
+sp_string = sp_string.replace('e-', '0')
+
+dic={'Process':[],'Replicate':[],'Gene_tree':[],'Species_Tree':[],'Duplication':[],'NNI':[],'Loss':[]}
 
 DATA_PATH = "./" # path to the gene tree folder
 file_path = os.path.join(DATA_PATH)
 
-gene_folder='10_sp'
 
-n =1000 # number of gene tree replicate in the folder
-for i in range(1):
 
-        reco =reconcils()
-        red= readWrite.readWrite()
-        #dic= red.read_log('True Process',i,dic,gene_folder)
+for i in range(len(gT_list)):
 
+                reco =reconcils()
+                red= readWrite.readWrite()
+                #dic= red.read_log('True Process',i,dic,gene_folder)
+
+        
             
-        try:
-                tree= str(read_trees(i,os.path.join(file_path, gene_folder)))
-                tr=red.parse(tree)
-                dic= red.read_log('True Process',i,dic,gene_folder)
+        #try:
+                tree= str(gT_list[i])
+                tree = tree.replace('e-', '0')
 
+                
+                
+                tr= red.parse_bio(red.to_newick(red.parse_bio(tree)))
+
+                sp=red.parse_bio(sp_string)
+                #dic= red.read_log('True Process',i,dic,gene_folder)
+                tr_str_ref=tr.to_newick()
+                sp_str_ref=sp.to_newick()
+                tr_str_ref = generate_species_codes(species_to_letters,tr_str_ref)
+                sp_str_ref = generate_species_codes(species_to_letters,sp_str_ref)
+
+
+                genetree = PhyloTree(tr_str_ref)
+
+                sptree = PhyloTree(sp_str_ref)  
+
+                recon_tree, events = genetree.reconcile(sptree)
+
+                li1=red.sp_event_ete3(recon_tree)
                 dic['Gene_tree']+=[tr.to_newick()]
                 dic['Species_Tree']+=[sp_string]
-            
+                        
+                
+                red.Create_pd_ete3('ete3',0,Counter(li1),dic)
 
-                sp=red.parse(sp_string)
+     
+
                 sp_copy= copy.deepcopy(sp)
 
                 
@@ -71,11 +133,8 @@ for i in range(1):
                         li= reco.iterative_reconcILS(tr,sp,sp_copy,sp,[])
                 
         
-                reco.reconcILS(tr,sp,sp_copy,sp,[])
+                #reco.reconcILS(tr,sp,sp_copy,sp,[])
 
-                dic['DLCILS']+=[0]
-                dic['Hemiplasy']+=[0]
-                dic['RHemiplasy']+=[0]
                 
                 dic['Gene_tree']+=[red.to_newick(reco.gene_tree)]
                 dic['Species_Tree']+=[sp_string]
@@ -87,9 +146,10 @@ for i in range(1):
                 print(df)
 
 
-                df.to_csv(gene_folder+'_result.csv', index=False)
-        except:
-                continue
+                df.to_csv('bio_result.csv', index=False)
+                exit()
+        #except:
+                #continue
     
 
 

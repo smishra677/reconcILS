@@ -124,20 +124,19 @@ class ILS:
 
                                 number_map=1
                                 #print((loss_score+bi_score_left+bi_score_right)*number_map)              
-                                if k not in pool.keys():
-                                    pool[k]= (loss_score+bi_score_left+bi_score_right)*number_map
-                                    tre_pool[k]=li[1]
-                                    orientation[k]=li[2]
 
+                                combined_score = (loss_score + bi_score_left + bi_score_right) * number_map
+
+                                if k not in pool:
+                                    pool[k] = combined_score
+                                    tre_pool[k] = li[1]
+                                    orientation[k] = li[2]
                                 else:
-                                    if pool[k]<(loss_score+bi_score_left+bi_score_right)*number_map:
-                                        continue
-                                    else:
-                                        pool[k] =(loss_score+bi_score_left+bi_score_right)*number_map
-                                        tre_pool[k]=li[1]
-                                        orientation[k]=li[2]
-                                    
-                
+                                    if pool[k] >= combined_score:
+                                        pool[k] = combined_score
+                                        tre_pool[k] = li[1]
+                                        orientation[k] = li[2]
+
 
 
                 min_key = min(pool, key=pool.get)
