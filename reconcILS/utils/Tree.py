@@ -28,14 +28,27 @@ class Tree:
         self.event_list=[]
         self.visited=[]
         self.li=[]
-        self.paralogy=[]
+        #self.paralogy=[]
         self.NNI_=[]
         self.taxa_list=[]
 
+    def deepcopy_single(self):
+        #deep_copied_instance = pickle.loads(pickle.dumps(self))
+
+        return pickle.loads(pickle.dumps(self))
+
     def deepcopy(self):
-        serialized_instance = pickle.dumps(self)
-        deep_copied_instance = pickle.loads(serialized_instance)
-        return deep_copied_instance
+        #deep_copied_instance = pickle.loads(pickle.dumps(self))
+    
+        return pickle.loads(pickle.dumps(self))
+
+    def deepcopy_double(self):
+        deep_copied_instance = pickle.dumps(self)
+        copy_1=pickle.loads(deep_copied_instance)
+        copy_2=pickle.loads(deep_copied_instance)
+        del deep_copied_instance
+        return copy_1,copy_2
+
 
     def clear_ref(self):
         stack = [self]
@@ -616,11 +629,7 @@ class Tree:
         geneTree_left.label_internal()
         geneTree_right.label_internal()
 
-        
-        
-        
-                
-            
+
             
         l_t.change_id(l_t,copy_left)
         r_t.change_id(r_t,copy_right)
