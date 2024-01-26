@@ -7,7 +7,7 @@ import argparse
 import utils.ILS as ILS
 import utils.readWrite as readWrite
 import pickle
-
+import gc
 sys.setrecursionlimit(10000)
 
 
@@ -1036,7 +1036,7 @@ def parse1():
 
 
 
-
+    
 def main():
     reconcILS= reconcils()
     parser = parse1()
@@ -1066,10 +1066,15 @@ def main():
         sp_string=parser.spTree
         gene_tree=parser.gTree
 
+
+    gene_tree = gene_tree.replace('e-', '0')
+
+    sp_string = sp_string.replace('e-', '0')
     
     red= readWrite.readWrite()
-    tr= red.parse_bio(gene_tree)
+    tr= red.parse_bio(red.to_newick(red.parse_bio(gene_tree)))
     sp=red.parse_bio(sp_string)
+
 
 
     
@@ -1104,9 +1109,7 @@ def main():
         
 
 
-    print(red.to_newick(reconcILS.gene_tree))
-    print(li)
-
+ 
     #print('######################33')
     
 
@@ -1125,21 +1128,25 @@ def main():
     dic={'Process':[],'Replicate':[],'Gene_tree':[],'Species_Tree':[],'Duplication':[],'NNI':[],'Loss':[]}
     
     dic['Gene_tree']+=[red.to_newick(reconcILS.gene_tree)]
-    dic['Species_Tree']+=[sp_string]
+    dic['Species_Tree']+=[sp_str_ref]
         
     #print(li)
     dic= re_w.Create_pd('reconcILS',0,li,dic)
 
 
     
-    df = pd.DataFrame(dic)
+    
   
     
     
-    df.to_csv(parser.output, index=False)
+    
 
     dic_log ={'Gene_Tree':[tr.to_newick()],'Species_Tree':[sp_string],'Duplication_cost':[str(reconcILS.D_cost)],'NNI_cost':[str(reconcILS.I_cost)],'Loss_cost':[str(reconcILS.L_cost)]}
+    
+    
+    df = pd.DataFrame(dic)
     df_log=pd.DataFrame(dic_log)
+    df.to_csv(parser.output, index=False)
     df_log.to_csv(parser.output[:-4]+'_log.csv',index=False)
 if __name__ == "__main__":
     

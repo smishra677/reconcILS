@@ -1,0 +1,116 @@
+{'Mus', 'Chl', 'Tup', 'Pil', 'Col', 'Nom', 'Oto', 'TR', 'TE', 'Man', 'Ceb', 'Car', 'Cer', 'Gal', 'Pap', 'Pon', 'Gor', 'Hom', 'The', 'Aot', 'Sai', 'Rhi', 'Pro', 'Mic', 'Cal', 'Mac'}
+{'Mus', 'Chl', 'Tup', 'Pil', 'Col', 'Nom', 'Oto', 'TR', 'TE', 'Man', 'Ceb', 'Cer', 'Gal', 'Pap', 'Pon', 'Gor', 'Hom', 'The', 'Aot', 'Sai', 'Rhi', 'Pro', 'Mic', 'Cal', 'Mac'}
+{'Chl', 'Pil', 'Col', 'Nom', 'TR', 'TE', 'Man', 'Ceb', 'Cer', 'Pap', 'Pon', 'Gor', 'Hom', 'The', 'Aot', 'Sai', 'Rhi', 'Cal', 'Mac'}
+{'The', 'Pil', 'Cer', 'Col', 'Nom', 'Rhi', 'Chl', 'TR', 'TE', 'Man', 'Pon', 'Pap', 'Gor', 'Hom', 'Mac'}
+{'Nom', 'TR', 'TE', 'Pon', 'Gor', 'Hom'}
+{'TR', 'TE', 'Pon', 'Gor', 'Hom'}
+{'Gor', 'Hom', 'TE', 'TR'}
+{'Hom', 'TE', 'TR'}
+{'Hom'}
+{'TR', 'TE'}
+{'TE'}
+{'TR'}
+{'Gor'}
+{'Pon'}
+{'Nom'}
+{'The', 'Pil', 'Cer', 'Col', 'Rhi', 'Chl', 'Man', 'Pap', 'Mac'}
+{'The', 'Cer', 'Chl', 'Man', 'Pap', 'Mac'}
+{'The', 'Cer', 'Man', 'Pap', 'Mac'}
+{'The', 'Man', 'Cer', 'Pap'}
+{'Man', 'Cer'}
+{'Man'}
+{'Cer'}
+{'The', 'Pap'}
+{'The'}
+{'Pap'}
+{'Mac'}
+{'Mac'}
+{'Mac'}
+{'Mac'}
+{'Mac'}
+{'Chl'}
+{'Pil', 'Rhi', 'Col'}
+{'Rhi'}
+{'Rhi'}
+{'Rhi'}
+{'Pil', 'Col'}
+{'Col'}
+{'Pil'}
+{'Cal', 'Ceb', 'Sai', 'Aot'}
+{'Ceb', 'Sai'}
+{'Sai'}
+{'Ceb'}
+{'Cal', 'Aot'}
+{'Cal'}
+{'Aot'}
+{'Gal', 'Oto', 'Pro', 'Mic', 'Mus', 'Tup'}
+{'Pro', 'Mic', 'Oto'}
+{'Pro', 'Mic'}
+{'Pro'}
+{'Mic'}
+{'Oto'}
+{'Mus', 'Gal', 'Tup'}
+{'Mus', 'Tup'}
+{'Tup'}
+{'Mus'}
+{'Gal'}
+{'Car'}
+-------------------------------------------------------------
+{'Mus', 'Chl', 'Tup', 'Pil', 'Col', 'Nom', 'Oto', 'Cal', 'Man', 'TR', 'TE', 'Ceb', 'Car', 'Gal', 'Cer', 'Pap', 'Pon', 'Hom', 'The', 'Aot', 'Sai', 'Rhi', 'Pro', 'Mic', 'Gor', 'Mac'}
+{'Gal'}
+{'Mus', 'Chl', 'Tup', 'Pil', 'Col', 'Nom', 'Oto', 'Cal', 'Man', 'TR', 'TE', 'Ceb', 'Car', 'Cer', 'Pap', 'Pon', 'Hom', 'The', 'Aot', 'Sai', 'Rhi', 'Pro', 'Mic', 'Gor', 'Mac'}
+{'Chl', 'Tup', 'Pil', 'Col', 'Nom', 'Oto', 'Cal', 'Man', 'TR', 'TE', 'Ceb', 'Car', 'Cer', 'Pap', 'Pon', 'Hom', 'The', 'Aot', 'Sai', 'Rhi', 'Pro', 'Mic', 'Gor', 'Mac'}
+{'Tup'}
+{'Chl', 'Pil', 'Col', 'Nom', 'Oto', 'Cal', 'Man', 'TR', 'TE', 'Ceb', 'Car', 'Cer', 'Pap', 'Pon', 'Hom', 'The', 'Aot', 'Sai', 'Rhi', 'Pro', 'Mic', 'Gor', 'Mac'}
+{'Pro', 'Mic', 'Car', 'Oto'}
+{'Car'}
+{'Pro', 'Mic', 'Oto'}
+{'Pro', 'Mic'}
+{'Mic'}
+{'Pro'}
+{'Oto'}
+{'Chl', 'Pil', 'Col', 'Nom', 'Man', 'TR', 'TE', 'Ceb', 'Cer', 'Pap', 'Pon', 'Gor', 'Hom', 'The', 'Aot', 'Sai', 'Rhi', 'Cal', 'Mac'}
+{'The', 'Pil', 'Cer', 'Col', 'Pon', 'Nom', 'Rhi', 'Chl', 'Pap', 'Man', 'TR', 'Hom', 'TE', 'Gor', 'Ceb', 'Mac'}
+{'Ceb'}
+{'The', 'Pil', 'Cer', 'Col', 'Pon', 'Nom', 'Rhi', 'Chl', 'Pap', 'Man', 'TR', 'TE', 'Gor', 'Hom', 'Mac'}
+{'The', 'Pil', 'Cer', 'Col', 'Rhi', 'Chl', 'Pap', 'Man', 'Mac'}
+{'The', 'Cer', 'Chl', 'Pap', 'Man', 'Mac'}
+{'The', 'Cer', 'Pap', 'Man', 'Mac'}
+{'The', 'Mac', 'Pap', 'Cer'}
+{'The', 'Mac', 'Cer'}
+{'Cer'}
+{'The', 'Mac'}
+{'Mac'}
+{'Mac'}
+{'Mac'}
+{'The'}
+{'Pap', 'Mac'}
+{'Pap'}
+{'Mac'}
+{'Man'}
+{'Chl'}
+{'Pil', 'Rhi', 'Col'}
+{'Pil', 'Col'}
+{'Col'}
+{'Pil'}
+{'Rhi'}
+{'Rhi'}
+{'Rhi'}
+{'Nom', 'TR', 'TE', 'Pon', 'Gor', 'Hom'}
+{'TR', 'TE', 'Pon', 'Gor', 'Hom'}
+{'Gor', 'Hom', 'TE', 'TR'}
+{'Gor'}
+{'Hom', 'TE', 'TR'}
+{'Hom'}
+{'TR', 'TE'}
+{'TR'}
+{'TE'}
+{'Pon'}
+{'Nom'}
+{'Aot', 'Sai', 'Cal'}
+{'Sai'}
+{'Aot', 'Cal'}
+{'Aot'}
+{'Cal'}
+{'Mus'}
+-----------------------------------------------------------------

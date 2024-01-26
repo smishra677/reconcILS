@@ -54,7 +54,7 @@ sp_string=str(open('./sp.tre').read()) # species Tree string
 gT_list = open('./ZeroCol_ASTRAL_ML_ALLPARALOGS_MIN27.tre')
 gT_list_r= gT_list.read()
 gT_list.close()
-gT_list=gT_list_r.split(';')[:1]
+gT_list=gT_list_r.split(';')[:100]
 
 
 sp_string = sp_string.replace('e-', '0')
@@ -147,7 +147,7 @@ for i in range(len(gT_list)):
 
 
                 df.to_csv('bio_result.csv', index=False)
-                exit()
+
         #except:
                 #continue
     
