@@ -183,6 +183,7 @@ class readWrite:
             if len(tree.event_list)>0:
                 ev=''
                 tree.event_list.reverse()
+                tree.event_list=self.summarize(tree.event_list)
                 for j in tree.event_list:
                     if j[0] not in [-1,-2]:
                         dic=dict(Counter(j[1]))
@@ -209,6 +210,8 @@ class readWrite:
             if len(tree.event_list)>0:
                 ev=''
                 tree.event_list.reverse()
+                tree.event_list=self.summarize(tree.event_list)
+                print(tree.event_list)
                 for j in tree.event_list:
                     if j[0] not in [-1,-2]:
                         dic=dict(Counter(j[1]))
@@ -234,7 +237,34 @@ class readWrite:
                 return ev
             else:
                 return ''
-    
+
+
+
+    def write_events_sp(self,tree):
+        if tree.isLeaf:
+            ev=''
+            for i in tree.event_list:
+                ev+=str(i[0]['D'])+'-'+str(i[0]['I'])+'-'+str(i[0]['L'])
+                ev+='   '
+            return ev+tree.taxa   
+        else:
+            ev=''
+            for i in tree.event_list:
+                ev+=str(i[0]['D'])+'-'+str(i[0]['I'])+'-'+str(i[0]['L'])
+                ev+='   '
+                
+            return ev
+
+    def summarize(self,li):
+        changed_list = [li[0]]
+
+        for i in li[1:]:
+            if i[0] == changed_list[-1][0]:
+                changed_list[-1][1].extend(i[1])
+            else:
+                changed_list.append(i)
+
+        return changed_list
 
     # Got it From StackOverflow:
     #https://stackoverflow.com/questions/61117131/how-to-convert-a-binary-tree-to-a-newick-tree-using-python
@@ -265,6 +295,35 @@ class readWrite:
         return newick
 
 
+
+    # Got it From StackOverflow:
+    #https://stackoverflow.com/questions/61117131/how-to-convert-a-binary-tree-to-a-newick-tree-using-python
+    # https://stackoverflow.com/questions/61117131/how-to-convert-a-binary-tree-to-a-newick-tree-using-python
+    def traverse_sp(self, newick,tree):
+        if tree.leftChild and not tree.rightChild:
+            newick = f"(,{self.traverse_sp(newick,tree.leftChild)}){self.write_events_sp(tree)}"
+        elif not tree.leftChild and tree.rightChild:
+            newick = f"({self.traverse_sp(newick,tree.rightChild)},){self.write_events_sp(tree)}"
+        elif tree.leftChild and tree.rightChild:
+            newick = f"({self.traverse_sp(newick,tree.rightChild)},{self.traverse_sp(newick,tree.leftChild)}){self.write_events_sp(tree)}"
+        elif not tree.leftChild and not tree.rightChild :
+            newick = f"{self.write_events_sp(tree)}"
+        else:
+            pass
+        return newick
+
+
+
+
+
+    # Got it From StackOverflow:
+    #https://stackoverflow.com/questions/61117131/how-to-convert-a-binary-tree-to-a-newick-tree-using-python
+    # https://stackoverflow.com/questions/61117131/how-to-convert-a-binary-tree-to-a-newick-tree-using-python
+    def to_newick_sp(self,tree):
+        newick = ""
+        newick = self.traverse_sp(newick,tree)
+        newick = f"{newick};"
+        return newick
 
     #Got the framework of the code from StackOver FLow 
     # https://stackoverflow.com/questions/51373300/how-to-convert-newick-tree-format-to-a-tree-like-hierarchical-object
@@ -325,7 +384,7 @@ class readWrite:
         import random
         tokens = re.finditer(r"([^:;,()\s]*)(?:\s*:\s*([\d.]+)\s*)?([,);])|(\S)", newick + ";")
 
-        def recurse(tre, nextid=0, parentid=-1):  # one node
+        def recurse(tre, nextid=0, parentid=-1): 
             thisid = nextid
             children = []
 

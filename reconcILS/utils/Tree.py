@@ -22,24 +22,25 @@ class Tree:
         self.refTo=[]
         self.parent=None
         self.split_list=None
-        self.to_tag=None
+        #self.to_tag=None
         self.cost=0
         self.inital_ref=0
         self.event_list=[]
-        self.visited=[]
-        self.li=[]
+        #self.visited=[]
+        #self.li=[]
+        #self.sp_ev_list=[]
         #self.paralogy=[]
-        self.NNI_=[]
+        #self.NNI_=[]
         self.taxa_list=[]
 
     def deepcopy_single(self):
         #deep_copied_instance = pickle.loads(pickle.dumps(self))
-
+    
         return pickle.loads(pickle.dumps(self))
 
     def deepcopy(self):
         #deep_copied_instance = pickle.loads(pickle.dumps(self))
-    
+
         return pickle.loads(pickle.dumps(self))
 
     def deepcopy_double(self):
@@ -47,6 +48,7 @@ class Tree:
         copy_1=pickle.loads(deep_copied_instance)
         copy_2=pickle.loads(deep_copied_instance)
         del deep_copied_instance
+
         return copy_1,copy_2
 
 
@@ -69,13 +71,17 @@ class Tree:
                 node.tag = None
                 node.evolve = None
                 node.taxa_list = []
-                node.NNI_ = []
+                #node.sp_ev_list=[]
+                #node.NNI_ = []
+
                 if node.isLeaf == None:
                     node.taxa = None
                 node.refTo = []
                 stack.append(node.leftChild)
+     
                 stack.append(node.rightChild)
 
+    '''
     def reset_tag(self):
         stack = [self]
         while stack:
@@ -99,7 +105,7 @@ class Tree:
                 stack.append(node.leftChild)
                 stack.append(node.rightChild)
 
-
+    '''
     def printorder_species(self, root):
         stack = [(root, False)]
         while stack:
@@ -403,7 +409,7 @@ class Tree:
                         node.rightChild = copy_tree.rightChild
                         copy_tree.parent = node.parent
                         node.parent.children.append(copy_tree)
-                        break
+                        return
                     else:
                         node.parent.children.remove(node.parent.rightChild)
                         node.parent.rightChild = copy_tree
@@ -411,7 +417,7 @@ class Tree:
                         node.rightChild = copy_tree.rightChild
                         copy_tree.parent = node.parent
                         node.parent.children.append(copy_tree)
-                        break
+                        return
                 else:
                     stack.append(node.rightChild)
                     stack.append(node.leftChild)        
@@ -448,8 +454,6 @@ class Tree:
             new_tree_left.children =[new_tree_left.leftChild, new_tree_left.rightChild]
             new_tree_left.leftChild.parent=new_tree_left
             new_tree_left.rightChild.parent=new_tree_left
-
-            #copy_left_child.id=new_tree_left.id
             new_tree_left.id =self.leftChild.id
 
             
@@ -461,12 +465,6 @@ class Tree:
             new_tree_left.parent=copy_left
             copy_right_child.parent=copy_left
 
-
-
-            #id_= copy_left_child.id
-            #new_tree_left.id= id_
-            #copy_left_child.id= new_tree_left.id
-
             new_tree_right = Tree()
             new_tree_right.leftChild=copy_right_child
             new_tree_right.rightChild=copy_right.rightChild
@@ -475,10 +473,6 @@ class Tree:
             new_tree_right.leftChild.parent=new_tree_right
 
 
-
-            #new_tree_right.id= copy_right.id
-            
-            #copy_right_child.id=new_tree_right.id
             new_tree_right.id =self.leftChild.id
 
             copy_right.rightChild=new_tree_right
@@ -492,22 +486,19 @@ class Tree:
         
         else:
             copy_right_child= self.rightChild.rightChild.deepcopy()
-            #print(copy_right_child.to_newick())
+           
             copy_right_child.reset()
             copy_left_child= self.rightChild.leftChild.deepcopy()
-            #print(copy_left_child.to_newick())
             copy_left_child.reset()
             
             new_tree_left = Tree()
             new_tree_left.rightChild =copy_left_child
             new_tree_left.leftChild=copy_left.leftChild
-            #print(new_tree_left.to_newick())
+
             new_tree_left.children =[new_tree_left.leftChild, new_tree_left.rightChild]
             new_tree_left.leftChild.parent=new_tree_left
             new_tree_left.rightChild.parent=new_tree_left
 
-
-            #copy_left_child.id=new_tree_left.id
             new_tree_left.id =self.rightChild.id
 
 
@@ -517,10 +508,6 @@ class Tree:
             copy_left.children= [copy_left.rightChild, copy_left.leftChild]
             copy_left.rightChild.parent=copy_left
             copy_left.leftChild.parent=copy_left
-
-            #id_= copy_left_child.id
-            #new_tree_left.id= id_
-            #copy_left_child.id= new_tree_left.id
 
             
             new_tree_right = Tree()
@@ -545,28 +532,15 @@ class Tree:
 
         if self.parent==None:
 
-            #print('No_parent')
-            #return [[self.parse(copy_left.to_newick()),self.parse(copy_left.to_newick()),'left'],[self.parse(copy_right.to_newick()),self.parse(copy_right.to_newick()),'right']]
-            #return [[copy_left,copy_left,'left'],[copy_right,copy_right,'right']]
-            #l_t= self.parse(copy_left.to_newick())
-            #r_t=self.parse(copy_right.to_newick())
-
-            l_t= red.parse_bio(red.to_newick(copy_left))
-            r_t=red.parse_bio(red.to_newick(copy_right))
-
-
-            #print('kt1',l_t.id)
-            #print('kt2',r_t.id)
+            l_t= red.parse(red.to_newick(copy_left))
+            r_t=red.parse(red.to_newick(copy_right))
 
 
             l_t.label_internal()
             r_t.label_internal()
             copy_left.label_internal()
             copy_right.label_internal()
-                
-            #exit()
-            
-        
+
             
             l_t.change_id(l_t,copy_left)
             r_t.change_id(r_t,copy_right)
@@ -579,9 +553,6 @@ class Tree:
             
 
 
-            #print('kt',l_t.id)
-            #print('kt0',r_t.id)
-
             return [[l_t,l_t,'left'],[r_t,r_t,'right']]
         
         geneTree_left.label_internal()
@@ -591,30 +562,21 @@ class Tree:
         copy_left.label_internal()
         copy_right.label_internal()
 
-        #geneTree_left.rightChild=copy_left
 
-        #geneTree_right.leftChild=copy_right
-
-
-        #print(geneTree_left)
-        #print(geneTree_right)
         
         self.locate_copy(copy_left,geneTree_left)
         self.locate_copy(copy_right,geneTree_right)
 
-        #l_t= self.parse(copy_left.to_newick())
-        #l_t_1= self.parse(geneTree_left.to_newick())
-        
-        l_t= red.parse_bio(red.to_newick(copy_left))
-        l_t_1=red.parse_bio(red.to_newick(geneTree_left))
 
         
+        l_t= red.parse(red.to_newick(copy_left))
+        l_t_1=red.parse(red.to_newick(geneTree_left))
 
-        #r_t=self.parse(copy_right.to_newick())
-        #r_t_1=self.parse(geneTree_right.to_newick())
+        
 
-        r_t= red.parse_bio(red.to_newick(copy_right))
-        r_t_1=red.parse_bio(red.to_newick(geneTree_right))
+
+        r_t= red.parse(red.to_newick(copy_right))
+        r_t_1=red.parse(red.to_newick(geneTree_right))
 
         
 
@@ -629,7 +591,11 @@ class Tree:
         geneTree_left.label_internal()
         geneTree_right.label_internal()
 
-
+        
+        
+        
+                
+            
             
         l_t.change_id(l_t,copy_left)
         r_t.change_id(r_t,copy_right)
@@ -645,10 +611,5 @@ class Tree:
         geneTree_right.reset()
         l_t.reset()
         copy_left.reset()
-        #print('Parents')
-        #print('kt1',l_t.id)
-        #print('kt2',r_t.id)
-
-        #return [[self.parse(copy_left.to_newick()),self.parse(geneTree_left.to_newick()),'left'],[self.parse(copy_right.to_newick()),self.parse(geneTree_right.to_newick()),'right']]
-        #return [[copy_left,geneTree_left,'left'],[copy_right,geneTree_right,'right']]
+        
         return [[l_t,l_t_1,'left'],[r_t,r_t_1,'right']]

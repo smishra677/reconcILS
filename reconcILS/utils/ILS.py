@@ -3,16 +3,24 @@ import copy
 import utils.Tally as Tally
 
 class ILS:
-    def find_bipartitions(self,bi,sp):
+    def find_bipartitions(self,bipartitions, subtree):
+        if not subtree:
+            return []
 
-        if sp:
-            if sp.isLeaf:
-                return bi
-            else:
-                bi.append(sp.taxa_list)
-            bi1 =self.find_bipartitions(bi,sp.leftChild)
-            bi2 =self.find_bipartitions(bi1,sp.rightChild)
-        return bi2
+        stack = [subtree]
+
+        while stack:
+            node = stack.pop()
+
+            if not node.isLeaf:
+                bipartitions.append(node.taxa_list)
+                
+                if node.rightChild:
+                    stack.append(node.rightChild)
+                if node.leftChild:
+                    stack.append(node.leftChild)
+
+        return bipartitions
 
     def find_biparition_cost(self,sp,tr):
 
@@ -54,7 +62,7 @@ class ILS:
 
 
                         list_tree= ch.NNI(gene_tree,ch1[2])
-                        #list_tree = ch.NNI1(gene_tree,ch1)
+
                         super_list[k]=list_tree
                         for li in list_tree:
                             
@@ -108,7 +116,7 @@ class ILS:
                                 number_map= len(tr.refTo)
                                 tr.reset()
 
-                                #print('##############################')
+                                print('##############################')
                                 #print(li[1].to_newick())
                                 #print(tr.to_newick())
                                 #print('top_0',li[0].to_newick())
@@ -141,20 +149,7 @@ class ILS:
 
                 min_key = min(pool, key=pool.get)
 
-            
-                M=True
 
-                '''
-                while M:
-
-                    if tre_pool[min_key].to_newick()  in visited:
-                        del pool[min_key]
-                        if len(pool)==0:
-                             return -1,-1,-1
-                        else:
-                            min_key = min(pool, key=pool.get)
-                    else:
-                '''
                 return child[min_key],tre_pool[min_key],pool[min_key],orientation[min_key],super_list[min_key]
 
     def find_parent_child(self,root,child):
@@ -180,144 +175,81 @@ class ILS:
                 child= self.find_parent_child(root,child)
         return child
 
-    def ILS(self,gene_tree,tr,sp_copy,cost,visited):
-        list_tree=[]
-        child=[]
+    def ILS(self, gene_tree, tr, sp_copy, cost, visited):
+        child = self.parent_child(tr, [])
 
-        child= self.parent_child(tr,child)
-        new_topo=gene_tree.deepcopy()
-        geneTree =new_topo.deepcopy()
+        if len(child) == 0 or cost <= 1:
+            return gene_tree, cost, -1, visited
+
+        geneTree = gene_tree.deepcopy()
         geneTree.reset()
         
-        ##print(child)
-
-        if len(child)==0 or cost<=1:
-            return gene_tree,cost,-1,visited
+        if len(child) == 1:
+            list_tree = child[0][0].NNI(geneTree, child[0][2])
         else:
-            if len(child)<=1:
-                print('!')
-                list_tree= child[0][0].NNI(geneTree,child[0][2])        
+            chil, trei, cos, orientation, list_tree = self.pick_first_edge(child, gene_tree, tr, visited)
+
+            if cos == 0:
+                trei.label_internal()
+                chii = self.get_child_info(chil, orientation)
+                visited.append(chii)
+                return trei, cost - 1, cos, visited
+            elif cos == -1:
+                return gene_tree, 0, -1, visited
             else:
-                chil, trei , cos,orientation,list_tree =self.pick_first_edge(child,gene_tree,tr,visited)
+                child = [chil]
 
-                if cos==0:
-                        trei.label_internal()
-                        #Tally.Tally().tally_NNI(tr,trei,chil[2])
-                        #return  self.ILS(trei,tr,sp_copy,cost-1,visited),cos
-                        #print(chil)
-                        if chil[2]=='Left':
-                            if orientation=='left':
-                                chii=[chil[0].leftChild,chil[0].leftChild.leftChild]
-                            else:
-                                chii=[chil[0].leftChild,chil[0].leftChild.rightChild]
-                        else:
-                            if orientation=='left':
-                                    chii=[chil[0].rightChild,chil[0].rightChild.leftChild]
-                            else:
-                                chii=[chil[0].rightChild,chil[0].rightChild.rightChild]
-                        visited.append(chii)
-                        return  trei,cost-1,cos,visited
-                elif cos==-1:
-                        return gene_tree,0,-1,visited
-                else:
-                    child=[chil]
+        ch = child[0][0].deepcopy()
+        ch.reset()
 
+        best_cost = cost
+        improvement = False
 
-            
-                 
-            
-            ###print(child)
+        new_topo = geneTree.deepcopy()
 
+        for i in list_tree:
+            i[1].reset()
+            i[0].reset()
+            cop = sp_copy.deepcopy()
+            cop.reset()
 
-            
-            
-            
+            i[1].order_gene(cop)
+            i[1].label_internal()
+            cop.label_internal()
+            i[1].map_gene(cop)
+            new_cost = len(cop.refTo)
 
-            
-            for ch1 in child:
-                    if ch1 in tr.visited:
-                        ###print('visited')
-                        continue 
-                    ch = ch1[0].deepcopy()
-                    ch.reset()
-                    #list_tree = ch1[0].NNI(geneTree,ch1[2])
-                    best_cost=cost
-                    imporvement=False
+            if best_cost > new_cost and cost > 0:
+                improvement = best_cost != new_cost
+                best_cost = new_cost
+                new_topo = i[1].deepcopy()
 
-                    new_topo=geneTree.deepcopy()
-                    
-                    for i in list_tree:
-                        i[1].reset()
-                        i[0].reset()
-                        cop= sp_copy.deepcopy()
-                        cop.reset()
-                            
-                        #print('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$')
-                        #print('top_0',i[0].to_newick())
-                        #print('topo_1',i[1].to_newick())
-                        #print('sp',cop.to_newick())
+                chii = self.get_child_info(child[0], i[2])
+                visited.append(chii)
 
-                        
-                        #new_cost =cop.optimize_cost(i[0],i[1])
-                        i[1].order_gene(cop)
-                        i[1].label_internal()
-                        cop.label_internal()
-                        i[1].map_gene(cop)
-                        new_cost = len(cop.refTo)
+                cost -= 1
 
-                        if best_cost>new_cost and cost>0:
-                            if best_cost!=new_cost:
-                                imporvement=True
-                            else:
-                                 imporvement=False
-                            best_cost=new_cost
+        if cost <= 0 or not improvement:
+            return new_topo, cost, -1, visited
 
+        new_sp = sp_copy.deepcopy()
+        new_sp.reset()
+        new_topo.reset()
+        new_topo.order_gene(new_sp)
+        new_topo.label_internal()
+        new_sp.label_internal()
+        new_topo.map_gene(new_sp)
 
-                            if tr.isRoot:
-                                
-                                new_topo=i[1].deepcopy()
-                            else:
-                                new_topo=i[1].deepcopy()
+        return self.ILS(new_topo, new_sp, sp_copy, cost, visited)
 
-                            if child[0][2]=='Left':
-                                if i[2]=='left':
-                                    chii=[child[0][0].leftChild,child[0][0].leftChild.leftChild]
-                                else:
-                                    chii=[child[0][0].leftChild,child[0][0].leftChild.rightChild]
-                            else:
-                                if i[2]=='left':
-                                    chii=[child[0][0].rightChild,child[0][0].rightChild.leftChild]
-                                else:
-                                    chii=[child[0][0].rightChild,child[0][0].rightChild.rightChild]
-                            visited.append(chii)
-                            #visited.append(i[0].to_newick())
-                            cost=cost-1
-
-                            #Tally.Tally().tally_NNI(tr,new_topo,ch1[2])  
-
-                           
-
-
-                    #cost=cost-1
-                    tr.visited.append([ch1[0],ch1[1]])
-                    
-                    if cost<=0 or imporvement==False:
-                            return new_topo,cost,-1,visited
-                    else:
-                            new_sp = sp_copy.deepcopy()
-                            new_sp.reset()
-                            new_topo.reset()
-                            new_topo.order_gene(new_sp)
-                            
-                            new_topo.label_internal()
-                        
-                            new_sp.label_internal()
-                            
-                            new_topo.map_gene(new_sp)
-
-                            
-
-                            return self.ILS(new_topo,new_sp,sp_copy,cost,visited)
-                    
-                    
-        return new_topo,cost,-1,visited
+    def get_child_info(self, chil, orientation):
+        if chil[2] == 'Left':
+            if orientation == 'left':
+                return [chil[0].leftChild, chil[0].leftChild.leftChild]
+            else:
+                return [chil[0].leftChild, chil[0].leftChild.rightChild]
+        else:
+            if orientation == 'left':
+                return [chil[0].rightChild, chil[0].rightChild.leftChild]
+            else:
+                return [chil[0].rightChild, chil[0].rightChild.rightChild]
