@@ -10,6 +10,7 @@ import pickle
 from numba import jit
 import gc
 import time
+import pandas as pd
 from concurrent.futures import ThreadPoolExecutor, TimeoutError
 
 sys.setrecursionlimit(50000)
@@ -854,7 +855,8 @@ class reconcils:
                             recon_left,recon_right=0,0
                         else:
                             tr_copy_1,tr_copy_2 = tr.deepcopy_double()
-                
+                            print(tr_copy_1.to_newick(),sp.to_newick(),Initial_multiple_mapping)
+                            
     
                             sp_1 = sp.deepcopy_single()
                             print('done')
@@ -912,7 +914,7 @@ class reconcils:
                             
                             
 
-
+                            print(new_gene_tree.to_newick(),sp.to_newick(),Initial_multiple_mapping)
                             new_gene_tree.leftChild.order_gene(recon_left)
                             new_gene_tree.rightChild.order_gene(recon_right)
 
@@ -994,6 +996,8 @@ class reconcils:
                                 
                                 stack.append((new_topo,sp))
 
+                                df1 = pd.read_csv('./discordance.csv', converters={'events': eval}) 
+
                                 for i in list(child_):
                                     if type(i[1].numbered_taxa)==set:
                                         li= '-'.join(list(i[1].numbered_taxa))
@@ -1008,13 +1012,60 @@ class reconcils:
                                     #i[0].event_list+=[li,['I' for i in range(Initial_multiple_mapping- cost)]]
                                     i[0].event_list+=[li,['I']]
                                     print('---------------------------')
-                                    if i[1]==i[0].leftChild:
+                                    i[1].label_internal()
+
+                                    left_sp_t=sp.leftChild.taxa
+                                    right_sp_t=sp.rightChild.taxa
+
+                                    if sp.leftChild.isLeaf:
+                                        left_sp_t={sp.leftChild.taxa}
+                                    if sp.rightChild.isLeaf:
+                                        right_sp_t={sp.rightChild.taxa}
+
+                                    
+                                    i_taxa= i[1].taxa
+                                    
+                                    if i[1].isLeaf:
+                                        i_taxa={i[1].taxa}
+
+
+
+                                            
+                                    if len(i_taxa.intersection(left_sp_t))>=len(i_taxa.intersection(right_sp_t)):
                                         eve+=[[sp.taxa,sp.leftChild.taxa,'I',sp.leftChild.isLeaf]]
+                                        if sp.leftChild.isLeaf:
+                                            branch_name = [repr(list(sorted(sp.taxa))),' to ',repr(list(sorted({sp.leftChild.taxa})))]
+                                        else:
+                                            branch_name = [repr(list(sorted(sp.taxa))),' to ',repr(list(sorted(sp.leftChild.taxa)))]
                                     else:
                                         eve+=[[sp.taxa,sp.rightChild.taxa,'I',sp.rightChild.isLeaf]]
+                                        if sp.rightChild.isLeaf:
 
-                                    #self.copy_event_(i[0],self.gene_tree,new_topo)                                
-                            
+                                            branch_name = [repr(list(sorted(sp.taxa))),' to ',repr(list(sorted({sp.rightChild.taxa})))]
+                                        else:
+                                            branch_name = [repr(list(sorted(sp.taxa))),' to ',repr(list(sorted(sp.rightChild.taxa)))]
+                                        
+                                            
+                                        #self.copy_event_(i[0],self.gene_tree,new_topo) 
+                                
+                                print(i[0].parent.label_internal())
+                                introgression =sorted([sorted(list(i[0].parent.leftChild.taxa)),sorted(list(i[0].parent.rightChild.taxa))])
+
+                                new_events = [''.join(introgression[0])+'-'+''.join(introgression[1])]       
+
+    
+
+                                mask = df1['branch'] == repr(branch_name)
+                                red =readWrite.readWrite()
+
+                                print(mask)
+                                df1.loc[mask, 'events'] = df1.loc[mask, 'events'].apply(lambda x: red.update_events(x, new_events))
+
+                                #df1.loc[mask, 'events'] = df1.loc[mask, 'events'].apply(lambda x: x + new_events)
+
+                                print(df1)
+                                            
+                                df1.to_csv('./discordance.csv', index=False)                               
 
 
                        
@@ -1183,8 +1234,8 @@ def main():
 
     
     red= readWrite.readWrite()
-    sp_string='(A,(C,B));'
-    gene_tree='(C,(A,B));'
+    sp_string='((A,B),(C,D));'
+    gene_tree='(D,(B,(A,C)));'
     tr= red.parse(gene_tree)
     sp=red.parse(sp_string)
     
@@ -1211,6 +1262,7 @@ def main():
     reconcILS.gene_tree= copy.deepcopy(tr)
     re_w = readWrite.readWrite()
     species_edge_list=reconcILS.get_edges(sp)
+    red.write_introgression(sp)
     
     if len(gene_tree)>50:
 
@@ -1276,7 +1328,8 @@ def main():
     for i in species_edge_list:
         dic[i]=[]
 
-    print(dic)
+    print(dic_reconcILS)
+    exit()
     dic['Gene_tree']+=[red.to_newick(reconcILS.gene_tree)]
     dic['Species_Tree']+=[sp_string]
     dic['Replicate']+=[0]
@@ -1307,9 +1360,9 @@ def main():
 
         dic[(i)]+=[in_dic]
 
+    
 
-
-    print(dic)
+    print(red.to_newick(reconcILS.gene_tree))
     df = pd.DataFrame(dic)
     exit()
 

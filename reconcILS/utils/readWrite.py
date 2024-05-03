@@ -3,6 +3,8 @@ import argparse
 import copy
 import re
 import os
+import pandas as pd
+
 
 class readWrite:
     def read_trees(self,i,folder):
@@ -42,8 +44,52 @@ class readWrite:
     
         return dic
 
+    def update_events(self,existing_events, new_events):
+        for event in existing_events:
+            for key in new_events:
+                if key in event:
+                    event[key] += 1
+
+        return existing_events
 
 
+    def write_introgression(self,tree):
+        tree1 = copy.deepcopy(tree)
+        branch= []
+        events=[]
+        stack = [tree1]
+        while stack:
+            curr=stack.pop()
+            if curr.leftChild:
+                if curr.leftChild.isLeaf==None:
+                    branch.append([repr(list(sorted(curr.taxa))),' to ',repr(list(sorted(curr.leftChild.taxa)))])
+                    lis_l =curr.NNI(curr,'Left')
+                    lis_l[0][0].label_internal()
+                    lis_l[1][0].label_internal()
+                    introgression_l =sorted([sorted(list(lis_l[0][0].leftChild.taxa)),sorted(list(lis_l[0][0].rightChild.taxa))])
+                    introgression_r =sorted([sorted(list(lis_l[1][0].leftChild.taxa)),sorted(list(lis_l[1][0].rightChild.taxa))])
+
+                    events.append([{''.join(introgression_l[0])+'-'+''.join(introgression_l[1]):0,''.join(introgression_r[0])+'-'+''.join(introgression_r[1]):0}])
+                    stack.append(curr.leftChild)
+            if curr.rightChild:
+                if curr.rightChild.isLeaf==None:
+                    branch.append([repr(list(sorted(curr.taxa))),' to ',repr(list(sorted(curr.rightChild.taxa)))])
+                    
+                    lis_r =curr.NNI(curr,'Right')
+                    lis_r[0][0].label_internal()
+                    lis_r[1][0].label_internal()
+                    introgression_l =sorted([sorted(list(lis_r[0][0].leftChild.taxa)),sorted(list(lis_r[0][0].rightChild.taxa))])
+                    introgression_r =sorted([sorted(list(lis_r[1][0].leftChild.taxa)),sorted(list(lis_r[1][0].rightChild.taxa))])
+
+                    events.append([{''.join(introgression_l[0])+'-'+''.join(introgression_l[1]):0,''.join(introgression_r[0])+'-'+''.join(introgression_r[1]):0}])
+                    #events.append([lis_r[0][1],lis_r[1][1]])
+                    stack.append(curr.rightChild)
+
+        dic= {'branch':branch,'events':events}
+        df = pd.DataFrame(dic)
+        df.to_csv('./discordance.csv', index=False)
+
+        
 
     def Create_pd(self,flag,i,oo,dic):
         from collections import Counter
@@ -382,6 +428,7 @@ class readWrite:
 
     def parse_bio(self, newick):
         import random
+        random.seed(42)
         tokens = re.finditer(r"([^:;,()\s]*)(?:\s*:\s*([\d.]+)\s*)?([,);])|(\S)", newick + ";")
 
         def recurse(tre, nextid=0, parentid=-1): 
@@ -390,6 +437,8 @@ class readWrite:
 
             name, length, delim, ch = next(tokens).groups(0)
             tre.taxa = name
+
+            
             if name:
                 tre.taxa = ''.join(name.split('_')[:2])
                 tre.numbered_taxa = name
