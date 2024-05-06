@@ -22,7 +22,7 @@ class Tree:
         self.refTo=[]
         self.parent=None
         self.split_list=None
-        #self.to_tag=None
+        self.to_tag=None
         self.cost=0
         self.inital_ref=0
         self.event_list=[]

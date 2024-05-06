@@ -428,7 +428,6 @@ class readWrite:
 
     def parse_bio(self, newick):
         import random
-        random.seed(42)
         tokens = re.finditer(r"([^:;,()\s]*)(?:\s*:\s*([\d.]+)\s*)?([,);])|(\S)", newick + ";")
 
         def recurse(tre, nextid=0, parentid=-1): 
@@ -437,8 +436,6 @@ class readWrite:
 
             name, length, delim, ch = next(tokens).groups(0)
             tre.taxa = name
-
-            
             if name:
                 tre.taxa = ''.join(name.split('_')[:2])
                 tre.numbered_taxa = name
@@ -464,6 +461,7 @@ class readWrite:
                         child.parent = current
                         current.rightChild = child
                         current.leftChild =ne_t
+                        ne_t.parent=current
                         current.taxa=''
                         current.isLeaf=False
                         current = child

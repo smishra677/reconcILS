@@ -758,7 +758,7 @@ class reconcils:
 
 
 
-
+                print(34)
                 
 
 
@@ -1099,7 +1099,15 @@ class reconcils:
                                 if sp.isRoot:
                                     eve.append([sp.taxa,sp.taxa,'D',sp.isLeaf])
                                 else:
-                                    eve.append([sp.parent.taxa,sp.taxa,'D',sp.isLeaf])
+
+                                    parent= sp.parent
+                                    while sp.taxa== parent.taxa:
+                                        parent=parent.parent
+                                        
+                                    #eve.append([sp.to_tag.taxa,sp.taxa,'D',sp.isLeaf])
+                                    #else:
+
+                                    eve.append([parent.taxa,sp.taxa,'D',sp.isLeaf])
 
                                 #self.copy_event_(tr,self.gene_tree,tr)
 
@@ -1129,11 +1137,12 @@ class reconcils:
 
                                         sp.leftChild=recon_left
                                         sp.rightChild=recon_right
-                                        sp.children+=[sp.leftChild ]
+                                        sp.children=[sp.leftChild ]
                                         sp.children+=[sp.rightChild]
                                         
                                         sp.leftChild.parent=sp
                                         sp.rightChild.parent=sp
+                                        
                                         
                                        
                                         sp.isLeaf=None
@@ -1151,15 +1160,19 @@ class reconcils:
                                         tr.rightChild.map_gene(recon_right)
                                         stack.append((tr.rightChild,recon_right)) 
                                         
-                                        sp.children+=[sp.leftChild ]
+                                        sp.leftChild=recon_left
+                                        sp.rightChild=recon_right 
+                                        sp.children=[sp.leftChild ]
                                         sp.children+=[sp.rightChild]
-                                    
 
-                                       
+
+                                        sp.leftChild.parent=sp
+                                        sp.rightChild.parent=sp
+                                        
                                             
                                         sp.isLeaf=None
                                     
-                                
+                                       
 
 
 
