@@ -1,0 +1,11 @@
+Branch	Parent_1	Copy_2	Copy_3	Copy_4	Copy_5
+1	False	True	True	True	False
+2	False	True	True	False	True
+3	False	False	True	True	False
+5	True	False	False	True	True
+9	True	True	True	False	False
+12	True	True	True	True	True
+13	True	True	True	True	False
+14	False	True	False	True	False
+16	True	False	False	True	True
+20	False	True	True	True	True

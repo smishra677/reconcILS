@@ -1,0 +1,917 @@
+1821
+##########################################################################################################################
+0
+--------------------------------------------------------------------------------------------------------------------------
+1820
+&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+Using Iterative Function
+species (A,(((W,V),(B,U)),((((K,L),(M,N)),(J,((E,(D,H)),((C,I),(G,F))))),(T,(S,(O,((Q,R),P)))))));
+gene (A,((N,(H,(K,(I,(L,(G,(M,(F,(E,(J,(D,C))))))))))),(((O,(Q,(P,(T,R)))),S),(W,(B,U)))));
+Multiple_mapping 1
+34
+species A;
+gene A;
+Multiple_mapping 1
+34
+1
+species (((W,V),(B,U)),((((K,L),(M,N)),(J,((E,(D,H)),((C,I),(G,F))))),(T,(S,(O,((Q,R),P))))));
+gene ((N,(H,(K,(I,(L,(G,(M,(F,(E,(J,(D,C))))))))))),(((O,(Q,(P,(T,R)))),S),(W,(B,U))));
+Multiple_mapping 2
+34
+((N,(H,(K,(I,(L,(G,(M,(F,(E,(J,(D,C))))))))))),(((O,(Q,(P,(T,R)))),S),(W,(B,U)))); (((W,V),(B,U)),((((K,L),(M,N)),(J,((E,(D,H)),((C,I),(G,F))))),(T,(S,(O,((Q,R),P)))))); 2
+done
+((N,(H,(K,(I,(L,(G,(M,(F,(E,(J,(D,C))))))))))),(((O,(Q,(P,(T,R)))),S),(W,(B,U)))); (((W,V),(B,U)),((((K,L),(M,N)),(J,((E,(D,H)),((C,I),(G,F))))),(T,(S,(O,((Q,R),P)))))); 2
+1
+[[<utils.Tree.Tree object at 0x7f758277d2d0>, <utils.Tree.Tree object at 0x7f758277d240>]]
+---------------------------
+None
+0     False
+1      True
+2     False
+3     False
+4     False
+5     False
+6     False
+7     False
+8     False
+9     False
+10    False
+11    False
+12    False
+13    False
+14    False
+15    False
+16    False
+17    False
+18    False
+19    False
+20    False
+Name: branch, dtype: bool
+                                               branch                                             events
+0   ["['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'...  [{'ACDEFGHIJKLMNOPQRST-BUVW': 0, 'ABUVW-CDEFGH...
+1   ["['B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'...  [{'BOPQRSTUVW-CDEFGHIJKLMN': 0, 'BCDEFGHIJKLMN...
+2   ["['B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'...  [{'BCDEFGHIJKLMNOPQRSTU-VW': 0, 'BU-CDEFGHIJKL...
+3      ["['B', 'U', 'V', 'W']", ' to ', "['B', 'U']"]                         [{'B-UVW': 0, 'BVW-U': 0}]
+4      ["['B', 'U', 'V', 'W']", ' to ', "['V', 'W']"]                         [{'BUV-W': 0, 'BUW-V': 0}]
+5   ["['C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K'...  [{'CDEFGHIJKLMNOPQRS-T': 0, 'CDEFGHIJKLMNT-OPQ...
+6   ["['C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K'...  [{'CDEFGHIJOPQRST-KLMN': 0, 'CDEFGHIJ-KLMNOPQR...
+7   ["['C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K'...         [{'CDEFGHIKLMN-J': 0, 'CDEFGHI-JKLMN': 0}]
+8   ["['C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K'...         [{'CDEFGHIJMN-KL': 0, 'CDEFGHIJKL-MN': 0}]
+9      ["['K', 'L', 'M', 'N']", ' to ', "['M', 'N']"]                         [{'KLN-M': 0, 'KLM-N': 0}]
+10     ["['K', 'L', 'M', 'N']", ' to ', "['K', 'L']"]                         [{'K-LMN': 0, 'KMN-L': 0}]
+11  ["['C', 'D', 'E', 'F', 'G', 'H', 'I', 'J']", '...                 [{'CFGIJ-DEH': 0, 'CFGI-DEHJ': 0}]
+12  ["['C', 'D', 'E', 'F', 'G', 'H', 'I']", ' to '...                   [{'CI-DEFGH': 0, 'CDEHI-FG': 0}]
+13  ["['C', 'D', 'E', 'F', 'G', 'H', 'I']", ' to '...                   [{'CDFGHI-E': 0, 'CEFGI-DH': 0}]
+14          ["['D', 'E', 'H']", ' to ', "['D', 'H']"]                           [{'D-EH': 0, 'DE-H': 0}]
+15     ["['C', 'F', 'G', 'I']", ' to ', "['F', 'G']"]                         [{'CFI-G': 0, 'CGI-F': 0}]
+16     ["['C', 'F', 'G', 'I']", ' to ', "['C', 'I']"]                         [{'C-FGI': 0, 'CFG-I': 0}]
+17  ["['O', 'P', 'Q', 'R', 'S', 'T']", ' to ', "['...                     [{'OPQRT-S': 0, 'OPQR-ST': 0}]
+18  ["['O', 'P', 'Q', 'R', 'S']", ' to ', "['O', '...                       [{'O-PQRS': 0, 'OS-PQR': 0}]
+19  ["['O', 'P', 'Q', 'R']", ' to ', "['P', 'Q', '...                         [{'OP-QR': 0, 'OQR-P': 0}]
+20          ["['P', 'Q', 'R']", ' to ', "['Q', 'R']"]                           [{'PR-Q': 0, 'PQ-R': 0}]
+species (((W,V),(B,U)),((((K,L),(M,N)),(J,((E,(D,H)),((C,I),(G,F))))),(T,(S,(O,((Q,R),P))))));
+gene (((U,B),W),((S,((((R,T),P),Q),O)),(((((((((((C,D),J),E),F),M),G),L),I),K),H),N)));
+Multiple_mapping 1
+34
+species ((W,V),(B,U));
+gene ((U,B),W);
+Multiple_mapping 1
+34
+species (W,V);
+gene W;
+Multiple_mapping 0
+34
+loss
+species W;
+gene W;
+Multiple_mapping 1
+34
+1
+species (B,U);
+gene (U,B);
+Multiple_mapping 1
+34
+species B;
+gene B;
+Multiple_mapping 1
+34
+1
+species U;
+gene U;
+Multiple_mapping 1
+34
+1
+species ((((K,L),(M,N)),(J,((E,(D,H)),((C,I),(G,F))))),(T,(S,(O,((Q,R),P)))));
+gene ((S,((((R,T),P),Q),O)),(((((((((((C,D),J),E),F),M),G),L),I),K),H),N));
+Multiple_mapping 1
+34
+species (((K,L),(M,N)),(J,((E,(D,H)),((C,I),(G,F)))));
+gene (((((((((((C,D),J),E),F),M),G),L),I),K),H),N);
+Multiple_mapping 7
+34
+(((((((((((C,D),J),E),F),M),G),L),I),K),H),N); (((K,L),(M,N)),(J,((E,(D,H)),((C,I),(G,F))))); 7
+done
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+(((((((((((C,D),J),E),F),M),G),L),I),K),H),N); (((K,L),(M,N)),(J,((E,(D,H)),((C,I),(G,F))))); 7
+species (((K,L),(M,N)),(J,((E,(D,H)),((C,I),(G,F)))));
+gene ((((((((((C,D),J),E),F),M),G),L),I),K),H);
+Multiple_mapping 6
+34
+((((((((((C,D),J),E),F),M),G),L),I),K),H); (((K,L),(M,N)),(J,((E,(D,H)),((C,I),(G,F))))); 6
+done
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+((((((((((C,D),J),E),F),M),G),L),I),K),H); (((K,L),(M,N)),(J,((E,(D,H)),((C,I),(G,F))))); 6
+species (((K,L),(M,N)),(J,((E,(D,H)),((C,I),(G,F)))));
+gene (((((((((C,D),J),E),F),M),G),L),I),K);
+Multiple_mapping 5
+34
+(((((((((C,D),J),E),F),M),G),L),I),K); (((K,L),(M,N)),(J,((E,(D,H)),((C,I),(G,F))))); 5
+done
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+(((((((((C,D),J),E),F),M),G),L),I),K); (((K,L),(M,N)),(J,((E,(D,H)),((C,I),(G,F))))); 5
+4
+[[<utils.Tree.Tree object at 0x7f7581121ff0>, <utils.Tree.Tree object at 0x7f7581121b70>], [<utils.Tree.Tree object at 0x7f7583177e50>, <utils.Tree.Tree object at 0x7f7583177e80>], [<utils.Tree.Tree object at 0x7f7582a4f580>, <utils.Tree.Tree object at 0x7f7582a4f5b0>], [<utils.Tree.Tree object at 0x7f75829a9e40>, <utils.Tree.Tree object at 0x7f75829a9ed0>]]
+---------------------------
+---------------------------
+---------------------------
+---------------------------
+None
+0     False
+1     False
+2     False
+3     False
+4     False
+5     False
+6     False
+7     False
+8      True
+9     False
+10    False
+11    False
+12    False
+13    False
+14    False
+15    False
+16    False
+17    False
+18    False
+19    False
+20    False
+Name: branch, dtype: bool
+                                               branch                                             events
+0   ["['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'...  [{'ACDEFGHIJKLMNOPQRST-BUVW': 0, 'ABUVW-CDEFGH...
+1   ["['B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'...  [{'BOPQRSTUVW-CDEFGHIJKLMN': 0, 'BCDEFGHIJKLMN...
+2   ["['B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'...  [{'BCDEFGHIJKLMNOPQRSTU-VW': 0, 'BU-CDEFGHIJKL...
+3      ["['B', 'U', 'V', 'W']", ' to ', "['B', 'U']"]                         [{'B-UVW': 0, 'BVW-U': 0}]
+4      ["['B', 'U', 'V', 'W']", ' to ', "['V', 'W']"]                         [{'BUV-W': 0, 'BUW-V': 0}]
+5   ["['C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K'...  [{'CDEFGHIJKLMNOPQRS-T': 0, 'CDEFGHIJKLMNT-OPQ...
+6   ["['C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K'...  [{'CDEFGHIJOPQRST-KLMN': 0, 'CDEFGHIJ-KLMNOPQR...
+7   ["['C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K'...         [{'CDEFGHIKLMN-J': 0, 'CDEFGHI-JKLMN': 0}]
+8   ["['C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K'...         [{'CDEFGHIJMN-KL': 0, 'CDEFGHIJKL-MN': 0}]
+9      ["['K', 'L', 'M', 'N']", ' to ', "['M', 'N']"]                         [{'KLN-M': 0, 'KLM-N': 0}]
+10     ["['K', 'L', 'M', 'N']", ' to ', "['K', 'L']"]                         [{'K-LMN': 0, 'KMN-L': 0}]
+11  ["['C', 'D', 'E', 'F', 'G', 'H', 'I', 'J']", '...                 [{'CFGIJ-DEH': 0, 'CFGI-DEHJ': 0}]
+12  ["['C', 'D', 'E', 'F', 'G', 'H', 'I']", ' to '...                   [{'CI-DEFGH': 0, 'CDEHI-FG': 0}]
+13  ["['C', 'D', 'E', 'F', 'G', 'H', 'I']", ' to '...                   [{'CDFGHI-E': 0, 'CEFGI-DH': 0}]
+14          ["['D', 'E', 'H']", ' to ', "['D', 'H']"]                           [{'D-EH': 0, 'DE-H': 0}]
+15     ["['C', 'F', 'G', 'I']", ' to ', "['F', 'G']"]                         [{'CFI-G': 0, 'CGI-F': 0}]
+16     ["['C', 'F', 'G', 'I']", ' to ', "['C', 'I']"]                         [{'C-FGI': 0, 'CFG-I': 0}]
+17  ["['O', 'P', 'Q', 'R', 'S', 'T']", ' to ', "['...                     [{'OPQRT-S': 0, 'OPQR-ST': 0}]
+18  ["['O', 'P', 'Q', 'R', 'S']", ' to ', "['O', '...                       [{'O-PQRS': 0, 'OS-PQR': 0}]
+19  ["['O', 'P', 'Q', 'R']", ' to ', "['P', 'Q', '...                         [{'OP-QR': 0, 'OQR-P': 0}]
+20          ["['P', 'Q', 'R']", ' to ', "['Q', 'R']"]                           [{'PR-Q': 0, 'PQ-R': 0}]
+species (((K,L),(M,N)),(J,((E,(D,H)),((C,I),(G,F)))));
+gene ((I,(G,((((C,D),J),E),F))),((M,L),K));
+Multiple_mapping 1
+34
+species ((K,L),(M,N));
+gene ((M,L),K);
+Multiple_mapping 2
+34
+((M,L),K); ((K,L),(M,N)); 2
+done
+((M,L),K); ((K,L),(M,N)); 2
+1
+[[<utils.Tree.Tree object at 0x7f7580de5510>, <utils.Tree.Tree object at 0x7f7580de5630>]]
+---------------------------
+None
+0     False
+1     False
+2     False
+3     False
+4     False
+5     False
+6     False
+7     False
+8     False
+9     False
+10     True
+11    False
+12    False
+13    False
+14    False
+15    False
+16    False
+17    False
+18    False
+19    False
+20    False
+Name: branch, dtype: bool
+                                               branch                                             events
+0   ["['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'...  [{'ACDEFGHIJKLMNOPQRST-BUVW': 0, 'ABUVW-CDEFGH...
+1   ["['B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'...  [{'BOPQRSTUVW-CDEFGHIJKLMN': 0, 'BCDEFGHIJKLMN...
+2   ["['B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'...  [{'BCDEFGHIJKLMNOPQRSTU-VW': 0, 'BU-CDEFGHIJKL...
+3      ["['B', 'U', 'V', 'W']", ' to ', "['B', 'U']"]                         [{'B-UVW': 0, 'BVW-U': 0}]
+4      ["['B', 'U', 'V', 'W']", ' to ', "['V', 'W']"]                         [{'BUV-W': 0, 'BUW-V': 0}]
+5   ["['C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K'...  [{'CDEFGHIJKLMNOPQRS-T': 0, 'CDEFGHIJKLMNT-OPQ...
+6   ["['C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K'...  [{'CDEFGHIJOPQRST-KLMN': 0, 'CDEFGHIJ-KLMNOPQR...
+7   ["['C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K'...         [{'CDEFGHIKLMN-J': 0, 'CDEFGHI-JKLMN': 0}]
+8   ["['C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K'...         [{'CDEFGHIJMN-KL': 0, 'CDEFGHIJKL-MN': 0}]
+9      ["['K', 'L', 'M', 'N']", ' to ', "['M', 'N']"]                         [{'KLN-M': 0, 'KLM-N': 0}]
+10     ["['K', 'L', 'M', 'N']", ' to ', "['K', 'L']"]                         [{'K-LMN': 0, 'KMN-L': 0}]
+11  ["['C', 'D', 'E', 'F', 'G', 'H', 'I', 'J']", '...                 [{'CFGIJ-DEH': 0, 'CFGI-DEHJ': 0}]
+12  ["['C', 'D', 'E', 'F', 'G', 'H', 'I']", ' to '...                   [{'CI-DEFGH': 0, 'CDEHI-FG': 0}]
+13  ["['C', 'D', 'E', 'F', 'G', 'H', 'I']", ' to '...                   [{'CDFGHI-E': 0, 'CEFGI-DH': 0}]
+14          ["['D', 'E', 'H']", ' to ', "['D', 'H']"]                           [{'D-EH': 0, 'DE-H': 0}]
+15     ["['C', 'F', 'G', 'I']", ' to ', "['F', 'G']"]                         [{'CFI-G': 0, 'CGI-F': 0}]
+16     ["['C', 'F', 'G', 'I']", ' to ', "['C', 'I']"]                         [{'C-FGI': 0, 'CFG-I': 0}]
+17  ["['O', 'P', 'Q', 'R', 'S', 'T']", ' to ', "['...                     [{'OPQRT-S': 0, 'OPQR-ST': 0}]
+18  ["['O', 'P', 'Q', 'R', 'S']", ' to ', "['O', '...                       [{'O-PQRS': 0, 'OS-PQR': 0}]
+19  ["['O', 'P', 'Q', 'R']", ' to ', "['P', 'Q', '...                         [{'OP-QR': 0, 'OQR-P': 0}]
+20          ["['P', 'Q', 'R']", ' to ', "['Q', 'R']"]                           [{'PR-Q': 0, 'PQ-R': 0}]
+species ((K,L),(M,N));
+gene (M,(K,L));
+Multiple_mapping 1
+34
+species (K,L);
+gene (K,L);
+Multiple_mapping 1
+34
+species K;
+gene K;
+Multiple_mapping 1
+34
+1
+species L;
+gene L;
+Multiple_mapping 1
+34
+1
+species (M,N);
+gene M;
+Multiple_mapping 0
+34
+loss
+species M;
+gene M;
+Multiple_mapping 1
+34
+1
+species (J,((E,(D,H)),((C,I),(G,F))));
+gene (I,(G,((((C,D),J),E),F)));
+Multiple_mapping 5
+34
+(I,(G,((((C,D),J),E),F))); (J,((E,(D,H)),((C,I),(G,F)))); 5
+done
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+(I,(G,((((C,D),J),E),F))); (J,((E,(D,H)),((C,I),(G,F)))); 5
+species (J,((E,(D,H)),((C,I),(G,F))));
+gene I;
+Multiple_mapping 0
+34
+loss3
+done
+species ((E,(D,H)),((C,I),(G,F)));
+gene I;
+Multiple_mapping 0
+34
+loss3
+done
+species ((C,I),(G,F));
+gene I;
+Multiple_mapping 0
+34
+loss2
+species (C,I);
+gene I;
+Multiple_mapping 0
+34
+loss1
+species I;
+gene I;
+Multiple_mapping 1
+34
+1
+species (J,((E,(D,H)),((C,I),(G,F))));
+gene (G,((((C,D),J),E),F));
+Multiple_mapping 4
+34
+(G,((((C,D),J),E),F)); (J,((E,(D,H)),((C,I),(G,F)))); 4
+done
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+(G,((((C,D),J),E),F)); (J,((E,(D,H)),((C,I),(G,F)))); 4
+species (J,((E,(D,H)),((C,I),(G,F))));
+gene G;
+Multiple_mapping 0
+34
+loss3
+done
+species ((E,(D,H)),((C,I),(G,F)));
+gene G;
+Multiple_mapping 0
+34
+loss3
+done
+species ((C,I),(G,F));
+gene G;
+Multiple_mapping 0
+34
+loss3
+done
+species (G,F);
+gene G;
+Multiple_mapping 0
+34
+loss
+species G;
+gene G;
+Multiple_mapping 1
+34
+1
+species (J,((E,(D,H)),((C,I),(G,F))));
+gene ((((C,D),J),E),F);
+Multiple_mapping 3
+34
+((((C,D),J),E),F); (J,((E,(D,H)),((C,I),(G,F)))); 3
+done
+##############################
+##############################
+##############################
+##############################
+((((C,D),J),E),F); (J,((E,(D,H)),((C,I),(G,F)))); 3
+species (J,((E,(D,H)),((C,I),(G,F))));
+gene (((C,D),J),E);
+Multiple_mapping 2
+34
+(((C,D),J),E); (J,((E,(D,H)),((C,I),(G,F)))); 2
+done
+(((C,D),J),E); (J,((E,(D,H)),((C,I),(G,F)))); 2
+1
+[[<utils.Tree.Tree object at 0x7f758282fd90>, <utils.Tree.Tree object at 0x7f758282e170>]]
+---------------------------
+None
+0     False
+1     False
+2     False
+3     False
+4     False
+5     False
+6     False
+7     False
+8     False
+9     False
+10    False
+11     True
+12    False
+13    False
+14    False
+15    False
+16    False
+17    False
+18    False
+19    False
+20    False
+Name: branch, dtype: bool
+                                               branch                                             events
+0   ["['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'...  [{'ACDEFGHIJKLMNOPQRST-BUVW': 0, 'ABUVW-CDEFGH...
+1   ["['B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'...  [{'BOPQRSTUVW-CDEFGHIJKLMN': 0, 'BCDEFGHIJKLMN...
+2   ["['B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'...  [{'BCDEFGHIJKLMNOPQRSTU-VW': 0, 'BU-CDEFGHIJKL...
+3      ["['B', 'U', 'V', 'W']", ' to ', "['B', 'U']"]                         [{'B-UVW': 0, 'BVW-U': 0}]
+4      ["['B', 'U', 'V', 'W']", ' to ', "['V', 'W']"]                         [{'BUV-W': 0, 'BUW-V': 0}]
+5   ["['C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K'...  [{'CDEFGHIJKLMNOPQRS-T': 0, 'CDEFGHIJKLMNT-OPQ...
+6   ["['C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K'...  [{'CDEFGHIJOPQRST-KLMN': 0, 'CDEFGHIJ-KLMNOPQR...
+7   ["['C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K'...         [{'CDEFGHIKLMN-J': 0, 'CDEFGHI-JKLMN': 0}]
+8   ["['C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K'...         [{'CDEFGHIJMN-KL': 0, 'CDEFGHIJKL-MN': 0}]
+9      ["['K', 'L', 'M', 'N']", ' to ', "['M', 'N']"]                         [{'KLN-M': 0, 'KLM-N': 0}]
+10     ["['K', 'L', 'M', 'N']", ' to ', "['K', 'L']"]                         [{'K-LMN': 0, 'KMN-L': 0}]
+11  ["['C', 'D', 'E', 'F', 'G', 'H', 'I', 'J']", '...                 [{'CFGIJ-DEH': 0, 'CFGI-DEHJ': 0}]
+12  ["['C', 'D', 'E', 'F', 'G', 'H', 'I']", ' to '...                   [{'CI-DEFGH': 0, 'CDEHI-FG': 0}]
+13  ["['C', 'D', 'E', 'F', 'G', 'H', 'I']", ' to '...                   [{'CDFGHI-E': 0, 'CEFGI-DH': 0}]
+14          ["['D', 'E', 'H']", ' to ', "['D', 'H']"]                           [{'D-EH': 0, 'DE-H': 0}]
+15     ["['C', 'F', 'G', 'I']", ' to ', "['F', 'G']"]                         [{'CFI-G': 0, 'CGI-F': 0}]
+16     ["['C', 'F', 'G', 'I']", ' to ', "['C', 'I']"]                         [{'C-FGI': 0, 'CFG-I': 0}]
+17  ["['O', 'P', 'Q', 'R', 'S', 'T']", ' to ', "['...                     [{'OPQRT-S': 0, 'OPQR-ST': 0}]
+18  ["['O', 'P', 'Q', 'R', 'S']", ' to ', "['O', '...                       [{'O-PQRS': 0, 'OS-PQR': 0}]
+19  ["['O', 'P', 'Q', 'R']", ' to ', "['P', 'Q', '...                         [{'OP-QR': 0, 'OQR-P': 0}]
+20          ["['P', 'Q', 'R']", ' to ', "['Q', 'R']"]                           [{'PR-Q': 0, 'PQ-R': 0}]
+species (J,((E,(D,H)),((C,I),(G,F))));
+gene (J,((D,C),E));
+Multiple_mapping 1
+34
+species J;
+gene J;
+Multiple_mapping 1
+34
+1
+species ((E,(D,H)),((C,I),(G,F)));
+gene ((D,C),E);
+Multiple_mapping 2
+34
+((D,C),E); ((E,(D,H)),((C,I),(G,F))); 2
+done
+((D,C),E); ((E,(D,H)),((C,I),(G,F))); 2
+1
+[[<utils.Tree.Tree object at 0x7f7580fc90f0>, <utils.Tree.Tree object at 0x7f7580fc9030>]]
+---------------------------
+None
+0     False
+1     False
+2     False
+3     False
+4     False
+5     False
+6     False
+7     False
+8     False
+9     False
+10    False
+11    False
+12    False
+13     True
+14    False
+15    False
+16    False
+17    False
+18    False
+19    False
+20    False
+Name: branch, dtype: bool
+                                               branch                                             events
+0   ["['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'...  [{'ACDEFGHIJKLMNOPQRST-BUVW': 0, 'ABUVW-CDEFGH...
+1   ["['B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'...  [{'BOPQRSTUVW-CDEFGHIJKLMN': 0, 'BCDEFGHIJKLMN...
+2   ["['B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'...  [{'BCDEFGHIJKLMNOPQRSTU-VW': 0, 'BU-CDEFGHIJKL...
+3      ["['B', 'U', 'V', 'W']", ' to ', "['B', 'U']"]                         [{'B-UVW': 0, 'BVW-U': 0}]
+4      ["['B', 'U', 'V', 'W']", ' to ', "['V', 'W']"]                         [{'BUV-W': 0, 'BUW-V': 0}]
+5   ["['C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K'...  [{'CDEFGHIJKLMNOPQRS-T': 0, 'CDEFGHIJKLMNT-OPQ...
+6   ["['C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K'...  [{'CDEFGHIJOPQRST-KLMN': 0, 'CDEFGHIJ-KLMNOPQR...
+7   ["['C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K'...         [{'CDEFGHIKLMN-J': 0, 'CDEFGHI-JKLMN': 0}]
+8   ["['C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K'...         [{'CDEFGHIJMN-KL': 0, 'CDEFGHIJKL-MN': 0}]
+9      ["['K', 'L', 'M', 'N']", ' to ', "['M', 'N']"]                         [{'KLN-M': 0, 'KLM-N': 0}]
+10     ["['K', 'L', 'M', 'N']", ' to ', "['K', 'L']"]                         [{'K-LMN': 0, 'KMN-L': 0}]
+11  ["['C', 'D', 'E', 'F', 'G', 'H', 'I', 'J']", '...                 [{'CFGIJ-DEH': 0, 'CFGI-DEHJ': 0}]
+12  ["['C', 'D', 'E', 'F', 'G', 'H', 'I']", ' to '...                   [{'CI-DEFGH': 0, 'CDEHI-FG': 0}]
+13  ["['C', 'D', 'E', 'F', 'G', 'H', 'I']", ' to '...                   [{'CDFGHI-E': 0, 'CEFGI-DH': 0}]
+14          ["['D', 'E', 'H']", ' to ', "['D', 'H']"]                           [{'D-EH': 0, 'DE-H': 0}]
+15     ["['C', 'F', 'G', 'I']", ' to ', "['F', 'G']"]                         [{'CFI-G': 0, 'CGI-F': 0}]
+16     ["['C', 'F', 'G', 'I']", ' to ', "['C', 'I']"]                         [{'C-FGI': 0, 'CFG-I': 0}]
+17  ["['O', 'P', 'Q', 'R', 'S', 'T']", ' to ', "['...                     [{'OPQRT-S': 0, 'OPQR-ST': 0}]
+18  ["['O', 'P', 'Q', 'R', 'S']", ' to ', "['O', '...                       [{'O-PQRS': 0, 'OS-PQR': 0}]
+19  ["['O', 'P', 'Q', 'R']", ' to ', "['P', 'Q', '...                         [{'OP-QR': 0, 'OQR-P': 0}]
+20          ["['P', 'Q', 'R']", ' to ', "['Q', 'R']"]                           [{'PR-Q': 0, 'PQ-R': 0}]
+species ((E,(D,H)),((C,I),(G,F)));
+gene (C,(D,E));
+Multiple_mapping 1
+34
+species (E,(D,H));
+gene (D,E);
+Multiple_mapping 1
+34
+species E;
+gene E;
+Multiple_mapping 1
+34
+1
+species (D,H);
+gene D;
+Multiple_mapping 0
+34
+loss
+species D;
+gene D;
+Multiple_mapping 1
+34
+1
+species ((C,I),(G,F));
+gene C;
+Multiple_mapping 0
+34
+loss2
+species (C,I);
+gene C;
+Multiple_mapping 0
+34
+loss
+species C;
+gene C;
+Multiple_mapping 1
+34
+1
+species (J,((E,(D,H)),((C,I),(G,F))));
+gene F;
+Multiple_mapping 0
+34
+loss3
+done
+species ((E,(D,H)),((C,I),(G,F)));
+gene F;
+Multiple_mapping 0
+34
+loss3
+done
+species ((C,I),(G,F));
+gene F;
+Multiple_mapping 0
+34
+loss3
+done
+species (G,F);
+gene F;
+Multiple_mapping 0
+34
+loss1
+species F;
+gene F;
+Multiple_mapping 1
+34
+1
+species (((K,L),(M,N)),(J,((E,(D,H)),((C,I),(G,F)))));
+gene H;
+Multiple_mapping 0
+34
+loss3
+done
+species (J,((E,(D,H)),((C,I),(G,F))));
+gene H;
+Multiple_mapping 0
+34
+loss3
+done
+species ((E,(D,H)),((C,I),(G,F)));
+gene H;
+Multiple_mapping 0
+34
+loss2
+species (E,(D,H));
+gene H;
+Multiple_mapping 0
+34
+loss3
+done
+species (D,H);
+gene H;
+Multiple_mapping 0
+34
+loss1
+species H;
+gene H;
+Multiple_mapping 1
+34
+1
+species (((K,L),(M,N)),(J,((E,(D,H)),((C,I),(G,F)))));
+gene N;
+Multiple_mapping 0
+34
+loss2
+species ((K,L),(M,N));
+gene N;
+Multiple_mapping 0
+34
+loss3
+done
+species (M,N);
+gene N;
+Multiple_mapping 0
+34
+loss1
+species N;
+gene N;
+Multiple_mapping 1
+34
+1
+species (T,(S,(O,((Q,R),P))));
+gene (S,((((R,T),P),Q),O));
+Multiple_mapping 5
+34
+(S,((((R,T),P),Q),O)); (T,(S,(O,((Q,R),P)))); 5
+done
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+(S,((((R,T),P),Q),O)); (T,(S,(O,((Q,R),P)))); 5
+species (T,(S,(O,((Q,R),P))));
+gene S;
+Multiple_mapping 0
+34
+loss3
+done
+species (S,(O,((Q,R),P)));
+gene S;
+Multiple_mapping 0
+34
+loss2
+species S;
+gene S;
+Multiple_mapping 1
+34
+1
+species (T,(S,(O,((Q,R),P))));
+gene ((((R,T),P),Q),O);
+Multiple_mapping 4
+34
+((((R,T),P),Q),O); (T,(S,(O,((Q,R),P)))); 4
+done
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+##############################
+((((R,T),P),Q),O); (T,(S,(O,((Q,R),P)))); 4
+3
+[[<utils.Tree.Tree object at 0x7f7582808e50>, <utils.Tree.Tree object at 0x7f7582808e80>], [<utils.Tree.Tree object at 0x7f7579522650>, <utils.Tree.Tree object at 0x7f75795224a0>], [<utils.Tree.Tree object at 0x7f7582865b40>, <utils.Tree.Tree object at 0x7f7582866740>]]
+---------------------------
+---------------------------
+---------------------------
+None
+0     False
+1     False
+2     False
+3     False
+4     False
+5     False
+6     False
+7     False
+8     False
+9     False
+10    False
+11    False
+12    False
+13    False
+14    False
+15    False
+16    False
+17     True
+18    False
+19    False
+20    False
+Name: branch, dtype: bool
+                                               branch                                             events
+0   ["['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'...  [{'ACDEFGHIJKLMNOPQRST-BUVW': 0, 'ABUVW-CDEFGH...
+1   ["['B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'...  [{'BOPQRSTUVW-CDEFGHIJKLMN': 0, 'BCDEFGHIJKLMN...
+2   ["['B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'...  [{'BCDEFGHIJKLMNOPQRSTU-VW': 0, 'BU-CDEFGHIJKL...
+3      ["['B', 'U', 'V', 'W']", ' to ', "['B', 'U']"]                         [{'B-UVW': 0, 'BVW-U': 0}]
+4      ["['B', 'U', 'V', 'W']", ' to ', "['V', 'W']"]                         [{'BUV-W': 0, 'BUW-V': 0}]
+5   ["['C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K'...  [{'CDEFGHIJKLMNOPQRS-T': 0, 'CDEFGHIJKLMNT-OPQ...
+6   ["['C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K'...  [{'CDEFGHIJOPQRST-KLMN': 0, 'CDEFGHIJ-KLMNOPQR...
+7   ["['C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K'...         [{'CDEFGHIKLMN-J': 0, 'CDEFGHI-JKLMN': 0}]
+8   ["['C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K'...         [{'CDEFGHIJMN-KL': 0, 'CDEFGHIJKL-MN': 0}]
+9      ["['K', 'L', 'M', 'N']", ' to ', "['M', 'N']"]                         [{'KLN-M': 0, 'KLM-N': 0}]
+10     ["['K', 'L', 'M', 'N']", ' to ', "['K', 'L']"]                         [{'K-LMN': 0, 'KMN-L': 0}]
+11  ["['C', 'D', 'E', 'F', 'G', 'H', 'I', 'J']", '...                 [{'CFGIJ-DEH': 0, 'CFGI-DEHJ': 0}]
+12  ["['C', 'D', 'E', 'F', 'G', 'H', 'I']", ' to '...                   [{'CI-DEFGH': 0, 'CDEHI-FG': 0}]
+13  ["['C', 'D', 'E', 'F', 'G', 'H', 'I']", ' to '...                   [{'CDFGHI-E': 0, 'CEFGI-DH': 0}]
+14          ["['D', 'E', 'H']", ' to ', "['D', 'H']"]                           [{'D-EH': 0, 'DE-H': 0}]
+15     ["['C', 'F', 'G', 'I']", ' to ', "['F', 'G']"]                         [{'CFI-G': 0, 'CGI-F': 0}]
+16     ["['C', 'F', 'G', 'I']", ' to ', "['C', 'I']"]                         [{'C-FGI': 0, 'CFG-I': 0}]
+17  ["['O', 'P', 'Q', 'R', 'S', 'T']", ' to ', "['...                     [{'OPQRT-S': 0, 'OPQR-ST': 0}]
+18  ["['O', 'P', 'Q', 'R', 'S']", ' to ', "['O', '...                       [{'O-PQRS': 0, 'OS-PQR': 0}]
+19  ["['O', 'P', 'Q', 'R']", ' to ', "['P', 'Q', '...                         [{'OP-QR': 0, 'OQR-P': 0}]
+20          ["['P', 'Q', 'R']", ' to ', "['Q', 'R']"]                           [{'PR-Q': 0, 'PQ-R': 0}]
+species (T,(S,(O,((Q,R),P))));
+gene (T,(O,(Q,(R,P))));
+Multiple_mapping 1
+34
+species T;
+gene T;
+Multiple_mapping 1
+34
+1
+species (S,(O,((Q,R),P)));
+gene (O,(Q,(R,P)));
+Multiple_mapping 0
+34
+loss3
+done
+species (O,((Q,R),P));
+gene (O,(Q,(R,P)));
+Multiple_mapping 1
+34
+species O;
+gene O;
+Multiple_mapping 1
+34
+1
+species ((Q,R),P);
+gene (Q,(R,P));
+Multiple_mapping 2
+34
+(Q,(R,P)); ((Q,R),P); 2
+done
+(Q,(R,P)); ((Q,R),P); 2
+1
+[[<utils.Tree.Tree object at 0x7f7578e1cdf0>, <utils.Tree.Tree object at 0x7f7578e1ce50>]]
+---------------------------
+None
+0     False
+1     False
+2     False
+3     False
+4     False
+5     False
+6     False
+7     False
+8     False
+9     False
+10    False
+11    False
+12    False
+13    False
+14    False
+15    False
+16    False
+17    False
+18    False
+19    False
+20     True
+Name: branch, dtype: bool
+                                               branch                                             events
+0   ["['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'...  [{'ACDEFGHIJKLMNOPQRST-BUVW': 0, 'ABUVW-CDEFGH...
+1   ["['B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'...  [{'BOPQRSTUVW-CDEFGHIJKLMN': 0, 'BCDEFGHIJKLMN...
+2   ["['B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'...  [{'BCDEFGHIJKLMNOPQRSTU-VW': 0, 'BU-CDEFGHIJKL...
+3      ["['B', 'U', 'V', 'W']", ' to ', "['B', 'U']"]                         [{'B-UVW': 0, 'BVW-U': 0}]
+4      ["['B', 'U', 'V', 'W']", ' to ', "['V', 'W']"]                         [{'BUV-W': 0, 'BUW-V': 0}]
+5   ["['C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K'...  [{'CDEFGHIJKLMNOPQRS-T': 0, 'CDEFGHIJKLMNT-OPQ...
+6   ["['C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K'...  [{'CDEFGHIJOPQRST-KLMN': 0, 'CDEFGHIJ-KLMNOPQR...
+7   ["['C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K'...         [{'CDEFGHIKLMN-J': 0, 'CDEFGHI-JKLMN': 0}]
+8   ["['C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K'...         [{'CDEFGHIJMN-KL': 0, 'CDEFGHIJKL-MN': 0}]
+9      ["['K', 'L', 'M', 'N']", ' to ', "['M', 'N']"]                         [{'KLN-M': 0, 'KLM-N': 0}]
+10     ["['K', 'L', 'M', 'N']", ' to ', "['K', 'L']"]                         [{'K-LMN': 0, 'KMN-L': 0}]
+11  ["['C', 'D', 'E', 'F', 'G', 'H', 'I', 'J']", '...                 [{'CFGIJ-DEH': 0, 'CFGI-DEHJ': 0}]
+12  ["['C', 'D', 'E', 'F', 'G', 'H', 'I']", ' to '...                   [{'CI-DEFGH': 0, 'CDEHI-FG': 0}]
+13  ["['C', 'D', 'E', 'F', 'G', 'H', 'I']", ' to '...                   [{'CDFGHI-E': 0, 'CEFGI-DH': 0}]
+14          ["['D', 'E', 'H']", ' to ', "['D', 'H']"]                           [{'D-EH': 0, 'DE-H': 0}]
+15     ["['C', 'F', 'G', 'I']", ' to ', "['F', 'G']"]                         [{'CFI-G': 0, 'CGI-F': 0}]
+16     ["['C', 'F', 'G', 'I']", ' to ', "['C', 'I']"]                         [{'C-FGI': 0, 'CFG-I': 0}]
+17  ["['O', 'P', 'Q', 'R', 'S', 'T']", ' to ', "['...                     [{'OPQRT-S': 0, 'OPQR-ST': 0}]
+18  ["['O', 'P', 'Q', 'R', 'S']", ' to ', "['O', '...                       [{'O-PQRS': 0, 'OS-PQR': 0}]
+19  ["['O', 'P', 'Q', 'R']", ' to ', "['P', 'Q', '...                         [{'OP-QR': 0, 'OQR-P': 0}]
+20          ["['P', 'Q', 'R']", ' to ', "['Q', 'R']"]                           [{'PR-Q': 1, 'PQ-R': 0}]
+species ((Q,R),P);
+gene (P,(R,Q));
+Multiple_mapping 1
+34
+species (Q,R);
+gene (R,Q);
+Multiple_mapping 1
+34
+species Q;
+gene Q;
+Multiple_mapping 1
+34
+1
+species R;
+gene R;
+Multiple_mapping 1
+34
+1
+species P;
+gene P;
+Multiple_mapping 1
+34
+1
+1
+-----------------------------------------------------Done With reconcils-----------------------------------------------------------------------------
+['Speciation', [{'R', 'P', 'E', 'M', 'H', 'O', 'F', 'I', 'K', 'C', 'B', 'N', 'G', 'V', 'W', 'S', 'T', 'Q', 'L', 'D', 'J', 'U'}, {'R', 'P', 'E', 'M', 'H', 'O', 'F', 'I', 'K', 'C', 'N', 'G', 'S', 'T', 'Q', 'L', 'D', 'J'}, 'I', None], [{'V', 'W'}, 'V', 'L', True], 'Speciation', 'Speciation', 'Speciation', [{'R', 'P', 'E', 'M', 'H', 'O', 'F', 'I', 'K', 'C', 'N', 'G', 'S', 'T', 'Q', 'L', 'D', 'J'}, {'N', 'G', 'E', 'M', 'H', 'F', 'I', 'L', 'D', 'K', 'C', 'J'}, 'D', None], [{'N', 'R', 'G', 'P', 'S', 'E', 'M', 'H', 'O', 'F', 'I', 'T', 'Q', 'L', 'D', 'K', 'C', 'J'}, {'N', 'G', 'E', 'M', 'H', 'F', 'I', 'L', 'D', 'K', 'C', 'J'}, 'D', None], [{'N', 'G', 'E', 'M', 'H', 'F', 'I', 'L', 'D', 'K', 'C', 'J'}, {'H', 'F', 'G', 'I', 'D', 'C', 'E', 'J'}, 'I', None], [{'N', 'G', 'E', 'M', 'H', 'F', 'I', 'L', 'D', 'K', 'C', 'J'}, {'N', 'K', 'M', 'L'}, 'I', None], [{'N', 'G', 'E', 'M', 'H', 'F', 'I', 'L', 'D', 'K', 'C', 'J'}, {'H', 'F', 'G', 'I', 'D', 'C', 'E', 'J'}, 'I', None], [{'N', 'G', 'E', 'M', 'H', 'F', 'I', 'L', 'D', 'K', 'C', 'J'}, {'N', 'K', 'M', 'L'}, 'I', None], [{'N', 'K', 'M', 'L'}, {'K', 'L'}, 'I', None], 'Speciation', 'Speciation', [{'N', 'M'}, 'N', 'L', True], 'Speciation', [{'N', 'G', 'E', 'M', 'H', 'F', 'I', 'L', 'D', 'K', 'C', 'J'}, {'H', 'F', 'G', 'I', 'D', 'C', 'E', 'J'}, 'D', None], [{'H', 'F', 'G', 'I', 'D', 'C', 'E', 'J'}, 'J', 'L', True], [{'H', 'F', 'G', 'I', 'D', 'C', 'E'}, {'H', 'E', 'D'}, 'L', None], [{'F', 'G', 'C', 'I'}, {'F', 'G'}, 'L', None], [{'I', 'C'}, 'C', 'L', True], 'Speciation', [{'N', 'G', 'E', 'M', 'H', 'F', 'I', 'L', 'D', 'K', 'C', 'J'}, {'H', 'F', 'G', 'I', 'D', 'C', 'E', 'J'}, 'D', None], [{'H', 'F', 'G', 'I', 'D', 'C', 'E', 'J'}, 'J', 'L', True], [{'H', 'F', 'G', 'I', 'D', 'C', 'E'}, {'H', 'E', 'D'}, 'L', None], [{'F', 'G', 'C', 'I'}, {'I', 'C'}, 'L', None], [{'F', 'G'}, 'F', 'L', True], 'Speciation', [{'N', 'G', 'E', 'M', 'H', 'F', 'I', 'L', 'D', 'K', 'C', 'J'}, {'H', 'F', 'G', 'I', 'D', 'C', 'E', 'J'}, 'D', None], [{'H', 'F', 'G', 'I', 'D', 'C', 'E', 'J'}, {'H', 'F', 'G', 'I', 'D', 'C', 'E'}, 'I', None], 'Speciation', [{'H', 'F', 'G', 'I', 'D', 'C', 'E'}, {'H', 'E', 'D'}, 'I', None], 'Speciation', [{'H', 'D'}, 'H', 'L', True], 'Speciation', [{'F', 'G', 'C', 'I'}, {'F', 'G'}, 'L', None], [{'I', 'C'}, 'I', 'L', True], 'Speciation', [{'H', 'F', 'G', 'I', 'D', 'C', 'E', 'J'}, 'J', 'L', True], [{'H', 'F', 'G', 'I', 'D', 'C', 'E'}, {'H', 'E', 'D'}, 'L', None], [{'F', 'G', 'C', 'I'}, {'I', 'C'}, 'L', None], [{'F', 'G'}, 'G', 'L', True], 'Speciation', [{'N', 'G', 'E', 'M', 'H', 'F', 'I', 'L', 'D', 'K', 'C', 'J'}, {'N', 'K', 'M', 'L'}, 'L', None], [{'H', 'F', 'G', 'I', 'D', 'C', 'E', 'J'}, 'J', 'L', True], [{'H', 'F', 'G', 'I', 'D', 'C', 'E'}, {'F', 'G', 'C', 'I'}, 'L', None], [{'H', 'E', 'D'}, 'E', 'L', True], [{'H', 'D'}, 'D', 'L', True], 'Speciation', [{'N', 'G', 'E', 'M', 'H', 'F', 'I', 'L', 'D', 'K', 'C', 'J'}, {'H', 'F', 'G', 'I', 'D', 'C', 'E', 'J'}, 'L', None], [{'N', 'K', 'M', 'L'}, {'K', 'L'}, 'L', None], [{'N', 'M'}, 'M', 'L', True], 'Speciation', [{'R', 'P', 'E', 'M', 'H', 'O', 'F', 'I', 'K', 'C', 'N', 'G', 'S', 'T', 'Q', 'L', 'D', 'J'}, {'O', 'R', 'T', 'P', 'Q', 'S'}, 'D', None], [{'O', 'R', 'T', 'P', 'Q', 'S'}, 'T', 'L', True], [{'R', 'P', 'S', 'O', 'Q'}, {'O', 'R', 'Q', 'P'}, 'L', None], 'Speciation', [{'O', 'R', 'T', 'P', 'Q', 'S'}, {'R', 'P', 'S', 'O', 'Q'}, 'I', None], [{'O', 'R', 'T', 'P', 'Q', 'S'}, {'R', 'P', 'S', 'O', 'Q'}, 'I', None], [{'O', 'R', 'T', 'P', 'Q', 'S'}, {'R', 'P', 'S', 'O', 'Q'}, 'I', None], 'Speciation', [{'R', 'P', 'S', 'O', 'Q'}, 'S', 'L', True], 'Speciation', [{'R', 'Q', 'P'}, {'R', 'Q'}, 'I', None], 'Speciation', 'Speciation', 'Speciation']
+[("['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W']", ' to ', "['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W']"), ("['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W']", ' to ', "['B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W']"), ("['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W']", ' to ', "['A']"), ("['B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W']", ' to ', "['C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T']"), ("['B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W']", ' to ', "['B', 'U', 'V', 'W']"), ("['B', 'U', 'V', 'W']", ' to ', "['B', 'U']"), ("['B', 'U', 'V', 'W']", ' to ', "['V', 'W']"), ("['V', 'W']", ' to ', "['V']"), ("['V', 'W']", ' to ', "['W']"), ("['B', 'U']", ' to ', "['U']"), ("['B', 'U']", ' to ', "['B']"), ("['C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T']", ' to ', "['O', 'P', 'Q', 'R', 'S', 'T']"), ("['C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T']", ' to ', "['C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N']"), ("['C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N']", ' to ', "['C', 'D', 'E', 'F', 'G', 'H', 'I', 'J']"), ("['C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N']", ' to ', "['K', 'L', 'M', 'N']"), ("['K', 'L', 'M', 'N']", ' to ', "['M', 'N']"), ("['K', 'L', 'M', 'N']", ' to ', "['K', 'L']"), ("['K', 'L']", ' to ', "['L']"), ("['K', 'L']", ' to ', "['K']"), ("['M', 'N']", ' to ', "['N']"), ("['M', 'N']", ' to ', "['M']"), ("['C', 'D', 'E', 'F', 'G', 'H', 'I', 'J']", ' to ', "['C', 'D', 'E', 'F', 'G', 'H', 'I']"), ("['C', 'D', 'E', 'F', 'G', 'H', 'I', 'J']", ' to ', "['J']"), ("['C', 'D', 'E', 'F', 'G', 'H', 'I']", ' to ', "['C', 'F', 'G', 'I']"), ("['C', 'D', 'E', 'F', 'G', 'H', 'I']", ' to ', "['D', 'E', 'H']"), ("['D', 'E', 'H']", ' to ', "['D', 'H']"), ("['D', 'E', 'H']", ' to ', "['E']"), ("['D', 'H']", ' to ', "['H']"), ("['D', 'H']", ' to ', "['D']"), ("['C', 'F', 'G', 'I']", ' to ', "['F', 'G']"), ("['C', 'F', 'G', 'I']", ' to ', "['C', 'I']"), ("['C', 'I']", ' to ', "['I']"), ("['C', 'I']", ' to ', "['C']"), ("['F', 'G']", ' to ', "['F']"), ("['F', 'G']", ' to ', "['G']"), ("['O', 'P', 'Q', 'R', 'S', 'T']", ' to ', "['O', 'P', 'Q', 'R', 'S']"), ("['O', 'P', 'Q', 'R', 'S', 'T']", ' to ', "['T']"), ("['O', 'P', 'Q', 'R', 'S']", ' to ', "['O', 'P', 'Q', 'R']"), ("['O', 'P', 'Q', 'R', 'S']", ' to ', "['S']"), ("['O', 'P', 'Q', 'R']", ' to ', "['P', 'Q', 'R']"), ("['O', 'P', 'Q', 'R']", ' to ', "['O']"), ("['P', 'Q', 'R']", ' to ', "['P']"), ("['P', 'Q', 'R']", ' to ', "['Q', 'R']"), ("['Q', 'R']", ' to ', "['R']"), ("['Q', 'R']", ' to ', "['Q']")]
+##############################################################################################
+##############################################################################################
+-----------------------------------------------------Done With ETE3---------------------------------------------------------------------------
+-----------------------------------------------------next_replicate-----------------------------------------------------------------------------
