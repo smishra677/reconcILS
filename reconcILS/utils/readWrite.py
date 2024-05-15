@@ -97,9 +97,14 @@ class readWrite:
 
         for k in oo:
             if type(k)==list:
-                o_list+=k
-            else:
-                o_list.append(k)
+                if k[2]=='I':
+
+                    o_list+=['NNI']
+                elif k[2]=='D':
+                    o_list+=['Duplication']
+                else:
+                    o_list+=['Loss']
+        
 
         o= dict(Counter(o_list))
                 
@@ -129,15 +134,15 @@ class readWrite:
 
     def Create_pd_ete3(self,flag,i,o,dic):
         
-        #dic['DLCILS']+=[0]
-        #dic['RHemiplasy']+=[0]
+        dic['DLCILS']+=[0]
+        dic['RHemiplasy']+=[0]
        
         dic['Process']+=[flag]
         dic['Replicate']+=[i]
         dic['Duplication'].append(0)
         dic['NNI'].append(0)
         dic['Loss'].append(0)
-        #dic['Hemiplasy'].append(0)
+        dic['Hemiplasy'].append(0)
 
 
         for i in o:
@@ -229,7 +234,6 @@ class readWrite:
             if len(tree.event_list)>0:
                 ev=''
                 tree.event_list.reverse()
-                tree.event_list=self.summarize(tree.event_list)
                 for j in tree.event_list:
                     if j[0] not in [-1,-2]:
                         dic=dict(Counter(j[1]))
@@ -256,8 +260,6 @@ class readWrite:
             if len(tree.event_list)>0:
                 ev=''
                 tree.event_list.reverse()
-                tree.event_list=self.summarize(tree.event_list)
-                print(tree.event_list)
                 for j in tree.event_list:
                     if j[0] not in [-1,-2]:
                         dic=dict(Counter(j[1]))
@@ -283,7 +285,7 @@ class readWrite:
                 return ev
             else:
                 return ''
-
+    
 
 
     def write_events_sp(self,tree):
@@ -429,7 +431,7 @@ class readWrite:
     def parse_bio(self, newick):
         import random
         tokens = re.finditer(r"([^:;,()\s]*)(?:\s*:\s*([\d.]+)\s*)?([,);])|(\S)", newick + ";")
-
+        random.seed(42)
         def recurse(tre, nextid=0, parentid=-1): 
             thisid = nextid
             children = []
@@ -450,6 +452,7 @@ class readWrite:
 
                 if len(tre.children) > 2:
                     random.shuffle(tre.children)
+                    
                     
                     tre.leftChild = tre.children[0]
                     tre.rightChild = tre.children[1]
