@@ -7,7 +7,6 @@ import argparse
 import utils.ILS as ILS
 import utils.readWrite as readWrite
 import pickle
-from numba import jit
 import gc
 import time
 import pandas as pd
@@ -67,7 +66,6 @@ class reconcils:
     
     def label_lost_child(self,tree):
         if tree:
-            print(tree.event_list)
             tree.event_list.append([-2,['L']])        
             self.label_lost_child(tree.leftChild)
             self.label_lost_child(tree.rightChild)
@@ -79,139 +77,152 @@ class reconcils:
             print(tree.to_newick(),tree.id)
             self.print_id(tree.leftChild)
             self.print_id(tree.rightChild)
-        
-
     
-    def copy_loss(self, re, sp, new_topo):
-        stack = [(re, sp)]
-        while stack:
-            gc.collect()
-            current_re, current_sp = stack.pop()
+    def copy_numbered_taxa(self,sp,new_sp):
+        if sp:
+            new_sp.id= sp.id
+            if sp.isLeaf==None:
+                new_sp.event_list =sp.event_list
+            else:
+                new_sp.numbered_taxa= sp.numbered_taxa
 
-            if not current_sp:
-                continue
+            if new_sp.leftChild and new_sp.rightChild:
 
-            if current_sp.id == current_re.id:
-                print(1)
-                if current_re.parent is None:
-                    co = Tree.Tree()
-                    print(2)
+                if (sp.leftChild.to_newick()== new_sp.leftChild.to_newick()) and (sp.rightChild.to_newick()== new_sp.rightChild.to_newick()):
 
-                    serialized_instance = pickle.dumps(current_sp)
-                    co.leftChild = pickle.loads(serialized_instance)
-
-                    serialized_instance = pickle.dumps(new_topo)
-                    co.rightChild = pickle.loads(serialized_instance)
-
-                    self.label_lost_child(co.rightChild)
-
-                    current_sp.leftChild = co.leftChild
-                    current_sp.rightChild = co.rightChild
-                    current_sp.id = co.id
-
-                    co.leftChild.parent = current_sp
-                    co.rightChild.parent = current_sp
-
-                    current_sp.children = [current_sp.leftChild, current_sp.rightChild]
-                    current_sp.isLeaf = None
+                    self.copy_numbered_taxa(sp.leftChild,new_sp.leftChild)
+                    self.copy_numbered_taxa(sp.rightChild,new_sp.rightChild) 
                 else:
-                    if current_sp.parent.leftChild == current_sp:
-                        if len(current_sp.event_list) < 1:
-                            print(3)
-                            co = Tree.Tree()
-                            co.leftChild = current_sp.deepcopy_single()
-                            co.rightChild = new_topo.deepcopy_single()
+                    self.copy_numbered_taxa(sp.rightChild,new_sp.leftChild)
+                    self.copy_numbered_taxa(sp.leftChild,new_sp.rightChild) 
 
-                            self.label_lost_child(co.rightChild)
 
-                            co.leftChild.parent = co
-                            co.rightChild.parent = co
+    def copy_loss(self,re,sp,new_topo):
+        red= readWrite.readWrite()
+        if sp:
 
-                            current_sp.parent.leftChild = co
-                            current_sp.parent.isLeaf = None
+            if sp.id==re.id:
+                if re.parent==None:
+                        co= Tree.Tree()
+                        co.leftChild= sp
+                        co.rightChild= new_topo
+                        
+                        co= co.parse(co.to_newick())
+ 
+                        self.copy_numbered_taxa(sp,co.rightChild)
+                        
+
+                        self.label_lost_child(co.leftChild)
+                        
+                       
+                        self.gene_tree=co
+                        sp.id=co.id
+
+                        co.leftChild.parent =sp
+                        co.rightChild.parent =sp
+
+                        sp.children=[sp.leftChild,sp.rightChild]
+                        sp.isLeaf=None
+            
+                else:
+                    if sp.parent.leftChild==sp:
+                            co= Tree.Tree()
+                            co.leftChild= sp
+                            co.rightChild= new_topo
+
+
+                            co= co.parse(co.to_newick())
+
+                            self.copy_numbered_taxa(sp,co.rightChild)
                             
-                            current_sp.parent.rightChild = current_sp.parent.rightChild
-                            current_sp.parent.isLeaf = None
-                            current_sp.parent.rightChild.parent = current_sp.parent
-                            current_sp.parent.leftChild.parent = current_sp.parent
 
-                            current_sp.parent.children = [current_sp.parent.leftChild, current_sp.parent.rightChild]
-                        else:
-                            print(4)
-                            co = Tree.Tree()
-                            co.leftChild = current_sp.parent.rightChild.deepcopy_single()
-                            co.rightChild = new_topo.deepcopy_single()
 
-                            self.label_lost_child(co.rightChild)
+                            
+                            self.label_lost_child(co.leftChild)
 
-                            co.leftChild.parent = co
-                            co.rightChild.parent = co
 
-                            current_sp.parent.rightChild = co
-                            current_sp.parent.isLeaf = None
+                            sp.parent.leftChild=co
+                            sp.parent.isLeaf=None
+                            
+                            sp.parent.rightChild=sp.parent.rightChild
+                            sp.parent.isLeaf=None
+                            sp.parent.rightChild.parent=sp.parent
+                            sp.parent.leftChild.parent=sp.parent
+                        
+                        
 
-                            current_sp.parent.leftChild = current_sp.parent.leftChild
-                            current_sp.parent.isLeaf = None
-                            current_sp.parent.rightChild.parent = current_sp.parent
-                            current_sp.parent.leftChild.parent = current_sp.parent
-
-                            current_sp.parent.children = [current_sp.parent.leftChild, current_sp.parent.rightChild]
+                            #sp.event_list=[]
+                            sp.parent.children=[sp.parent.leftChild,sp.parent.rightChild]
+                        
+                            
+                            
 
                     else:
-                        if len(current_sp.event_list) < 1:
-                            print(6)
-                            co = Tree.Tree()
-                            co.leftChild = current_sp.deepcopy_single()
-                            co.rightChild = new_topo.deepcopy_single()
+                    
+                            co= Tree.Tree()
+                            co.leftChild= sp
+                            co.rightChild= new_topo
+   
+                            co= co.parse(co.to_newick())
 
-                            self.label_lost_child(co.rightChild)
 
-                            co.leftChild.parent = co
-                            co.rightChild.parent = co
+                            self.copy_numbered_taxa(sp,co.rightChild)
+                            
 
-                            current_sp.parent.rightChild = co
-                            current_sp.parent.leftChild = current_sp.parent.leftChild
-                            current_sp.parent.isLeaf = None
-                            current_sp.parent.rightChild.parent = current_sp.parent
-                            current_sp.parent.leftChild.parent = current_sp.parent
-                        else:
-                            print(7)
-                            co = Tree.Tree()
-                            co.leftChild = current_sp.parent.leftChild.deepcopy_single()
-                            co.rightChild = new_topo.deepcopy_single()
+                        
+                            self.label_lost_child(co.leftChild)
+                            
+  
+                            sp.parent.rightChild=co
+                            sp.parent.leftChild=sp.parent.leftChild
+                            sp.parent.isLeaf=None
+                            sp.parent.rightChild.parent=sp.parent
+                            sp.parent.leftChild.parent=sp.parent
+                       
+                        
 
-                            self.label_lost_child(co.rightChild)
+                            
+                            sp.parent.children=[sp.parent.leftChild,sp.parent.rightChild]
+                       
+                     
+                    
+                        
 
-                            co.leftChild.parent = co
-                            co.rightChild.parent = co
 
-                            current_sp.parent.leftChild = co
-                            current_sp.parent.isLeaf = None
 
-                            current_sp.parent.rightChild = current_sp.parent.rightChild
-                            current_sp.parent.isLeaf = None
-                            current_sp.parent.rightChild.parent = current_sp.parent
-                            current_sp.parent.leftChild.parent = current_sp.parent
 
-                        current_sp.parent.children = [current_sp.parent.leftChild, current_sp.parent.rightChild]
+                        #sp.event_list=[]
 
-                current_sp.taxa = ''
-                gc.collect()
-                return
 
-            stack.append((current_re, current_sp.leftChild))
-            stack.append((current_re, current_sp.rightChild))
+                        
+
+                    sp.taxa=''
+
+                    return
+            else:
+                self.copy_loss(re,sp.leftChild,new_topo)
+                self.copy_loss(re,sp.rightChild,new_topo)           
+
+          
 
 
     
-    def copy_event_(self,re,sp,new_topo):
-        if sp:
-            if sp.id==re.id:
-                    sp.event_list.append(re.event_list)
-                    return
-            else:
-                self.copy_event_(re,sp.leftChild,new_topo)
-                self.copy_event_(re,sp.rightChild,new_topo)
+    def copy_event_(self, re, sp, new_topo):
+        stack = [sp] 
+        
+        while stack:
+            current_node = stack.pop()  
+            
+            if current_node:
+                
+                if current_node.id == re.id:
+                    current_node.event_list.append(re.event_list)
+                    return 
+                
+               
+                stack.append(current_node.leftChild)
+                stack.append(current_node.rightChild)
+
 
 
     def get_edges(self,sp):
@@ -783,7 +794,7 @@ class reconcils:
                             if len(left_.intersection(tr_))==0:
                                 print('loss')
                                 sp.leftChild.evolve='Loss'
-                                #self.copy_loss(tr,self.gene_tree,sp.leftChild)
+                                self.copy_loss(tr,self.gene_tree,sp.leftChild)
                                 eve.append([sp.taxa, sp.leftChild.taxa,'L',sp.leftChild.isLeaf])
                                 stack.append((tr,sp.rightChild))
 
@@ -792,7 +803,7 @@ class reconcils:
                                 sp.rightChild.evolve='Loss'
                                 eve.append([sp.taxa, sp.rightChild.taxa,'L',sp.rightChild.isLeaf])
                                 print('loss1')
-                                #self.copy_loss(tr,self.gene_tree,sp.rightChild)
+                                self.copy_loss(tr,self.gene_tree,sp.rightChild)
                                 stack.append((tr,sp.leftChild))
                             
 
@@ -819,7 +830,7 @@ class reconcils:
                             sp.evolve= 'Speciation'
                             if len(left_.intersection(tr_))==0:
                                 print('loss2')
-                                #self.copy_loss(tr,self.gene_tree,sp.leftChild)
+                                self.copy_loss(tr,self.gene_tree,sp.leftChild)
                                 sp.leftChild.evolve='Loss'
                                 eve.append([sp.taxa, sp.leftChild.taxa,'L',sp.leftChild.isLeaf])
                             
@@ -829,7 +840,7 @@ class reconcils:
                                 sp.rightChild.evolve='Loss'
                                 eve.append([sp.taxa, sp.rightChild.taxa,'L',sp.rightChild.isLeaf])
                                 print('loss3')
-                                #self.copy_loss(tr,self.gene_tree,sp.rightChild)
+                                self.copy_loss(tr,self.gene_tree,sp.rightChild)
                                 print('done')
                                 stack.append((tr,sp.leftChild))
         
@@ -1011,6 +1022,7 @@ class reconcils:
                             
                                     #i[0].event_list+=[li,['I' for i in range(Initial_multiple_mapping- cost)]]
                                     i[0].event_list+=[li,['I']]
+                                    self.copy_event_(i[0],self.gene_tree,new_topo)
                                     print('---------------------------')
                                     i[1].label_internal()
 
@@ -1096,6 +1108,7 @@ class reconcils:
 
 
                                 tr.event_list+=[-1,['D']]
+                                self.copy_event_(tr,self.gene_tree,tr)
                                 if sp.isRoot:
                                     eve.append([sp.taxa,sp.taxa,'D',sp.isLeaf])
                                 else:
@@ -1109,7 +1122,7 @@ class reconcils:
 
                                     eve.append([parent.taxa,sp.taxa,'D',sp.isLeaf])
 
-                                #self.copy_event_(tr,self.gene_tree,tr)
+                                
 
 
                             
@@ -1247,8 +1260,7 @@ def main():
 
     
     red= readWrite.readWrite()
-    sp_string='((A,B),(C,D));'
-    gene_tree='(D,(B,(A,C)));'
+    
     tr= red.parse(gene_tree)
     sp=red.parse(sp_string)
     
@@ -1277,7 +1289,7 @@ def main():
     species_edge_list=reconcILS.get_edges(sp)
     red.write_introgression(sp)
     
-    if len(gene_tree)>50:
+    if len(gene_tree)<0:
 
         reconcILS.reconcILS(tr,sp,sp_copy,sp,[])
         
