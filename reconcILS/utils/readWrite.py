@@ -470,8 +470,8 @@ class readWrite:
                         current = child
 
                 elif len(tre.children) == 1:
-                    tre.leftChild = tre.children[0]
-                    tre.children[0].parent = tre
+                    tre.children =[]
+                    tre =tre1
                 elif len(tre.children) == 2:
                     tre.leftChild = tre.children[0]
                     tre.rightChild = tre.children[1]
