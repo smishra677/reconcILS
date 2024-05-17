@@ -7,7 +7,6 @@ import argparse
 import utils.ILS as ILS
 import utils.readWrite as readWrite
 import pickle
-import gc
 import time
 import pandas as pd
 from concurrent.futures import ThreadPoolExecutor, TimeoutError
@@ -25,6 +24,9 @@ class reconcils:
         self.address_dictionary=None
         self.V=False
         self.F= False
+        self.introgression=False
+        self.time_ils=600
+        self.thread=20
 
 
     
@@ -363,14 +365,14 @@ class reconcils:
             if Initial_multiple_mapping in [0,1]:
                 if sp.isLeaf:
                     if sp.inital_ref==0 and sp.parent.evolve!='Loss':
-                        print('111')
+                        #print('111')
                         sp.evolve='Loss'
                         return sp
                     else:
                         sp.evolve='Speciation'
                         return sp
                 elif (sp.leftChild.isLeaf and sp.rightChild.isLeaf) :
-                        print('2')
+                        #print('2')
                         if sp.evolve==None:
                             sp.evolve= 'Speciation'
                         if len(left_.intersection(tr_))==0:
@@ -407,7 +409,7 @@ class reconcils:
                             sp.rightChild =self.reconcILS(tr.leftChild,sp.rightChild,sp_copy,sp_,visited)                          
                     return sp
                 else:   
-                        print(113232)
+                        #print(113232)
                         sp.evolve= 'Speciation'
 
 
@@ -418,7 +420,7 @@ class reconcils:
                             sp.rightChild= self.reconcILS(tr,sp.rightChild,sp_copy,sp_,visited)
                             return sp
 
-                        print('-----------------------------------------------')
+                        #print('-----------------------------------------------')
                         
                         if len(right_.intersection(tr_))==0:
                             sp.rightChild.evolve='Loss'
@@ -622,7 +624,7 @@ class reconcils:
 
 
                     if  NNI_cost>=duplication_cost or  sp.isLeaf or new_multiple>=Initial_multiple_mapping:
-                            print('Dups')
+                            #print('Dups')
                             #recon_left = copy.deepcopy(sp)
                             serialized_instance = pickle.dumps(sp)
                             recon_left = pickle.loads(serialized_instance)
@@ -724,23 +726,18 @@ class reconcils:
     def iterative_reconcILS(self,tr, sp, sp_copy, sp_, visited):
         stack = []
         eve=[]
-        gc.enable()
-        start_time = time.time()
-        time_bound = 2400
+
         
         while True:
             if sp:
 
-                if time.time()>start_time+time_bound:
-                    return []                
-                print('species',sp.to_newick())
-                print('gene',tr.to_newick())
-
-
-
                 Initial_multiple_mapping = len(sp.refTo)
+                if self.V:
+                    print('Multiple_mapping', Initial_multiple_mapping)
+                    print('species',sp.to_newick())
+                    print('gene',tr.to_newick())
 
-                print('Multiple_mapping', Initial_multiple_mapping)
+
 
                 if sp.isLeaf==None:
                     left_=set(sp.leftChild.taxa)
@@ -765,19 +762,11 @@ class reconcils:
                     if tr.leftChild.isLeaf:
                         tr_left=set({tr.leftChild.taxa})
 
-                
-
-
-
-                print(34)
-                
-
-
 
                 if Initial_multiple_mapping in [0,1]:
 
                     if sp.isLeaf:
-                        print(1)
+                        #print(1)
                         if sp.inital_ref==0 and sp.parent.evolve!='Loss':
                             #sp = sp.parse(sp.to_newick(sp))
                             sp.evolve='Loss'
@@ -792,7 +781,7 @@ class reconcils:
                             if sp.evolve==None:
                                 sp.evolve= 'Speciation'
                             if len(left_.intersection(tr_))==0:
-                                print('loss')
+                                #print('loss')
                                 sp.leftChild.evolve='Loss'
                                 self.copy_loss(tr,self.gene_tree,sp.leftChild)
                                 eve.append([sp.taxa, sp.leftChild.taxa,'L',sp.leftChild.isLeaf])
@@ -802,7 +791,7 @@ class reconcils:
                             elif len(right_.intersection(tr_))==0:
                                 sp.rightChild.evolve='Loss'
                                 eve.append([sp.taxa, sp.rightChild.taxa,'L',sp.rightChild.isLeaf])
-                                print('loss1')
+                                #print('loss1')
                                 self.copy_loss(tr,self.gene_tree,sp.rightChild)
                                 stack.append((tr,sp.leftChild))
                             
@@ -829,7 +818,7 @@ class reconcils:
                     else:
                             sp.evolve= 'Speciation'
                             if len(left_.intersection(tr_))==0:
-                                print('loss2')
+                                #print('loss2')
                                 self.copy_loss(tr,self.gene_tree,sp.leftChild)
                                 sp.leftChild.evolve='Loss'
                                 eve.append([sp.taxa, sp.leftChild.taxa,'L',sp.leftChild.isLeaf])
@@ -839,9 +828,9 @@ class reconcils:
                             elif len(right_.intersection(tr_))==0:
                                 sp.rightChild.evolve='Loss'
                                 eve.append([sp.taxa, sp.rightChild.taxa,'L',sp.rightChild.isLeaf])
-                                print('loss3')
+                                #print('loss3')
                                 self.copy_loss(tr,self.gene_tree,sp.rightChild)
-                                print('done')
+                                #print('done')
                                 stack.append((tr,sp.leftChild))
         
 
@@ -866,18 +855,17 @@ class reconcils:
                             recon_left,recon_right=0,0
                         else:
                             tr_copy_1,tr_copy_2 = tr.deepcopy_double()
-                            print(tr_copy_1.to_newick(),sp.to_newick(),Initial_multiple_mapping)
+                            #print(tr_copy_1.to_newick(),sp.to_newick(),Initial_multiple_mapping)
                             
     
                             sp_1 = sp.deepcopy_single()
-                            print('done')
-                            #new_topo,cost,bi_cos,child_=ILS.ILS().ILS(tr_copy_1,sp_1,sp_1,Initial_multiple_mapping,[])
+                            
                             def call_ils_function():
                                 return ILS.ILS().ILS(tr_copy_1, sp_1, sp_1, Initial_multiple_mapping, [])
 
-                            num_threads = 20
+                            num_threads = self.thread
 
-                            timeout_duration = 600
+                            timeout_duration = self.time_ils
                             with ThreadPoolExecutor(max_workers=num_threads) as executor:
                                 future = executor.submit(call_ils_function)
 
@@ -888,8 +876,6 @@ class reconcils:
                                 except TimeoutError:
                                     print(f"The function call timed out after {timeout_duration} seconds.")
                                     return []
-                            if time.time()>start_time+time_bound:
-                                return [] 
 
                             new_topo.reset()
 
@@ -900,18 +886,13 @@ class reconcils:
 
                             new_gene_tree =tr_copy_2.deepcopy_single()
                             new_gene_tree.reset()
-                            #new_gene_tree.leftChild = sp.parse(new_gene_tree.leftChild.to_newick())
-                            #new_gene_tree.rightChild= sp.parse(new_gene_tree.rightChild.to_newick())
-
+                            
 
                             
 
                             recon_left,recon_right = sp.deepcopy_double()
                             
                             
-
-                            #recon_right = sp.parse(recon_right.to_newick())
-                            #recon_left= sp.parse(recon_left.to_newick())
 
 
 
@@ -925,7 +906,7 @@ class reconcils:
                             
                             
 
-                            print(new_gene_tree.to_newick(),sp.to_newick(),Initial_multiple_mapping)
+                            #print(new_gene_tree.to_newick(),sp.to_newick(),Initial_multiple_mapping)
                             new_gene_tree.leftChild.order_gene(recon_left)
                             new_gene_tree.rightChild.order_gene(recon_right)
 
@@ -1000,14 +981,16 @@ class reconcils:
 
                                 #visited.append(new_topo.to_newick())
 
-                                print((Initial_multiple_mapping- cost))
-                                print(child_)
+                                #print((Initial_multiple_mapping- cost))
+                                #print(child_)
 
 
                                 
                                 stack.append((new_topo,sp))
 
-                                df1 = pd.read_csv('./discordance.csv', converters={'events': eval}) 
+                                if self.introgression:
+
+                                    df1 = pd.read_csv('./discordance.csv', converters={'events': eval}) 
 
                                 for i in list(child_):
                                     if type(i[1].numbered_taxa)==set:
@@ -1023,7 +1006,6 @@ class reconcils:
                                     #i[0].event_list+=[li,['I' for i in range(Initial_multiple_mapping- cost)]]
                                     i[0].event_list+=[li,['I']]
                                     self.copy_event_(i[0],self.gene_tree,new_topo)
-                                    print('---------------------------')
                                     i[1].label_internal()
 
                                     left_sp_t=sp.leftChild.taxa
@@ -1060,24 +1042,22 @@ class reconcils:
                                             
                                         #self.copy_event_(i[0],self.gene_tree,new_topo) 
                                 
-                                print(i[0].parent.label_internal())
-                                introgression =sorted([sorted(list(i[0].parent.leftChild.taxa)),sorted(list(i[0].parent.rightChild.taxa))])
 
-                                new_events = [''.join(introgression[0])+'-'+''.join(introgression[1])]       
+                                if self.introgression:
+                                    introgression =sorted([sorted(list(i[0].parent.leftChild.taxa)),sorted(list(i[0].parent.rightChild.taxa))])
 
-    
+                                    new_events = [''.join(introgression[0])+'-'+''.join(introgression[1])]       
 
-                                mask = df1['branch'] == repr(branch_name)
-                                red =readWrite.readWrite()
+        
 
-                                print(mask)
-                                df1.loc[mask, 'events'] = df1.loc[mask, 'events'].apply(lambda x: red.update_events(x, new_events))
+                                    mask = df1['branch'] == repr(branch_name)
+                                    red =readWrite.readWrite()
 
-                                #df1.loc[mask, 'events'] = df1.loc[mask, 'events'].apply(lambda x: x + new_events)
+                                    df1.loc[mask, 'events'] = df1.loc[mask, 'events'].apply(lambda x: red.update_events(x, new_events))
 
-                                print(df1)
-                                            
-                                df1.to_csv('./discordance.csv', index=False)                               
+                                    
+                                                
+                                    df1.to_csv('./discordance.csv', index=False)                               
 
 
                        
@@ -1089,9 +1069,6 @@ class reconcils:
  
                                 
                                 self.clearid(recon_left,'Left')
-                                
-                                
-                                
 
                                 self.clearid(recon_right,'right')
                                 
@@ -1117,8 +1094,6 @@ class reconcils:
                                     while sp.taxa== parent.taxa:
                                         parent=parent.parent
                                         
-                                    #eve.append([sp.to_tag.taxa,sp.taxa,'D',sp.isLeaf])
-                                    #else:
 
                                     eve.append([parent.taxa,sp.taxa,'D',sp.isLeaf])
 
@@ -1152,46 +1127,30 @@ class reconcils:
                                         sp.rightChild=recon_right
                                         sp.children=[sp.leftChild ]
                                         sp.children+=[sp.rightChild]
-                                        
+                                
                                         sp.leftChild.parent=sp
-                                        sp.rightChild.parent=sp
-                                        
-                                        
-                                       
+                                        sp.rightChild.parent=sp   
                                         sp.isLeaf=None
-                                    
-
-
-                                    
+                                                 
                                     else:
                                         tr.leftChild.order_gene(recon_left)
                                         tr.rightChild.order_gene(recon_right)
                                         tr.label_internal()
-
                                         tr.leftChild.map_gene(recon_left)
                                         stack.append((tr.leftChild,recon_left)) 
                                         tr.rightChild.map_gene(recon_right)
                                         stack.append((tr.rightChild,recon_right)) 
-                                        
                                         sp.leftChild=recon_left
                                         sp.rightChild=recon_right 
                                         sp.children=[sp.leftChild ]
                                         sp.children+=[sp.rightChild]
-
-
                                         sp.leftChild.parent=sp
                                         sp.rightChild.parent=sp
-                                        
-                                            
                                         sp.isLeaf=None
                                     
                                        
-
-
-
-
                 if not stack:
-                    print(1)
+                    
                     break
                 else:
                     
@@ -1221,6 +1180,7 @@ def parse1():
     parser.add_argument('--I', type=str, help="ILS Cost")
     parser.add_argument('--V', type=str, help="Verbose Mode")
     parser.add_argument('--F', type=str, help="Read File Mode")
+    parser.add_argument('--Delta', type=str, help="Record number of discordant topologies")
     args= parser.parse_args()
     return(args)
 
@@ -1260,11 +1220,18 @@ def main():
 
     
     red= readWrite.readWrite()
+    tr= red.parse_bio(gene_tree)
+    sp=red.parse_bio(sp_string)
+
     
-    tr= red.parse(gene_tree)
-    sp=red.parse(sp_string)
-    
-    print(tr.to_newick())
+
+                
+    resolved_gene_tree=red.to_newick(tr)
+    resolve_sp_string =red.to_newick(sp)
+   
+
+    sp=red.parse(resolve_sp_string)
+    tr=red.parse(resolved_gene_tree)
 
 
     
@@ -1287,140 +1254,77 @@ def main():
     reconcILS.gene_tree= copy.deepcopy(tr)
     re_w = readWrite.readWrite()
     species_edge_list=reconcILS.get_edges(sp)
-    red.write_introgression(sp)
     
-    if len(gene_tree)<0:
+    if reconcILS.introgression:
+        red.write_introgression(sp)
+    
 
-        reconcILS.reconcILS(tr,sp,sp_copy,sp,[])
+    li= reconcILS.iterative_reconcILS(tr,sp,sp_copy,sp,[])
+        
         
     
-        li =re_w.sp_event(sp,[])
-    else:
-        print('Using Iterative Function')
-        li= reconcILS.iterative_reconcILS(tr,sp,sp_copy,sp,[])
-        
-        
-    print(red.to_newick(reconcILS.gene_tree))
-    print(li)
-    print(species_edge_list)
-    print('##############################################################################################')
-    li.reverse()
-    dic_reconcILS={}
-    for i in li:
-        if type(i)==list:
-            print(i[2],' on branch from ',i[0],' to ',i[1])
-            if (repr(list(sorted(i[0]))),' to ',repr(list(sorted(i[1]))))  in dic_reconcILS.keys():
-                dic_reconcILS[(repr(list(sorted(i[0]))),' to ',repr(list(sorted(i[1]))))]+=[i[2]]
-            else:
-                dic_reconcILS[(repr(list(sorted(i[0]))),' to ',repr(list(sorted(i[1]))))]=[i[2]]
-    print('##############################################################################################')
-
-    from ete3 import PhyloTree  
-    genetree = PhyloTree(gene_tree)
-    sptree = PhyloTree(sp_string)
-    recon_tree, events = genetree.reconcile(sptree)
-    print(recon_tree.write(format=9))
-    fr={}
-    for node in recon_tree.traverse(strategy="preorder"):
-            if len(node.children) >= 0:
-                if hasattr(node,'evoltype'):
-                    if node.evoltype in ['D','L']:
-                        node_ =sorted(node.get_species())
-                        if node.evoltype=='L' and len(node.children) >1:
-                            if (hasattr(node.children[1],'evoltype')  and node.children[1]!='L') or  (hasattr(node.children[0],'evoltype') and node.children[0]!='L'):
-                                    continue
-                        if node.up:
-                                node_up = sorted(node.up.get_species())
-                                if node.evoltype=='L' and node_up==node_:
-                                    continue
-                                if (repr(node_up),' to ',repr(node_))  in fr.keys():
-                                    fr[(repr(node_up),' to ',repr(node_))]+=[node.evoltype]
-                                else:
-                                    fr[(repr(node_up),' to ',repr(node_))]=[node.evoltype]
+    #print('##############################################################################################')
+    if len(li)==0:
+        print('Error')
+    else:   
+        #print('##############################################################################################')
+        li.reverse()
+        dic_reconcILS={}
+        for i in li:
+            if type(i)==list:
+                    if (repr(list(sorted(i[0]))),' to ',repr(list(sorted(i[1]))))  in dic_reconcILS.keys():
+                        if i[3]==True:
+                            dic_reconcILS[(repr(list(sorted(i[0]))),' to ',repr(list(sorted({i[1]}))))]+=[i[2]]
                         else:
-                            
-                            if (repr(node_),' to ',repr(node_))  in fr.keys():
-                                fr[(repr(node_),' to ',repr(node_))]+=[node.evoltype]
-                            else:
-                                fr[(repr(node_),' to ',repr(node_))]=[node.evoltype]
+                            dic_reconcILS[(repr(list(sorted(i[0]))),' to ',repr(list(sorted(i[1]))))]+=[i[2]]
+                    else:   
+                        if i[3]==True:
+                            dic_reconcILS[(repr(list(sorted(i[0]))),' to ',repr(list(sorted({i[1]}))))]=[i[2]]
+                        else:
+                            dic_reconcILS[(repr(list(sorted(i[0]))),' to ',repr(list(sorted(i[1]))))]=[i[2]]
 
-    import pprint
-    pprint.pprint(fr)
+    #print('##############################################################################################')
 
-    pprint.pprint(dic_reconcILS)
-
-    dic={'Process':[],'Replicate':[],'Gene_tree':[],'Species_Tree':[]}
+    eve_rec= {'D':0,'I':0,'L':0}
     for i in species_edge_list:
-        dic[i]=[]
+            rec_in_dic= {'D':0,'I':0,'L':0}
+            if i in dic_reconcILS:
+                dic_in= dict(Counter(dic_reconcILS[i]))
+                for j in rec_in_dic:
+                        if j in dic_in:
+                            rec_in_dic[j]=dic_in[j]
+                            eve_rec[j]+=dic_in[j]
+                dic_reconcILS[i]=rec_in_dic
+            else:
+                dic_reconcILS[i]={'D':0,'I':0,'L':0}
+                                
+  
 
-    print(dic_reconcILS)
-    exit()
+
+
+                                
+                                
+    sp_small=red.parse(sp_string)
+    sp_small.label_internal()
+
+
+    reconcILS.edge_to_event(sp_small,dic_reconcILS,0) 
+
+    dic={'Process':[],'Replicate':[],'Gene_tree':[],'Species_Tree':[],'Duplication':[],'NNI':[],'Loss':[]}
+
+
+
     dic['Gene_tree']+=[red.to_newick(reconcILS.gene_tree)]
-    dic['Species_Tree']+=[sp_string]
+    dic['Species_Tree']+=[red.to_newick_sp(sp_small)]
     dic['Replicate']+=[0]
     dic['Process']+=['reconcILS']  
-    dic['Gene_tree']+=[red.to_newick(reconcILS.gene_tree)]
-    dic['Species_Tree']+=[sp_string]
-    dic['Replicate']+=[0]
-    dic['Process']+=['ete3']
+    dic['Duplication']+=[eve_rec['D']]
+    dic['NNI']+=[eve_rec['I']]
+    dic['Loss']+=[eve_rec['L']]
+    print(dic)
 
-    for i in species_edge_list:
-        in_dic= {'D':0,'I':0,'L':0}
-        
-
-        if i in dic_reconcILS:
-            dic_in= dict(Counter(dic_reconcILS[i]))
-            for j in in_dic:
-                if j in dic_in:
-                    in_dic[j]=dic_in[j]
-
-        dic[(i)]+=[in_dic]
-        in_dic= {'D':0,'I':0,'L':0}
-
-        if i in fr:
-            dic_in= dict(Counter(fr[i]))
-            for j in in_dic:
-                if j in dic_in:
-                    in_dic[j]=dic_in[j]
-
-        dic[(i)]+=[in_dic]
-
-    
-
-    print(red.to_newick(reconcILS.gene_tree))
     df = pd.DataFrame(dic)
-    exit()
 
-
-    
-
-    exit()
-    #re_w = readWrite.readWrite()
- 
-    #li =re_w.sp_event(sp,[])
-    
-
-
-    sp.reset()
-
-    tr.order_gene(sp)
-    
-
-    #print(Counter(li))
-    dic={'Process':[],'Replicate':[],'Gene_tree':[],'Species_Tree':[],'Duplication':[],'NNI':[],'Loss':[]}
-    
-    dic['Gene_tree']+=[red.to_newick(reconcILS.gene_tree)]
-    dic['Species_Tree']+=[sp_string]
-        
-    #print(li)
-    dic= re_w.Create_pd('reconcILS',0,li,dic)
-
-
-    
-    df = pd.DataFrame(dic)
-  
-    
- 
     df.to_csv(parser.output, index=False)
 
     dic_log ={'Gene_Tree':[tr.to_newick()],'Species_Tree':[sp_string],'Duplication_cost':[str(reconcILS.D_cost)],'NNI_cost':[str(reconcILS.I_cost)],'Loss_cost':[str(reconcILS.L_cost)]}
