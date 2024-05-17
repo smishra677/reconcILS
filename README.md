@@ -57,7 +57,7 @@ Example entry in the output file:
 output.csv
 | Process    | Replicate | Gene_tree      | Species_Tree   | Duplication | NNI | Loss |
 |------------|-----------|----------------|----------------|-------------|-----|------|
-| reconcILS  | 0         | "((C,A)1I C,B);	" | "(A,(B,C));"   | 0           | 1   | 0    |
+| reconcILS  | 0         | "((C,A)1I C,B);	" | "((0-0-0   C,0-0-0   B)0-1-0   ,0-0-0   A)0-0-0   ;"   | 0           | 1   | 0    |
 
 output_log.csv
 
