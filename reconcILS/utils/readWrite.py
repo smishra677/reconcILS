@@ -234,6 +234,7 @@ class readWrite:
             if len(tree.event_list)>0:
                 ev=''
                 tree.event_list.reverse()
+                tree.event_list=self.summarize(tree.event_list)
                 for j in tree.event_list:
                     if j[0] not in [-1,-2]:
                         dic=dict(Counter(j[1]))
@@ -260,6 +261,8 @@ class readWrite:
             if len(tree.event_list)>0:
                 ev=''
                 tree.event_list.reverse()
+                tree.event_list=self.summarize(tree.event_list)
+                #print(tree.event_list)
                 for j in tree.event_list:
                     if j[0] not in [-1,-2]:
                         dic=dict(Counter(j[1]))
