@@ -17,7 +17,7 @@
 # Experiments
 
 ## Requirements
-1. Extract the experiment folder into `./reconcILS`.
+1. Extract the experiment folder into `./reconcILS` and change the folder to Experiments  `cd ./Experiments`
 2. Install `ete3` and `DLCpar`.
 
 ## Single Copy Orthologs / All Paralogy Dataset
@@ -25,6 +25,7 @@
 
 ## Simulated Dataset
 4. Replace the `gene_folder` on line 107 with folder names from the input. For example: `./10_30`, `./zero_loss`, `./zero_loss_zero_dups`.
+5. Run the appropriate script: `python ./trigger_simulated_data.py`.
 
 # Outputs
 
