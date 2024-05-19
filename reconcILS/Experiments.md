@@ -45,7 +45,7 @@ By the end of the run, the program will output three types of files:
 
 **Output Explanation:**
 - `bio_result_ZeroCol_ASTRAL_ML_<SCO/all_paralogy>_MIN27_pruned.csv`: Records all the gene trees, with event numbers (i.e., number of duplications, NNI, and loss) required for reconciling each gene tree with the species tree for both ReconcILS and ete3.
-- `labeled_L_ZeroCol_ASTRAL_ML_SCO_MIN27_pruned.csv`: This is the species tree with events labeled. This outputs the Newick representation used in Figure S3 (for both ReconcILS and ete3).
+- `labeled_L_ZeroCol_ASTRAL_ML_<SCO/all_paralogy>_MIN27_pruned.csv`: This is the species tree with events labeled. This outputs the Newick representation used in Figure S3 (for both ReconcILS and ete3).
 - Timing files are not relevant to our experiments but record timing for ReconcILS and writing output to the files.
 - `ZeroCol_ASTRAL_ML_<SCO/all_paralogy>_MIN27_pruned_Gene_trees.csv`: These are the gene trees that produced the particular results. This is important because the input gene trees are non-binary and have 29 species (including outgroups). We have pruned the species, converted them to letters with the key provided above, and resolved the non-binary nodes at random. Hence, this file is the true input to ReconcILS.
 
