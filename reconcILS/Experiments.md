@@ -3,9 +3,9 @@
 ## Input
 
 ### Folders: 10_30, zero_loss, zero_loss_zero_dups
-- These folders contain gene trees simulated by DupCoal.
+- These folders contain gene trees simulated by dupcoal.
 - The species tree used is inside the folder as "sp_tree.tre".
-- The command given to DupCoal is also found inside the folder as "command.command".
+- The command given to dupcoal is also found inside the folder as "command.command".
 
 ### Files
 - **ZeroCol_ASTRAL_ML_ALLPARALOGS_MIN27.tre, ZeroCol_ASTRAL_ML_SCO_MIN27.tre**: These are gene trees from Smith et al., 2020.
