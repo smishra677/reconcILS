@@ -23,7 +23,10 @@ You can install reconcILS using pip:
 pip install .
 ```
 
+## Input
 
+reconcILS accepts species names with fewer than or equal to 2 characters. For instance, reconcILS accepts (AA,(AB,AC));, (AA_1,(AB_1,AC_2));, or (A,(AB_1,AC));. 
+The species present in the gene tree must be present in the species tree.
 
 
 ## Arguments 
