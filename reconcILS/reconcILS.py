@@ -9,6 +9,8 @@ import utils.readWrite as readWrite
 import pickle
 import time
 import pandas as pd
+import string
+import json
 from concurrent.futures import ThreadPoolExecutor, TimeoutError
 
 sys.setrecursionlimit(50000)
@@ -28,6 +30,67 @@ class reconcils:
         self.time_ils=600
         self.thread=20
 
+    def get_species(self,sp):
+        flag1=False
+        flag2=False
+        length=[]
+        return_it=[]
+        stack = [sp]
+        while stack:
+                curr=stack.pop()
+
+                
+                
+
+                if str(curr.taxa)!='0':
+                    length.append(len(str(curr.taxa)))
+                    return_it.append(str(curr.numbered_taxa))
+
+                if curr.leftChild:
+                    stack.append(curr.leftChild)
+                if curr.rightChild:
+                    stack.append(curr.rightChild)
+
+        flag2  = all(len_ < 3 for len_ in length)
+        flag1  = all(len_ > 3 for len_ in length)
+
+        return return_it,not(flag1 or flag2),flag2
+
+
+    def generate_letter_combinations(self):
+        letters = list(string.ascii_uppercase)
+        for first in letters:
+            if first not in ['D','I','L']:
+                yield first
+        for first in letters:
+            if first not in ['D','I','L']:
+                for second in letters:
+                    if second not in ['D','I','L']:
+                        yield first + second
+
+
+
+    def generate_code_species(self,mapping,tree):
+        for species, letter in mapping.items():
+            tree = tree.replace(","+species+")", " "+letter+")")
+            tree = tree.replace("("+species+",", "("+letter+",")
+        return tree
+
+    def generate_code_gene(self,mapping,tree):
+        for species, letter in mapping.items():
+            tree = tree.replace(" "+species+",", " "+letter+",")
+            tree = tree.replace(" "+species+")", " "+letter+")")
+            tree = tree.replace("("+species+",", "("+letter+",")
+            tree = tree.replace(","+species+")", ","+letter+")")
+            tree = tree.replace(" "+species+"-", " "+letter+"-")
+            tree = tree.replace("-"+species+"-", "-"+letter+"-")
+            tree = tree.replace("-"+species+")", "-"+letter+")")
+        return tree
+
+    def generate_species_codes(self,mapping,tree):
+        for species, letter in mapping.items():
+            tree = tree.replace(species, letter)
+        return tree
 
     
     def clearid(self,sp,ori):
@@ -1220,15 +1283,51 @@ def main():
 
     
     red= readWrite.readWrite()
+    sp_string = sp_string.replace('e-', '0')
+    gene_tree = gene_tree.replace('e-', '0')
+
+
+
     tr= red.parse_bio(gene_tree)
     sp=red.parse_bio(sp_string)
 
-    
+    species_names,flag1,flag2=reconcILS.get_species(sp)
 
-                
-    resolved_gene_tree=red.to_newick(tr)
-    resolve_sp_string =red.to_newick(sp)
-   
+
+    if flag1:
+        print('Error: please make sure all species are named with more than 2> or less than 2<= characters')
+        exit()
+
+    
+ 
+
+    if not flag2:
+        map_ = reconcILS.generate_letter_combinations()
+
+
+        mapping = {name: next(map_) for name in species_names}
+
+
+        resolve_sp_string=reconcILS.generate_species_codes(mapping,red.to_newick(sp))
+
+        resolved_gene_tree=reconcILS.generate_species_codes(mapping,red.to_newick(tr))
+
+        inverse_mapping = {value: key for key, value in mapping.items()}
+
+
+
+        file_path_name_dict = './'+parser.output[:-4]+'species_acr.json'
+        file_path_inverse_name_dict = './'+parser.output[:-4]+'acr_species.json'
+
+        with open(file_path_name_dict, 'w') as file:
+            json.dump(mapping, file)
+
+        with open(file_path_inverse_name_dict, 'w') as file:
+            json.dump(inverse_mapping, file)
+    else:
+        resolved_gene_tree=red.to_newick(tr)
+        resolve_sp_string =red.to_newick(sp)
+
 
     sp=red.parse(resolve_sp_string)
     tr=red.parse(resolved_gene_tree)
@@ -1304,7 +1403,7 @@ def main():
 
                                 
                                 
-    sp_small=red.parse(sp_string)
+    sp_small=red.parse(resolve_sp_string)
     sp_small.label_internal()
 
 
@@ -1314,16 +1413,24 @@ def main():
 
 
 
-    dic['Gene_tree']+=[red.to_newick(reconcILS.gene_tree)]
-    dic['Species_Tree']+=[red.to_newick_sp(sp_small)]
+
+    if not flag2:
+        dic['Gene_tree']+=[reconcILS.generate_code_gene(inverse_mapping,red.to_newick(reconcILS.gene_tree))]
+        dic['Species_Tree']+=[reconcILS.generate_code_gene(inverse_mapping,red.to_newick_sp(sp_small))]
+
+    else:
+        dic['Gene_tree']+=[red.to_newick(reconcILS.gene_tree)]
+        dic['Species_Tree']+=[red.to_newick_sp(sp_small)]
+
+
     dic['Replicate']+=[0]
     dic['Process']+=['reconcILS']  
     dic['Duplication']+=[eve_rec['D']]
     dic['NNI']+=[eve_rec['I']]
     dic['Loss']+=[eve_rec['L']]
-    print(dic)
 
     df = pd.DataFrame(dic)
+    print(dic)
 
     df.to_csv(parser.output, index=False)
 
