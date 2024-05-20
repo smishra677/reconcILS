@@ -23,9 +23,7 @@ You can install reconcILS using pip:
 pip install .
 ```
 
-## Input
-reconcILS currently accepts binary gene trees of form (B_1,(C_1,A_1)); or (B,(C,A)); or (B_2,(C_1,A)); .
-We are working to implement a version of reconcILS that accepts non-binary gene trees.
+
 
 
 ## Arguments 
