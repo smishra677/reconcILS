@@ -65,6 +65,25 @@ output_log.csv
 
 
 
+## Parsing Output
+
+### Labeled Species Tree
+((0-0-0 C, 0-0-0 B) 0-1-0, 0-0-0 A) 0-0-0
+
+Here, ReconcILS produces a labeled species tree where each branch is labeled with the number of **Duplication-NNI-Loss** events for that branch. For instance, `((0-0-0 C, 0-0-0 B) 0-1-0, 0-0-0 A) 0-0-0` indicates there was one NNI move on the branch leading from `(B, C)` to `(A, (B, C))` on the species tree.
+
+### Labeled Gene Tree
+((C, A) 1I C, B)
+
+Here, ReconcILS labels the gene tree with Duplication (D), NNI (I), and Loss (L) events. For example, `((C, A) 1I C, B)` indicates there was one NNI move on `C` at the branch `(C, A)` to `(A, (B, C))` on the gene tree.
+
+These labeled trees can be visualized with any Newick visualizer.
+
+
+## Experiments:
+
+For experiments, please see the experiment branch. (https://github.com/smishra677/reconcILS/blob/Experiments/reconcILS/Experiments.md)
+
 ## Example Usage
 
 You can use reconcILS as follows:
