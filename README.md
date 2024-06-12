@@ -97,4 +97,8 @@ Input as file:
 ```bash
 python ./reconcILS/reconcILS.py --spTree './spTree.tre' --gTree './gTree.tre' --output 'result.csv' --F 1
 ```
+Using reconcILS from a Python file:
+
+Please see the example.md at https://github.com/smishra677/reconcILS/blob/main/reconcILS/example/example.md
+
 
