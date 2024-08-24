@@ -316,7 +316,7 @@ class reconcils:
     
     def edge_to_event(self,sp,dic,flag):
         stack = [sp]
-        if len(sp.event_list)<2:
+        if len(sp.event_list)<=flag:
             if sp.isLeaf:
                 sp.event_list+=[[dic[(repr(list(sorted({sp.taxa}))),' to ',repr(list(sorted({sp.taxa}))))],'Up']]
             else:
@@ -333,7 +333,7 @@ class reconcils:
         while stack:
             curr=stack.pop()
             if curr.parent:
-                if len(curr.event_list)<2:
+                if len(curr.event_list)<=flag:
                     if curr.isLeaf:
                         curr.event_list+= [[dic[(repr(list(sorted(curr.parent.taxa))),' to ',repr(list(sorted({curr.taxa}))))],'Up']]
                     else:
