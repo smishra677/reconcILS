@@ -76,6 +76,7 @@ class Tree:
                 node.tag = None
                 node.evolve = None
                 node.taxa_list = []
+                node.cost=0
                 #node.sp_ev_list=[]
                 #node.NNI_ = []
 

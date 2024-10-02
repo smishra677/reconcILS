@@ -140,7 +140,7 @@ class ILS:
                                     tre_pool[k] = li[1]
                                     orientation[k] = li[2]
                                 else:
-                                    if pool[k] >= combined_score:
+                                    if pool[k] > combined_score:
                                         pool[k] = combined_score
                                         tre_pool[k] = li[1]
                                         orientation[k] = li[2]
@@ -175,10 +175,12 @@ class ILS:
                 child= self.find_parent_child(root,child)
         return child
 
-    def ILS(self, gene_tree, tr, sp_copy, cost, visited):
+    def ILS(self, gene_tree, tr, sp_copy, cost,best_cost, visited):
+        #print(1,cost)
+        #Initial_best_cost=best_cost
         child = self.parent_child(tr, [])
-
-        if len(child) == 0 or cost <= 1:
+        same_round=False
+        if len(child) == 0 or cost <= 0:
             return gene_tree, cost, -1, visited
 
         geneTree = gene_tree.deepcopy()
@@ -188,7 +190,7 @@ class ILS:
             list_tree = child[0][0].NNI(geneTree, child[0][2])
         else:
             chil, trei, cos, orientation, list_tree = self.pick_first_edge(child, gene_tree, tr, visited)
-
+            #print(cos,trei.to_newick())
             if cos == 0:
                 trei.label_internal()
                 chii = self.get_child_info(chil, orientation)
@@ -202,11 +204,11 @@ class ILS:
         ch = child[0][0].deepcopy()
         ch.reset()
 
-        best_cost = cost
+        #best_cost = cost
         improvement = False
 
         new_topo = geneTree.deepcopy()
-
+        
         for i in list_tree:
             i[1].reset()
             i[0].reset()
@@ -219,16 +221,25 @@ class ILS:
             i[1].map_gene(cop)
             new_cost = len(cop.refTo)
 
-            if best_cost > new_cost and cost > 0:
-                improvement = best_cost != new_cost
+            if best_cost >= new_cost and cost >= 0:
+                improvement = best_cost >= new_cost
                 best_cost = new_cost
                 new_topo = i[1].deepcopy()
 
                 chii = self.get_child_info(child[0], i[2])
+                
+                
+
+ 
+                if same_round:
+                    visited=visited[:-1]
+                else:
+                    same_round=True
+                    cost -=1
                 visited.append(chii)
-
-                cost -= 1
-
+                
+            
+            
         if cost <= 0 or not improvement:
             return new_topo, cost, -1, visited
 
@@ -240,7 +251,7 @@ class ILS:
         new_sp.label_internal()
         new_topo.map_gene(new_sp)
 
-        return self.ILS(new_topo, new_sp, sp_copy, cost, visited)
+        return self.ILS(new_topo, new_sp, sp_copy, cost,best_cost, visited)
 
     def get_child_info(self, chil, orientation):
         if chil[2] == 'Left':

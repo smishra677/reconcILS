@@ -2,7 +2,7 @@ import utils.Tree as Tree
 from collections import Counter
 import pandas as pd
 import igraph as ig
-import matplotlib.pyplot as plt
+
     
 class Tally:
     def __init__(self):

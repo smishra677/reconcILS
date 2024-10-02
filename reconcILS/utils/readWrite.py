@@ -158,20 +158,305 @@ class readWrite:
                         
                 
                 
+    
+    def search_ete3(self,root):
+
+        stack=[]
+        child_events=[]
+        while stack:
+
+            child_events += [node_child.evoltype for node_child in root.traverse(strategy="postorder") if len(node_child.children) >1]
+                        
+    def convert_1(self,df,df1):
+        df['Loss'].append(sum(list(df1['loss'])))
+        df['NNI'].append(sum(list(df1['coal'])))
+        df['Duplication'].append(sum(list(df1['dup'])))
+
+        
+        return df
+
+    def convert(self,df,df1):
+        df['Loss'].append(sum(list(df1['loss'])))
+        df['DLCILS'].append(sum(list(df1['coal'])))
+        df['Duplication'].append(sum(list(df1['dup'])))
+        df['Hemiplasy'].append(0)
+        df['NNI'].append(0)
+        df['RHemiplasy'].append(0)
+        
+        return df
+
+    def put_it_in_sp(self,df,node_to_leaves,species_edge_list):
+
+        events={idx:{'D':0,'I':0,'L':0} for idx in species_edge_list}
+        for idx, row in df.iterrows():
+
+            if int(row['parentid'])==-1:
+                if row['nodeid'].isnumeric():
+                    start= repr(list(sorted(node_to_leaves[str(row['nodeid'])])))
+                    #events[(start,' to ',start)]= {'D':row['dup'],'I':row['coal'],'L':row['loss']}
+                else:
+                    start =repr(list({row['nodeid']}))
+            
+            else:
+                start=repr(list(sorted(node_to_leaves[str(row['parentid'])])))
+            end=''
+
+
+            if row['nodeid'].isnumeric():
+                end= repr(list(sorted(node_to_leaves[str(row['nodeid'])])))
+            else:
+                end =repr(list({row['nodeid']}))
             
 
+            if (start,' to ',end) in events:
+                events[(start,' to ',end)]= {'D':row['dup'],'I':row['coal'],'L':row['loss']}
 
-    def sp_event_ete3(self,root):
+
+        return events
+
+    def label_reconcILS(self,li):
+            li.reverse()
+            dic_reconcILS={}
+            for i in li:
+                    if type(i)==list:
+                            if (repr(list(sorted(i[0]))),' to ',repr(list(sorted(i[1]))))  in dic_reconcILS.keys():
+                                    if i[3]==True:
+                                            dic_reconcILS[(repr(list(sorted(i[0]))),' to ',repr(list(sorted({i[1]}))))]+=[i[2]]
+                                    else:
+                                            dic_reconcILS[(repr(list(sorted(i[0]))),' to ',repr(list(sorted(i[1]))))]+=[i[2]]
+                            else:   
+                                    if i[3]==True:
+                                            dic_reconcILS[(repr(list(sorted(i[0]))),' to ',repr(list(sorted({i[1]}))))]=[i[2]]
+                                    else:
+                                            dic_reconcILS[(repr(list(sorted(i[0]))),' to ',repr(list(sorted(i[1]))))]=[i[2]]
+            
+            return dic_reconcILS
+
+    def label_ete3(self,recon_tree, fr):
+        coun = 0
+        coun1 = 0
+
+        for node in recon_tree.traverse(strategy="preorder"):
+            if len(node.children) >= 0:
+                if hasattr(node, 'evoltype'):
+                    if node.evoltype in ['D', 'L']:
+                        if node.evoltype == 'D':
+                            coun += 1
+
+                        node_ = sorted(node.get_species())
+
+                        if node.evoltype == 'L' and len(node.children) > 1:
+                            if not hasattr(node.children[1], 'evoltype') or not hasattr(node.children[0], 'evoltype'):
+                                continue
+                            else:
+                                if node.up:
+                                    node_up = sorted(node.up.get_species())
+                                    if node.evoltype == 'L' and node_up == node_:
+                                        continue
+                                    elif (repr(node_up), ' to ', repr(node_)) in fr.keys():
+                                        fr[(repr(node_up), ' to ', repr(node_))] += [node.evoltype]
+                                    else:
+                                        fr[(repr(node_up), ' to ', repr(node_))] = [node.evoltype]
+                                else:
+                                    if (repr(node_), ' to ', repr(node_)) in fr.keys():
+                                        fr[(repr(node_), ' to ', repr(node_))] += [node.evoltype]
+                                    else:
+                                        fr[(repr(node_), ' to ', repr(node_))] = [node.evoltype]
+
+                                if hasattr(node.children[1], 'evoltype'):
+                                    node.children[1].evoltype = 'S'
+                                if hasattr(node.children[0], 'evoltype'):
+                                    node.children[0].evoltype = 'S'
+
+                        else:
+                            if node.up:
+                                node_up = sorted(node.up.get_species())
+                                tem_node = node.up
+
+                                while node_ == node_up:
+                                    if tem_node.up:
+                                        node_up = sorted(tem_node.up.get_species())
+                                        tem_node = tem_node.up
+                                    else:
+                                        break
+
+                                if node.evoltype == 'D':
+                                    coun1 += 1
+
+                                if (repr(node_up), ' to ', repr(node_)) in fr.keys():
+                                    fr[(repr(node_up), ' to ', repr(node_))] += [node.evoltype]
+                                else:
+                                    fr[(repr(node_up), ' to ', repr(node_))] = [node.evoltype]
+                            else:
+                                if (repr(node_), ' to ', repr(node_)) in fr.keys():
+                                    fr[(repr(node_), ' to ', repr(node_))] += [node.evoltype]
+                                else:
+                                    fr[(repr(node_), ' to ', repr(node_))] = [node.evoltype]
+        return fr
+
+
+
+
+
+    def sp_event_ete3(self,root,events):
         li=[]
+        
 
-        for node in root.traverse(strategy="postorder"):
-            if len(node.children) != 0:
+        
+        for ev in events:
+            if ev.etype == "D": 
+                #print(ev.inparalogs, ev.outparalogs)
+                li.append(ev.etype)
+
+        #print(li)
+        for node in root.traverse(strategy="preorder"):
+            
+            if hasattr(node,'evoltype') :
+                #print(node)
+                #print(node.evoltype)
+                #print('############################')
+                if (node.evoltype)!='D':
+                    node_up= node.up
+                    #print(node)
+
+                    #print(node_up)
+                   
+                    #print('$$$$$$$$$$$$$$$$$$$$$$$')
+                    #print(child_events)
+                    if node.evoltype=='L':
+
+
+                        child_events = []
+                        for node_child in node.traverse(strategy="preorder"):
+                            if hasattr(node_child,'evoltype'):
+                                if  node!=node_child:
+                                    child_events.append(node_child.evoltype)
+                            else:
+                                child_events.append('Z')
+
+
+                        #print(node,child_events)
+                    
+                        
+                        if 'S' in child_events or 'D' in child_events or 'X' in child_events or 'Z' in child_events :
+                            if node.evoltype=='D':
+                                print('Wrong Marking X')
+                                exit()
+                            #print('set to X-------------------------------------------------------')
+                            setattr(node, 'evoltype', 'X')
+                        elif len(child_events)==0:
+                            #print(node)
+                            li.append(node.evoltype)
+
+                        else: 
+                            #print(True)
+
+                            #print(node)
+                            li.append(node.evoltype)
+                            for node_child in node.traverse(strategy="preorder"):
+                                if hasattr(node_child, 'evoltype'):
+                                    if node_child.evoltype=='L'and node_child!=node:
+                                        if node_child.evoltype=='D':
+                                            print('wrong marking')
+                                            exit()
+                                        setattr(node_child, 'evoltype', 'X')
+                                        #print('set to Y-------------------------------------------------------')
+
+                            
+
+
+
+
             ##print(dir(root))
                 
-                li.append(node.evoltype)
+                    #li.append(node.evoltype)
             ##print(root.isLeaf),
         
         return li
+
+    def find_leaves(self,node, df):
+        if not node.isnumeric():
+            return node
+
+
+        children = df[df['parentid'] == int(node)]['nodeid'].tolist()
+
+        if not children:
+            return {node}
+        else:
+            result = set()
+            for child in children:
+                result.update(self.find_leaves(child, df))
+            return result
+
+
+    def Create_pd_ete3_1(self,flag,i,o,dic):
+            dic['Process']+=[flag]
+            dic['Replicate']+=[i]
+            dic['Duplication'].append(0)
+            dic['Loss'].append(0)
+            dic['NNI'].append(0)
+
+            
+
+            for i in o:
+                #print(i)
+                if i in ['D','L']:
+                        if i =='D':
+                            dic['Duplication'][-1]=o[i]
+                        elif i=='L':
+                            dic['Loss'][-1]=o[i]
+                        else:
+                            continue
+
+            return dic
+
+    def find_replacement_for_edge(self,species_edge_list,fr):
+            list_to_replace ={}
+            for edge in fr:
+                    if edge not in species_edge_list:
+                            for edge_sp in species_edge_list:
+                                    if edge[2] in edge_sp[2]:
+                                            list_to_replace[edge]=edge_sp
+
+
+            for edge in list_to_replace:
+                    fr[list_to_replace[edge]]= fr[edge]
+            
+            return fr
+
+    def put_it_in_sp_tree(self,species_edge_list,dic_reconcILS,fr):
+            eve_rec= {'D':0,'I':0,'L':0}
+            eve_ete= {'D':0,'I':0,'L':0}
+            from collections import Counter
+            for i in species_edge_list:
+                    rec_in_dic= {'D':0,'I':0,'L':0}
+                    if i in dic_reconcILS:
+                            dic_in= dict(Counter(dic_reconcILS[i]))
+                            for j in rec_in_dic:
+                                    if j in dic_in:
+                                            rec_in_dic[j]=dic_in[j]
+                                            eve_rec[j]+=dic_in[j]
+                            dic_reconcILS[i]=rec_in_dic
+                    else:
+                            dic_reconcILS[i]={'D':0,'I':0,'L':0}
+                                                            
+                                                    
+                    ete_in_dic= {'D':0,'I':0,'L':0}
+
+                    if i in fr:
+                            dic_in= dict(Counter(fr[i]))
+                            for j in ete_in_dic:
+                                    if j in dic_in:
+                                            ete_in_dic[j]=dic_in[j]
+                                            eve_ete[j]+=dic_in[j]
+                            fr[i]=ete_in_dic
+                    else:
+                            fr[i]={'D':0,'I':0,'L':0}
+            return dic_reconcILS,fr,eve_rec,eve_ete
+                    
+
+
 
     def sp_event_gene(self,root,li):
         from collections import Counter
