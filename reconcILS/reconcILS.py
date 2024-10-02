@@ -179,9 +179,18 @@ class reconcils:
 
                         self.label_lost_child(co.leftChild)
                         
-                       
-                        self.gene_tree=co
-                        sp.id=co.id
+                        print(co.to_newick())
+                        
+                        if sp.parent==None:
+                            self.gene_tree=co
+                        else:
+                            sp.leftChild=co.leftChild
+                            sp.rightChild=co.rightChild
+                            co.rightChild.id=sp.id
+                            sp.id=co.id
+                            sp.taxa=''
+
+                        
 
                         co.leftChild.parent =sp
                         co.rightChild.parent =sp
@@ -316,7 +325,7 @@ class reconcils:
     
     def edge_to_event(self,sp,dic,flag):
         stack = [sp]
-        if len(sp.event_list)<=flag:
+        if len(sp.event_list)<2:
             if sp.isLeaf:
                 sp.event_list+=[[dic[(repr(list(sorted({sp.taxa}))),' to ',repr(list(sorted({sp.taxa}))))],'Up']]
             else:
@@ -333,7 +342,7 @@ class reconcils:
         while stack:
             curr=stack.pop()
             if curr.parent:
-                if len(curr.event_list)<=flag:
+                if len(curr.event_list)<2:
                     if curr.isLeaf:
                         curr.event_list+= [[dic[(repr(list(sorted(curr.parent.taxa))),' to ',repr(list(sorted({curr.taxa}))))],'Up']]
                     else:
@@ -794,6 +803,7 @@ class reconcils:
         while True:
             if sp:
 
+
                 Initial_multiple_mapping = len(sp.refTo)
                 if self.V:
                     print('Multiple_mapping', Initial_multiple_mapping)
@@ -924,7 +934,7 @@ class reconcils:
                             sp_1 = sp.deepcopy_single()
                             
                             def call_ils_function():
-                                return ILS.ILS().ILS(tr_copy_1, sp_1, sp_1, Initial_multiple_mapping, [])
+                                return ILS.ILS().ILS(tr_copy_1, sp_1, sp_1, Initial_multiple_mapping,Initial_multiple_mapping, [])
 
                             num_threads = self.thread
 
@@ -1018,8 +1028,10 @@ class reconcils:
 
 
                             #print('to_new',new_topo.to_newick())
+                            red =readWrite.readWrite()
 
-                        if  NNI_cost<duplication_cost and  sp.isLeaf==None and (new_multiple<Initial_multiple_mapping or bi_cos==0):
+                        if  NNI_cost<duplication_cost and  sp.isLeaf==None and (new_multiple<Initial_multiple_mapping or bi_cos==0) and not (new_topo.to_newick() == tr.to_newick() or red.parse(new_topo.to_newick()).to_newick == tr.to_newick()) :
+
                                 sp.refTo=[]
                                 
                                 new_topo.reset()
@@ -1114,7 +1126,7 @@ class reconcils:
         
 
                                     mask = df1['branch'] == repr(branch_name)
-                                    red =readWrite.readWrite()
+                                    
 
                                     df1.loc[mask, 'events'] = df1.loc[mask, 'events'].apply(lambda x: red.update_events(x, new_events))
 
@@ -1440,3 +1452,4 @@ def main():
 if __name__ == "__main__":
     
     main()
+
