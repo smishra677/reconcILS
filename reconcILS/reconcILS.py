@@ -1305,7 +1305,7 @@ def main():
 
     species_names,flag1,flag2=reconcILS.get_species(sp)
 
-    print(species_names,flag1,flag2)
+    #print(species_names,flag1,flag2)
 
 
     if flag1:
