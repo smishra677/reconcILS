@@ -4,11 +4,11 @@
 
 ### Folder: 10_01
 - This folder contains gene trees simulated by Dupcoal.
-- The species tree used is inside the folder, named "species_3_with_branch_lengths.tre".
+- The species tree used is  named "species_3_with_branch_lengths.tre".
 
 ### Folder: Data_40_with_duplication_loss, Data_40_without_duplication_loss
 - Contains folders for gene trees produced by SimPhy and Dupcoal, along with all results with and without duplication (dupcoal_recepie.txt, SimPhy recipe can be found inside the SimPhy data folder).
-- The species tree used is inside the folder, named "species_40_with_branch_lengths.tre".
+- The species tree used is  named "species_40_with_branch_lengths.tre".
 
 ### Folder: Primate_results
 - Contains the results for the primate dataset.
