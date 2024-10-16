@@ -2,16 +2,25 @@
 
 ## Input
 
-### Folders: 10_01
-- These folders contain gene trees simulated by DupCoal.
+### Folder: 10_01
+- This folder contains gene trees simulated by Dupcoal.
 - The species tree used is inside the folder, named "species_3_with_branch_lengths.tre".
-- The command given to DupCoal is also found inside the folder, named "command.command".
+
+### Folder: Data_40_with_duplication_loss, Data_40_without_duplication_loss
+- Contains folders for gene trees produced by SimPhy and Dupcoal, along with all results with and without duplication (dupcoal_recepie.txt, SimPhy recipe can be found inside the SimPhy data folder).
+- The species tree used is inside the folder, named "species_40_with_branch_lengths.tre".
+
+### Folder: Primate_results
+- Contains the results for the primate dataset.
+
+### Folder: IQTree
+- This folder contains gcf files for SimPhy and Dupcoal gene trees.
 
 ### Files
 - **ZeroCol_ASTRAL_ML_ALLPARALOGS_MIN27.tre, ZeroCol_ASTRAL_ML_SCO_MIN27.tre**: These are gene trees from Smith et al., 2020.
 - **species_3_with_branch_lengths.tre, species_3_without_branch_lengths.tre, species_40_with_branch_lengths.tre, species_30_without_branch_lengths.tre, species_tree_primates.tre, sp_tree_pruned.tre**: These are the species trees used in our experiments.
-  1. **species_3_with_branch_lengths.tre**: Used in simulated experiments (10_01). You can find the recipe in the DupCoal recipe file.
-  2. **species_40_with_branch_lengths.tre**: Used in simulated experiments (Data_40_without_duplication_loss, Data_40_with_duplication_loss (Figure S1)). You can find the recipe in the DupCoal recipe file.
+  1. **species_3_with_branch_lengths.tre**: Used in simulated experiments (10_01). You can find the recipe in the Dupcoal recipe file.
+  2. **species_40_with_branch_lengths.tre**: Used in simulated experiments (Data_40_without_duplication_loss, Data_40_with_duplication_loss (Figure S1)). You can find the recipe in the Dupcoal recipe file.
   3. **sp_tree_pruned.tre**: This is the species tree from "species_tree_primates.tre" after pruning outgroups and converting species into keys provided in the map.
 
 # Experiments
@@ -56,7 +65,7 @@ By the end of the run, the program will output three types of files:
 By the end of the run, you will have four types of files:
 
 1. **Reconciliation Results**
-   - `<folder_name>_1_results.csv`: Records all the gene trees, along with event numbers (i.e., number of duplications, NNI, and losses) required for reconciling each gene tree with the species tree (True_process <DupCoal>, reconcILS, DLCpar, and ete3).
+   - `<folder_name>_1_results.csv`: Records all the gene trees, along with event numbers (i.e., number of duplications, NNI, and losses) required for reconciling each gene tree with the species tree (True_process <Dupcoal>, reconcILS, DLCpar, and ete3).
 
 2. **Timing**
    - `<folder_name>_1_time_result.csv`: Timing for ete3 and reconcILS.
@@ -72,14 +81,10 @@ By the end of the run, you will have four types of files:
 2. **Plot.r**: Used to plot results in Figure 5 of the main text. Please copy the labeled Newick string from `ZeroCol_ASTRAL_ML_<SCO/all_paralogy>_MIN27_pruned_Gene_trees.csv` into `newick_str` (line 10) and adjust the `Normalizing_factor` as follows: SCO: 1820, All_paralogy: 11555.
 3. **Produce_results-40_species.ipynb**: Jupyter notebook used to produce Figure 4 and Figure S2 in the main text. You can also find the significance test for hemiplasy in this notebook, as well as Time and Memory plots (Figure S4).
 4. **Produce_results-3_species.ipynb**: Jupyter notebook used to produce Figure S3 in the main text.
-5. **IQTree**: Folder containing gcf files for SimPhy and DupCoal gene trees.
-6. **produce_tree.r**: Script to generate a random tree using `ape`.
-7. **scale.py**: Script to scale the tree length.
-8. **plot_concord_simphy_dupcoal.py**: Used to plot and compare the correlation for gcf values in the IQTree folder for gene trees produced by DupCoal and SimPhy (SimPhy recipe can be found inside the `./Data_40_with_duplication_loss/simphy` folder).
-9. **plot_concord_primates.py**: Used to plot and compare correlations for (NNI vs gcf from Smith et al.), (all paralogs NNI vs SCO NNI), and (ETE3 duplications vs gcf from Smith et al.). Uncomment different sections of the code to obtain these.
-10. **Data_40_with_duplication_loss**: Contains folders for gene trees produced by SimPhy and DupCoal along with all results.
-11. **Data_40_without_duplication_loss**: Contains folders for gene trees produced by SimPhy and DupCoal along with all results.
-12. **Primate_results**: Contains the results for the primate dataset.
+5. **produce_tree.r**: Script to generate a random tree using `ape`.
+6. **scale.py**: Script to scale the tree length.
+7. **plot_concord_simphy_Dupcoal.py**: Used to plot and compare the correlation for gcf values in the IQTree folder for gene trees produced by Dupcoal and SimPhy (SimPhy recipe can be found inside the `./Data_40_with_duplication_loss/simphy` folder).
+8. **plot_concord_primates.py**: Used to plot and compare correlations for (NNI vs gcf from Smith et al.), (all paralogs NNI vs SCO NNI), and (ETE3 duplications vs gcf from Smith et al.). Uncomment different sections of the code to obtain these.
 
 ## MAP Used:
 ```python
