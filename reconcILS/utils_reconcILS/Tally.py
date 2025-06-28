@@ -1,4 +1,4 @@
-from .utils_reconcILS import Tree
+from . import Tree
 from collections import Counter
 import pandas as pd
 import igraph as ig

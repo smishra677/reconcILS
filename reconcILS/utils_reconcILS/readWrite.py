@@ -1,4 +1,4 @@
-from .utils_reconcILS import Tree
+from . import Tree
 import argparse
 import copy
 import re
