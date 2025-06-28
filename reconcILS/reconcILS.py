@@ -1,11 +1,11 @@
 import sys
 sys.path.append("../")
-from utils_reconcILS import Tree
+from .utils_reconcILS import Tree
 import copy
-from utils_reconcILS import Tally
+from .utils_reconcILS import Tally
 import argparse
-from utils_reconcILS import ILS
-from utils_reconcILS import readWrite
+from .utils_reconcILS import ILS
+from .utils_reconcILS import readWrite
 import pickle
 import time
 import pandas as pd
