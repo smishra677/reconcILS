@@ -102,3 +102,36 @@ Using reconcILS from a Python file:
 Please see the example.md at https://github.com/smishra677/reconcILS/blob/main/reconcILS/example/example.md
 
 
+## Example Usage Conda
+
+Install the package via Conda:
+
+```bash
+conda install -c smishra677 reconcils
+```
+
+Use the package programmatically from Python:
+
+```python
+
+import sys
+from reconcILS import reconcILS
+
+# Simulate command-line arguments
+sys.argv = [
+    "reconcILS.py",
+    "--spTree", "(A,(B,C));",     # Species tree in Newick format
+    "--gTree", "((A,C),B);",      # Gene tree in Newick format
+    "--output", "result.csv"      # Output file name
+]
+
+# Run the reconciliation
+reconcILS.main()
+```
+
+This will generate:
+- `result.csv`: Reconciliation summary including duplications, losses, and ILS events
+- `result_log.csv`: Metadata log including input trees and cost parameters
+- `resultspecies_acr.json` and `resultacr_species.json`: Mappings of species names to acronyms (if needed)
+
+> This interface allows calling `reconcILS` directly from Python scripts or notebooks (e.g., Google Colab), without using the command line.
