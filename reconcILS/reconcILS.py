@@ -1,11 +1,11 @@
 import sys
 sys.path.append("../")
-import utils_reconcILS.Tree as Tree
+from utils_reconcILS import Tree
 import copy
-import utils_reconcILS.Tally as Tally
+from utils_reconcILS import Tally
 import argparse
-import utils_reconcILS.ILS as ILS
-import utils_reconcILS.readWrite as readWrite
+from utils_reconcILS import ILS
+from utils_reconcILS import readWrite
 import pickle
 import time
 import pandas as pd
@@ -94,7 +94,7 @@ class reconcils:
 
     
     def clearid(self,sp,ori):
-        import utils_reconcILS.idmaker_ as idmaker_
+        from  . import idmaker_
         if sp:
 
             sp.id =idmaker_.idmaker2().id

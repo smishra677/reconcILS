@@ -1,8 +1,8 @@
 from itertools import count
 import copy
 import matplotlib.pyplot as plt
-import utils_reconcILS.idmaker_ as idmaker_
-import utils_reconcILS.readWrite  as readWrite
+from . import idmaker_
+from . import readWrite
 import pickle
 
 
