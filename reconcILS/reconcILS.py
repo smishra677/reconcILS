@@ -94,7 +94,7 @@ class reconcils:
 
     
     def clearid(self,sp,ori):
-        from  .utils_reconcILS import idmaker_
+        from  reconcILS.utils_reconcILS import idmaker_
         if sp:
 
             sp.id =idmaker_.idmaker2().id
