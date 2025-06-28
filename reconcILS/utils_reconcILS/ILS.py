@@ -1,6 +1,6 @@
-from . import Tree
+from .utils_reconcILS import Tree
 import copy
-from . import Tally
+from .utils_reconcILS import Tally
 
 class ILS:
     def find_bipartitions(self,bipartitions, subtree):
