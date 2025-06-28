@@ -1,14 +1,14 @@
 from itertools import count
 import copy
 import matplotlib.pyplot as plt
-from .utils_reconcILS import idmaker_
+from .utils_reconcILS import idmaker
 from .utils_reconcILS import readWrite
 import pickle
 
 
 class Tree:
     def __init__(self):
-        self.id= idmaker_.idmaker2().id
+        self.id= idmaker.idmaker2().id
         self.taxa=None
         self.numbered_taxa=None
         self.event=None

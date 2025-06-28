@@ -6,7 +6,6 @@ from .utils_reconcILS import Tally
 import argparse
 from .utils_reconcILS import ILS
 from .utils_reconcILS import readWrite
-from  .utils_reconcILS import idmaker_
 import pickle
 import time
 import pandas as pd
@@ -95,9 +94,10 @@ class reconcils:
 
     
     def clearid(self,sp,ori):
+        from  .utils_reconcILS import idmaker
         if sp:
 
-            sp.id =idmaker_.idmaker2().id
+            sp.id =idmaker.idmaker2().id
     
 
             self.clearid(sp.leftChild,ori)
