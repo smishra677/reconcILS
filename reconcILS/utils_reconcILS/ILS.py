@@ -41,16 +41,63 @@ class ILS:
         return difference
         
 
+    def find_number_map(self,sp):
+        stack=[sp]
+        total_map=0
+        while stack:
+            current_node=stack.pop()
 
+            if current_node: 
+                map_=len(current_node.refTo)
+                if map_>1:
+                    total_map+=map_
+
+                stack.append(current_node.leftChild)
+
+                stack.append(current_node.rightChild)
+        
+        return total_map
+
+
+    def find_lowest(self,gene_tree,id_list,child_dic):
+        
+
+        level_dic={}
+
+        address_list= {child_dic[id][1]:id for id in id_list}
+
+        #print(id_list)
+        #print(address_list)
+        for add in address_list.keys():
+            stack=[(add,0)]
+            while stack:
+                current_node,level=stack.pop()
+                
+                if current_node:
+                    if current_node.isLeaf:
+                        
+                        level_dic[address_list[add]]=level
+
+                    stack.append((current_node.leftChild,level+1))
+                    stack.append((current_node.rightChild,level+1))
+                
+        id_max_level= min(level_dic, key=level_dic.get)
+        #print(level_dic)
+        #print([i.to_newick() for i in address_list.keys()])
+
+        return id_max_level
+
+    
     def pick_first_edge(self,child,gene_tree,tr,visited):
 
-        if len(child)==0:
+            if len(child)==0:
                 return 
-        else:
+            else:
                 pool={}
                 tre_pool={}
                 orientation={}
                 super_list={}
+                LCA_dic={}
                 for k in range(len(child)):
                         
                         ch1=child[k]
@@ -91,6 +138,8 @@ class ILS:
                                 li[0].leftChild.map_gene(tr)
                                 tr.find_loss_sp(tr)
                                 loss_left = tr.cost
+                                number_map_left=len(tr.refTo)
+                                
 
 
 
@@ -113,7 +162,8 @@ class ILS:
                                 li[1].label_internal()
                                 li[1].map_gene(tr)
 
-                                number_map= len(tr.refTo)
+                                #number_map= len(tr.refTo)
+                                number_map_right=len(tr.refTo)
                                 tr.reset()
 
                                 #print('##############################')
@@ -128,12 +178,26 @@ class ILS:
                                 
                                 #print('left_bi_cost',bi_score_left)
                                 
-                                #print('right_bi_cost',bi_score_right)  
+                                #print('right_bi_cost',bi_score_right) 
+                                #firstTree = ete3.Tree(tr.to_newick())
+                                #secondTree = ete3.Tree(li[1].to_newick())
+                                #rf, _, _, _, _, _, _ = firstTree.robinson_foulds(secondTree)
 
-                                number_map=1
+                                #number_map=1
                                 #print((loss_score+bi_score_left+bi_score_right)*number_map)              
+                                if number_map_right==0:
+                                    number_map_right=1
+                                if number_map_left==0:
+                                    number_map_left=1
 
-                                combined_score = (loss_score + bi_score_left + bi_score_right) * number_map
+                                if k in LCA_dic:
+                                    LCA_dic[k] = min(LCA_dic[k],number_map_left+number_map_right)
+                                else:
+                                    LCA_dic[k] = number_map_left+number_map_right
+
+                                combined_score =(loss_left+bi_score_left)+(loss_right+bi_score_right)
+                                
+                                
 
                                 if k not in pool:
                                     pool[k] = combined_score
@@ -149,8 +213,37 @@ class ILS:
 
                 min_key = min(pool, key=pool.get)
 
+                
+                
+                min_combined_score=min(pool.values())
+                min_value_keys_count = sum(1 for value in pool.values() if value == min_combined_score)
+
+
+                
+                if min_value_keys_count>1:
+                    keys_with_min_value = [key for key, value in pool.items() if value == min_combined_score]
+                    extracted_dic = {key: LCA_dic[key] for key in keys_with_min_value}
+                    min_key = min(extracted_dic, key=extracted_dic.get)
+                    min_combined_score_1=min(extracted_dic.values())
+                    min_value_keys_count_1 = sum(1 for value in extracted_dic.values() if value == min_combined_score_1)
+                    keys_with_min_value_1 = [key for key, value in extracted_dic.items() if value == min_combined_score_1]
+                    if min_value_keys_count_1>1:
+                        min_key=self.find_lowest(gene_tree,keys_with_min_value_1,
+                        child)
+
+                
+                        
+                
+
+                
+
+                        
+
+                #print("==============================<><()))()()()()()",pool,LCA_dic)
 
                 return child[min_key],tre_pool[min_key],pool[min_key],orientation[min_key],super_list[min_key]
+        
+
 
     def find_parent_child(self,root,child):
         if len(root.refTo)>1:
