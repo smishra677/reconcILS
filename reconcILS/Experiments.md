@@ -8,7 +8,7 @@
 - Data_40_with_duplication_loss/simphy_output_40_0.0057_0.0047
 
 ### Folders: 
-- These folders contain gene trees simulated by DupCoal.
+- These folders contain gene trees simulated by dupcoal.
 - The species tree used is inside the folder, for example
  "species_3_with_branch_lengths.tre".
 - The command given to DupCoal is also found inside the folder, named "command.command".
