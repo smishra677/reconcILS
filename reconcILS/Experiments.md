@@ -3,9 +3,9 @@
 ## Input 
 - Clone `reconcILS` from the main branch.
 - Download `Experiments_V4` and extract it into `reconcILS/Experiments_V4`.
-- Data_40_with_duplication_loss/Data_with_duplication_3_0.03_0.03
-- Data_40_with_duplication_loss/Dupcoal_output_40_0.03_0.03
-- Data_40_with_duplication_loss/simphy_output_40_0.0057_0.0047
+- Data_with_duplication_and_loss/Data_with_duplication_3_0.03_0.03
+- Data_with_duplication_and_loss/Dupcoal_output_40_0.03_0.03
+- Data_with_duplication_and_loss/simphy_output_40_0.0057_0.0047
 
 ### Folders: 
 - These folders contain gene trees simulated by dupcoal.
@@ -16,8 +16,8 @@
 ### Files
 - **ZeroCol_ASTRAL_ML_ALLPARALOGS_MIN27.tre, ZeroCol_ASTRAL_ML_SCO_MIN27.tre**: These are gene trees from Smith et al., 2020.
 - **species_3_with_branch_lengths.tre, species_3_without_branch_lengths.tre, species_40_with_branch_lengths.tre, species_30_without_branch_lengths.tre, species_tree_primates.tre, sp_tree_pruned.tre**: These are the species trees used in our experiments.
-  1. **species_3_with_branch_lengths.tre**: Used in simulated experiments (Data_40_with_duplication_loss/Data_with_duplication_3_0.03_0.03). You can find the recipe in the DupCoal recipe file.
-  2. **species_40_with_branch_lengths.tre**: Used in simulated experiments (Data_40_with_duplication_loss/Dupcoal_output_40_0.03_0.03 (Figure 4)). You can find the recipe in the DupCoal recipe file.
+  1. **species_3_with_branch_lengths.tre**: Used in simulated experiments (Data_with_duplication_and_loss/Data_with_duplication_3_0.03_0.03). You can find the recipe in the DupCoal recipe file.
+  2. **species_40_with_branch_lengths.tre**: Used in simulated experiments (Data_with_duplication_and_loss/Dupcoal_output_40_0.03_0.03 (Figure 4)). You can find the recipe in the DupCoal recipe file.
   3. **sp_tree_pruned.tre**: This is the species tree from "species_tree_primates.tre" after pruning outgroups and converting species into keys provided in the map.
 
 # Experiments
@@ -113,3 +113,4 @@ species_to_letters = {
     'Aotusnancymaae': 'V',
     'Callithrixjacchus': 'W',
 }
+
