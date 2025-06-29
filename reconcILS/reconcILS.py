@@ -179,7 +179,7 @@ class reconcils:
 
                         self.label_lost_child(co.leftChild)
                         
-                        print(co.to_newick())
+                        #print(co.to_newick())
                         
                         if sp.parent==None:
                             self.gene_tree=co
@@ -280,7 +280,23 @@ class reconcils:
           
 
 
-    
+    def find_parent(self,sp,master_copy_sp):
+        stack= [master_copy_sp]
+        while stack:
+            current_node =stack.pop()
+
+            if current_node:
+                if current_node.taxa==sp.taxa:
+                    return current_node.parent
+                else:
+                    stack.append(current_node.leftChild)
+                    stack.append(current_node.rightChild)
+        
+        print('error please check find_parent')
+        exit()
+
+        
+
     def copy_event_(self, re, sp, new_topo):
         stack = [sp] 
         
@@ -798,10 +814,11 @@ class reconcils:
     def iterative_reconcILS(self,tr, sp, sp_copy, sp_, visited):
         stack = []
         eve=[]
-
+        master_copy_species_tree= copy.deepcopy(sp)
         
         while True:
             if sp:
+                
 
 
                 Initial_multiple_mapping = len(sp.refTo)
@@ -1001,7 +1018,7 @@ class reconcils:
                             
 
 
-                            recon_1_cost =recon_right.cost+recon_left.cost+self.D_cost
+                            duplication_cost =recon_right.cost+recon_left.cost+self.D_cost
 
 
 
@@ -1024,7 +1041,7 @@ class reconcils:
 
                             NNI_cost=recon_1.cost+(Initial_multiple_mapping- cost)*self.I_cost
 
-                            duplication_cost=recon_1_cost
+                            #duplication_cost=recon_1_cost
 
 
                             #print('to_new',new_topo.to_newick())
@@ -1160,17 +1177,23 @@ class reconcils:
 
 
                                 tr.event_list+=[-1,['D']]
+                                #print(tr.to_newick())
+                                #exit()
                                 self.copy_event_(tr,self.gene_tree,tr)
                                 if sp.isRoot:
                                     eve.append([sp.taxa,sp.taxa,'D',sp.isLeaf])
                                 else:
-
+                                    '''
                                     parent= sp.parent
+                                    print(parent.to_newick(),sp.to_newick())
                                     while sp.taxa== parent.taxa:
                                         parent=parent.parent
+                                    '''
+                                    parent= self.find_parent(sp,master_copy_species_tree)
                                         
 
                                     eve.append([parent.taxa,sp.taxa,'D',sp.isLeaf])
+                                #print(eve[-1])
 
                                 
 

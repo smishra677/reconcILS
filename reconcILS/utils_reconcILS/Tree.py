@@ -248,23 +248,60 @@ class Tree:
 
     
     
-    def find_loss_sp(self,root):
-        if self:
-            #print('tag',self.to_newick())
-            if self.leftChild and self.rightChild:
-                if self.rightChild.isLeaf and len(self.rightChild.refTo)==0 and self.leftChild.isLeaf and len(self.leftChild.refTo)==0:
-                    root.cost+=root.cost+1
-                    return 1
-            if self.leftChild:
-                root.cost+=self.leftChild.find_loss_sp(root)
-            if self.rightChild:
-                root.cost+=self.rightChild.find_loss_sp(root)
-            
-            if len(self.refTo)==0:
+    def check_below(self):
+        stack = [self]
+        flag = False
+        
+        while stack:
+            current_node = stack.pop()
+            if current_node:
+                if len(current_node.refTo) > 0:
+                    flag = True
+                    break
+                
+                if current_node.leftChild:
+                    stack.append(current_node.leftChild)
+                if current_node.rightChild:
+                    stack.append(current_node.rightChild)
+        
+        return 1 if not flag else 0
 
-                return 1
-            else:
+    def find_loss_sp(self, root):
+        if self:
+            
+            
+            if self.leftChild and self.rightChild:
+                if self.rightChild.isLeaf and len(self.rightChild.refTo) == 0 and self.leftChild.isLeaf and len(self.leftChild.refTo) == 0:
+                    #print(2, root.cost)
+                    root.cost+=1
+                    return 0
+            #if len(self.refTo)==0:
+            #print('tag', self.to_newick())
+            check= self.check_below()
+            #print(check)
+            if check==1:
+                root.cost+=1
                 return 0
+            
+            
+            else:
+                         
+                if self.leftChild:
+                    #print(3, root.cost)
+                    value_left=self.leftChild.find_loss_sp(root)
+                    root.cost += value_left
+                    #print('tag', self.to_newick())
+                    #print('ack', 3)
+                    #print('ack', 3, root.cost)
+                
+                if self.rightChild:
+                    #print(4, root.cost)
+                    value_right=self.rightChild.find_loss_sp(root)
+                    root.cost += value_right
+                    #print('tag', self.to_newick())
+                    #print('ack', 4, root.cost)
+                return 0
+                
 
 
 

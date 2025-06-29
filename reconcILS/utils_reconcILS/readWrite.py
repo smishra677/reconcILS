@@ -218,18 +218,23 @@ class readWrite:
             li.reverse()
             dic_reconcILS={}
             for i in li:
+                    #print(i)
+                    #print(dic_reconcILS)
                     if type(i)==list:
-                            if (repr(list(sorted(i[0]))),' to ',repr(list(sorted(i[1]))))  in dic_reconcILS.keys():
-                                    if i[3]==True:
-                                            dic_reconcILS[(repr(list(sorted(i[0]))),' to ',repr(list(sorted({i[1]}))))]+=[i[2]]
-                                    else:
-                                            dic_reconcILS[(repr(list(sorted(i[0]))),' to ',repr(list(sorted(i[1]))))]+=[i[2]]
-                            else:   
-                                    if i[3]==True:
-                                            dic_reconcILS[(repr(list(sorted(i[0]))),' to ',repr(list(sorted({i[1]}))))]=[i[2]]
-                                    else:
-                                            dic_reconcILS[(repr(list(sorted(i[0]))),' to ',repr(list(sorted(i[1]))))]=[i[2]]
-            
+                            if i[3]==True:
+                                if (repr(list(sorted(i[0]))),' to ',repr(list(sorted({i[1]}))))  in dic_reconcILS.keys():
+                                        #print(dic_reconcILS)
+                                    dic_reconcILS[(repr(list(sorted(i[0]))),' to ',repr(list(sorted({i[1]}))))]+=[i[2]]
+                                else:
+                                    dic_reconcILS[(repr(list(sorted(i[0]))),' to ',repr(list(sorted({i[1]}))))]=[i[2]]
+                                        
+                            else:
+                                if (repr(list(sorted(i[0]))),' to ',repr(list(sorted(i[1]))))  in dic_reconcILS.keys():
+                                        #print(dic_reconcILS)
+                                    dic_reconcILS[(repr(list(sorted(i[0]))),' to ',repr(list(sorted(i[1]))))]+=[i[2]]
+                                else:
+                                    dic_reconcILS[(repr(list(sorted(i[0]))),' to ',repr(list(sorted(i[1]))))]=[i[2]]
+                
             return dic_reconcILS
 
     def label_ete3(self,recon_tree, fr):
