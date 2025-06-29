@@ -3,7 +3,9 @@
 ## Input 
 - Clone `reconcILS` from the main branch.
 - Download `Experiments_V4` and extract it into `reconcILS/Experiments_V4`.
-
+- Data_40_with_duplication_loss/Data_with_duplication_3_0.03_0.03
+- Data_40_with_duplication_loss/Dupcoal_output_40_0.03_0.03
+- Data_40_with_duplication_loss/simphy_output_40_0.0057_0.0047
 
 ### Folders: 
 - These folders contain gene trees simulated by DupCoal.
