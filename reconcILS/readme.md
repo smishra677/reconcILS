@@ -1,6 +1,9 @@
 # Dataset
 
-## Input
+## Input 
+- Clone `reconcILS` from the main branch.
+- Download `Experiments_V4` and extract it into `reconcILS/Experiments_V4`.
+
 
 ### Folders: 
 - These folders contain gene trees simulated by DupCoal.
@@ -11,14 +14,14 @@
 ### Files
 - **ZeroCol_ASTRAL_ML_ALLPARALOGS_MIN27.tre, ZeroCol_ASTRAL_ML_SCO_MIN27.tre**: These are gene trees from Smith et al., 2020.
 - **species_3_with_branch_lengths.tre, species_3_without_branch_lengths.tre, species_40_with_branch_lengths.tre, species_30_without_branch_lengths.tre, species_tree_primates.tre, sp_tree_pruned.tre**: These are the species trees used in our experiments.
-  1. **species_3_with_branch_lengths.tre**: Used in simulated experiments (10_01). You can find the recipe in the DupCoal recipe file.
-  2. **species_40_with_branch_lengths.tre**: Used in simulated experiments (Data_40_without_duplication_loss, Data_40_with_duplication_loss (Figure S1)). You can find the recipe in the DupCoal recipe file.
+  1. **species_3_with_branch_lengths.tre**: Used in simulated experiments (Data_40_with_duplication_loss/Data_with_duplication_3_0.03_0.03). You can find the recipe in the DupCoal recipe file.
+  2. **species_40_with_branch_lengths.tre**: Used in simulated experiments (Data_40_with_duplication_loss/Dupcoal_output_40_0.03_0.03 (Figure 4)). You can find the recipe in the DupCoal recipe file.
   3. **sp_tree_pruned.tre**: This is the species tree from "species_tree_primates.tre" after pruning outgroups and converting species into keys provided in the map.
 
 # Experiments
 
 ## Requirements
-1. Extract the experiment folder into `./reconcILS`.
+1. Extract the Experiments_V4 folder into `./reconcILS`.
 2. Install `ete3` and `DLCpar`.
 
 ## Single Copy Orthologs / All Paralogy Dataset
@@ -50,7 +53,7 @@ By the end of the run, the program will output three types of files:
 
 **Output Explanation:**
 - `bio_result_ZeroCol_ASTRAL_ML_<SCO/all_paralogy>_MIN27_pruned.csv`: Records all the gene trees, along with event numbers (i.e., number of duplications, NNI, and losses) required for reconciling each gene tree with the species tree for both reconcILS and ete3.
-- `labeled_L_ZeroCol_ASTRAL_ML_SCO_MIN27_pruned.csv`: This is the species tree with events labeled. This outputs the Newick representation used in Figure S5 (for both reconcILS and ete3).
+- `labeled_L_ZeroCol_ASTRAL_ML_SCO_MIN27_pruned.csv`: This is the species tree with events labeled. This outputs the Newick representation used in Figure S9 (for both reconcILS and ete3).
 - Timing files are not relevant to our experiments but record the timing for reconcILS and writing output to the files.
 - `ZeroCol_ASTRAL_ML_<SCO/all_paralogy>_MIN27_pruned_Gene_trees.csv`: These are the gene trees that produced the particular results. This is important because the input gene trees are non-binary and include 29 species (including outgroups). We have pruned the species, converted them to letters using the key provided above, and resolved the non-binary nodes at random. Hence, this file is the true input to reconcILS.
 
@@ -72,8 +75,8 @@ By the end of the run, you will have four types of files inside the data folder:
 ## Other Files:
 1. **concord.cf.stat**: Gene tree concordance factor for SCO trees.
 2. **Plot.r**: Used to plot results in Figure 5 of the main text. Please copy the labeled Newick string from `ZeroCol_ASTRAL_ML_<SCO/all_paralogy>_MIN27_pruned_Gene_trees.csv` into `newick_str` (line 10) and adjust the `Normalizing_factor` as follows: SCO: 1820, All_paralogy: 11555.
-3. **Produce_results-40_species_V4.ipynb**: Jupyter notebook used to produce Figure 4 and Figure S2 in the main text. You can also find the significance test for hemiplasy in this notebook, as well as Time and Memory plots (Figure S4).
-4. **Produce_results-3_species_V4.ipynb**: Jupyter notebook used to produce Figure S3 in the main text.
+3. **Produce_results-40_species_V4.ipynb**: Jupyter notebook used to produce Figure 4, S6, S8 in the main text. You can also find the significance test for hemiplasy in this notebook, as well as Time and Memory plots (Figure S4).
+4. **Produce_results-3_species_V4.ipynb**: Jupyter notebook used to produce Figure S7 in the main text.
 5. **bin**: Folder containing gcf files for SimPhy and DupCoal gene trees.
 6. **produce_tree.r**: Script to generate a random tree using `ape`.
 7. **scale.py**: Script to scale the tree length.
