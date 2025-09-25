@@ -23,6 +23,12 @@ You can install reconcILS using pip:
 pip install .
 ```
 
+Install the package via Conda:
+
+```bash
+conda install -c smishra677 reconcils
+```
+
 
 
 
@@ -104,11 +110,6 @@ Please see the example.md at https://github.com/smishra677/reconcILS/blob/main/r
 
 ## Example Usage Conda
 
-Install the package via Conda:
-
-```bash
-conda install -c smishra677 reconcils
-```
 
 Use the package programmatically from Python:
 
