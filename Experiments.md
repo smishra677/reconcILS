@@ -3,7 +3,7 @@
 ## Input
 
 * Clone `reconcILS` from the main branch.
-* Download `Experiments_V5` and extract it into `reconcILS/Experiments_V5`.
+* Download `Experiments_V5` and extract it into `reconcILS/example/Experiments_V5`.
 * `Data_with_duplication_and_loss/Data_with_duplication_3_0.03_0.03`
 * `Data_with_duplication_and_loss/Dupcoal_output_40_0.03_0.03`
 * `Data_with_duplication_and_loss/simphy_output_40_0.0057_0.0047`
