@@ -88,7 +88,7 @@ These labeled trees can be visualized with any Newick visualizer.
 
 ## Experiments:
 
-For experiments, please see the experiment branch. (https://github.com/smishra677/reconcILS/blob/Experiments/reconcILS/Experiments.md)
+For experiments, please see the experiment branch. (https://github.com/smishra677/reconcILS/blob/Experiments/Experiments.md)
 
 ## Example Usage
 
