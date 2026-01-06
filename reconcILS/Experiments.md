@@ -142,4 +142,11 @@ species_to_letters = {
     'Panpaniscus': 'Q',
     'Pantroglodytes': 'R',
     'Pongoabelii':
+    'Pongoabelii': 'S',
+    'Nomascusleucogenys': 'T',
+    'Saimiriboliviensis': 'U',
+    'Aotusnancymaae': 'V',
+    'Callithrixjacchus': 'W',
+}
+
 ```
