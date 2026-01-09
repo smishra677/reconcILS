@@ -110,8 +110,8 @@ By the end of the run, you will have four types of files inside the data folder:
 
 1. **concord.cf.stat**: Gene tree concordance factor for SCO trees.
 2. **Plot.r**: Used to plot results in Figure 5 of the main text. Please copy the labeled Newick string from `ZeroCol_ASTRAL_ML_<SCO/all_paralogy>_MIN27_pruned_Gene_trees.csv` into `newick_str` (line 10) and adjust the `Normalizing_factor` as follows: SCO: 1820, All_paralogy: 11555.
-3. **Produce_results-40_species_V4.ipynb**: Jupyter notebook used to produce Figures 4, S6, and S8 in the main text. You can also find the significance test for hemiplasy in this notebook, as well as Time and Memory plots (Figure S4), along with Table S1 and Table S2.
-4. **Produce_results-3_species_V4.ipynb**: Jupyter notebook used to produce Figure S7 in the main text.
+3. **Produce_results-40_species_V5.ipynb**: Jupyter notebook used to produce Figures 4, S6, and S8 in the main text. You can also find the significance test for hemiplasy in this notebook, as well as Time and Memory plots (Figure S4), along with Table S1 and Table S2.
+4. **Produce_results-3_species_V5.ipynb**: Jupyter notebook used to produce Figure S7 in the main text.
 5. **bin**: Folder containing GCF files for SimPhy and DupCoal gene trees.
 6. **produce_tree.r**: Script to generate a random tree using `ape`.
 7. **scale.py**: Script to scale the tree length.
@@ -141,7 +141,6 @@ species_to_letters = {
     'Homosapiens': 'P',
     'Panpaniscus': 'Q',
     'Pantroglodytes': 'R',
-    'Pongoabelii':
     'Pongoabelii': 'S',
     'Nomascusleucogenys': 'T',
     'Saimiriboliviensis': 'U',
