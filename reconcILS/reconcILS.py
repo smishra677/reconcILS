@@ -1,11 +1,11 @@
 import sys
 sys.path.append("../")
-from .utils_reconcILS import Tree
+import utils_reconcILS.Tree as Tree
 import copy
-from .utils_reconcILS import Tally
+import utils_reconcILS.Tally as Tally
 import argparse
-from .utils_reconcILS import ILS
-from .utils_reconcILS import readWrite
+import utils_reconcILS.ILS as ILS
+import utils_reconcILS.readWrite as readWrite
 import pickle
 import time
 import pandas as pd
@@ -94,10 +94,10 @@ class reconcils:
 
     
     def clearid(self,sp,ori):
-        from  .utils_reconcILS import idmaker
+        import utils_reconcILS.idmaker_ as idmaker_
         if sp:
 
-            sp.id =idmaker.idmaker2().id
+            sp.id =idmaker_.idmaker2().id
     
 
             self.clearid(sp.leftChild,ori)
@@ -1402,7 +1402,10 @@ def main():
     #print('##############################################################################################')
     if len(li)==0:
         print('Error')
+    
     else:   
+        dic_reconcILS = red.label_reconcILS(li)
+        '''
         #print('##############################################################################################')
         li.reverse()
         dic_reconcILS={}
@@ -1420,7 +1423,8 @@ def main():
                             dic_reconcILS[(repr(list(sorted(i[0]))),' to ',repr(list(sorted(i[1]))))]=[i[2]]
 
     #print('##############################################################################################')
-
+    '''
+    
     eve_rec= {'D':0,'I':0,'L':0}
     for i in species_edge_list:
             rec_in_dic= {'D':0,'I':0,'L':0}
