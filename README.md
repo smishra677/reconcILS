@@ -2,7 +2,7 @@
 
 **reconcILS** is a Python tool for reconciling gene trees with a species tree and reporting duplication, incomplete lineage sorting (ILS/NNI), and loss events. It supports a single gene tree through the `reconcils` command and multiple gene trees through a parameterized parallel runner.
 
-This guide is intended for **new users**: it explains how to install the software, prepare your own data, run an analysis, interpret the generated files, and troubleshoot common problems. It follows the practical user-guide organization of DAFT.
+This guide is intended for **new users**: it explains how to install the software, prepare your own data, run an analysis, interpret the generated files, and troubleshoot common problems.
 
 ## What reconcILS does
 
