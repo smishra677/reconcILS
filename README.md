@@ -227,19 +227,3 @@ When reporting reconcILS results, retain the species and gene tree inputs, versi
 
 For detailed examples see [examples/README.md](examples/README.md); for installation and Conda packaging see [INSTALL.md](INSTALL.md) and [CONDA.md](CONDA.md).
 
-## Output organization (DAFT style)
-
-For `--output analysis.csv`, reconcILS automatically organizes generated files
-into three sibling directories beside the requested output path:
-
-```text
-reconcILS_results_analysis/   # result CSV and labeled species tree (parallel)
-reconcILS_extras_analysis/    # species alias map and validation reports
-reconcILS_log_analysis/       # run logs and parallel checkpoint state
-```
-
-The single-tree command organizes files after a successful run. The parallel
-runner writes directly into these folders so its checkpoint journal remains
-stable across interruptions and retries. Re-run with the same output name to
-resume parallel processing; use a different output name for a separate run.
-No unrelated files are moved.
