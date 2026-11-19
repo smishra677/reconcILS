@@ -1,4 +1,4 @@
-# reconcILS (for old reconcILS https://github.com/smishra677/reconcILS/tree/main/reconcILS-old)
+# reconcILS (for old reconcILS main/reconcILS-old)
 
 **Gene-tree reconciliation with duplication, incomplete lineage sorting, and gene loss**
 
