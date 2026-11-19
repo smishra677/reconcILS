@@ -25,7 +25,7 @@ Rooted species tree (SpeciesName) + rooted gene tree(s) (SpeciesName_copy)
                 Restore original species/copy labels
 ```
 
-The reconciliation engine uses event costs for duplication (`D`), loss (`L`), and ILS (`I`). The result CSV uses the column `NNI` for ILS-related events. Differences between gene-tree and species-tree topology are **not** treated as input-validation errors.
+The reconciliation engine uses event costs for duplication (`D`), loss (`L`), and ILS (`N`). The result CSV uses the column `NNI` for ILS-related events. Differences between gene-tree and species-tree topology are **not** treated as input-validation errors.
 
 ## 1. Get the source code
 
