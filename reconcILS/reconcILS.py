@@ -27,7 +27,7 @@ class reconcils:
         self.V=False
         self.F= False
         self.introgression=False
-        self.time_ils=600
+        self.time_ils=5000
         self.thread=20
 
     def get_species(self,sp):
@@ -1046,6 +1046,8 @@ class reconcils:
 
                             #print('to_new',new_topo.to_newick())
                             red =readWrite.readWrite()
+                        if NNI_cost==duplication_cost:
+                            sp.equal+=1
 
                         if  NNI_cost<duplication_cost and  sp.isLeaf==None and (new_multiple<Initial_multiple_mapping or bi_cos==0) and not (new_topo.to_newick() == tr.to_newick() or red.parse(new_topo.to_newick()).to_newick == tr.to_newick()) :
 
@@ -1086,7 +1088,8 @@ class reconcils:
 
                                 for i in list(child_):
                                     if type(i[1].numbered_taxa)==set:
-                                        li= '-'.join(list(i[1].numbered_taxa))
+                                        #li= '-'.join(list(i[1].numbered_taxa))
+                                        li = '-'.join(sorted(i[1].numbered_taxa))
                                     else:
                                         li =i[1].numbered_taxa
 
@@ -1096,7 +1099,7 @@ class reconcils:
 
                             
                                     #i[0].event_list+=[li,['I' for i in range(Initial_multiple_mapping- cost)]]
-                                    i[0].event_list+=[li,['I']]
+                                    i[0].event_list+=[li,['N']]
                                     self.copy_event_(i[0],self.gene_tree,new_topo)
                                     i[1].label_internal()
 
@@ -1318,8 +1321,11 @@ def main():
 
     
     red= readWrite.readWrite()
-    sp_string = sp_string.replace('e-', '0')
-    gene_tree = gene_tree.replace('e-', '0')
+    # Normalize Newick topology using ETE3, as in DAFT_Test.py.
+    # format=9 intentionally removes branch lengths and internal labels.
+    import ete3
+    sp_string = ete3.Tree(sp_string, format=1).write(format=9)
+    gene_tree = ete3.Tree(gene_tree, format=1).write(format=9)
 
 
 
@@ -1399,32 +1405,15 @@ def main():
         
         
     
-    #print('##############################################################################################')
-    if len(li)==0:
-        print('Error')
-    
-    else:   
-        dic_reconcILS = red.label_reconcILS(li)
-        '''
-        #print('##############################################################################################')
-        li.reverse()
-        dic_reconcILS={}
-        for i in li:
-            if type(i)==list:
-                    if (repr(list(sorted(i[0]))),' to ',repr(list(sorted(i[1]))))  in dic_reconcILS.keys():
-                        if i[3]==True:
-                            dic_reconcILS[(repr(list(sorted(i[0]))),' to ',repr(list(sorted({i[1]}))))]+=[i[2]]
-                        else:
-                            dic_reconcILS[(repr(list(sorted(i[0]))),' to ',repr(list(sorted(i[1]))))]+=[i[2]]
-                    else:   
-                        if i[3]==True:
-                            dic_reconcILS[(repr(list(sorted(i[0]))),' to ',repr(list(sorted({i[1]}))))]=[i[2]]
-                        else:
-                            dic_reconcILS[(repr(list(sorted(i[0]))),' to ',repr(list(sorted(i[1]))))]=[i[2]]
+    # Use the existing event-labeling helper from readWrite.
+    if len(li) == 0:
+        raise RuntimeError(
+            'reconcILS returned no event records. The internal ILS search may have '
+            'timed out, or no valid reconciliation path was produced.'
+        )
+    else:
+        dic_reconcILS = re_w.label_reconcILS(li)
 
-    #print('##############################################################################################')
-    '''
-    
     eve_rec= {'D':0,'I':0,'L':0}
     for i in species_edge_list:
             rec_in_dic= {'D':0,'I':0,'L':0}

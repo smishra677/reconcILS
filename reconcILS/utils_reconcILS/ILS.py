@@ -228,8 +228,7 @@ class ILS:
                     min_value_keys_count_1 = sum(1 for value in extracted_dic.values() if value == min_combined_score_1)
                     keys_with_min_value_1 = [key for key, value in extracted_dic.items() if value == min_combined_score_1]
                     if min_value_keys_count_1>1:
-                        min_key=self.find_lowest(gene_tree,keys_with_min_value_1,
-                        child)
+                        min_key=self.find_lowest(gene_tree,keys_with_min_value_1,child)
 
                 
                         

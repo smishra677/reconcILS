@@ -1,0 +1,13 @@
+include README.md
+include INSTALL.md
+include LICENSE
+include requirements.txt
+recursive-include reconcILS *.py
+recursive-exclude * __pycache__
+recursive-exclude * *.py[cod]
+
+include CONDA.md environment.yml environment-build.yml
+recursive-include conda-recipe *.yaml
+recursive-include examples *.py *.md *.tre *.csv *.tsv *.json
+
+recursive-include tests *.py

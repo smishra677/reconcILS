@@ -20,6 +20,7 @@ class Tree:
         self.rightChild=None
         self.children=[]
         self.refTo=[]
+        self.equal=0
         self.parent=None
         self.split_list=None
         self.to_tag=None

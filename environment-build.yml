@@ -1,0 +1,8 @@
+name: reconcils-build
+channels:
+  - conda-forge
+  - nodefaults
+dependencies:
+  - conda-build
+  - conda-verify
+  - python>=3.9

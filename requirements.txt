@@ -1,0 +1,6 @@
+pandas
+matplotlib
+igraph
+biopython
+ete3
+rich
