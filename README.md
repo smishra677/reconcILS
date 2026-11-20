@@ -187,7 +187,7 @@ Parallel runs additionally generate an aggregated labeled species tree and maint
 
 ## Species and gene-copy labels
 
-Species names are assigned deterministic internal two-character identifiers, based on sorted original names. For example:
+Species names are assigned internally as two-character identifiers, based on sorted original names. For example:
 
 ```text
 Homo_sapiens       -> A0
