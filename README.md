@@ -148,7 +148,7 @@ The runner uses independent worker processes, writes checkpoints, and can resume
 
 | Option | Description | Default |
 | --- | --- | --- |
-| `--workers` | Number of worker processes | Up to 8, based on `SLURM_CPUS_PER_TASK` |
+| `--workers` | Number of worker processes | Up to 8, based on HPC(`SLURM_CPUS_PER_TASK`) |
 | `--library-threads` | Native numerical-library threads per worker | 1 |
 | `--limit` | Process only the first N trees | All |
 | `--timeout` | Overall wall-clock time limit per tree, seconds | None |
