@@ -1,5 +1,5 @@
 # reconcILS: Simulation and Reconciliation Analyses ( rearranged by AI)
-Please find Experiment_V6 in dryad: 
+Please find Experiment_V6 in Zenodo:  https://zenodo.org/records/24383395
 
 
 This directory contains the commands and scripts used for the simulation and reconciliation analyses in **reconcILS: A gene tree-species tree reconciliation algorithm that allows for incomplete lineage sorting**.
