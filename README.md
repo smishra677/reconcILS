@@ -1,5 +1,5 @@
 # reconcILS (for old reconcILS main/reconcILS-old)
-for experiments related to paper:  https://github.com/smishra677/reconcILS/tree/Experiments
+
 
 **Gene-tree reconciliation with duplication, incomplete lineage sorting, and gene loss**
 
@@ -16,6 +16,7 @@ reconcILS reconciles rooted gene trees against a rooted species tree. It reports
 - [Species and gene-copy labels](#species-and-gene-copy-labels)
 - [Validation and troubleshooting](#validation-and-troubleshooting)
 - [Reproducibility](#reproducibility)
+- [Experiments](#experiments)
 - [License](#license)
 
 ## Installation
@@ -215,6 +216,9 @@ Use `--verbose 1` to display the Rich terminal interface. For parallel analyses,
 ## Reproducibility
 
 For reproducible analyses, retain the original Newick files, reconcILS version, event costs, timeout settings, species-alias mapping JSON, and result CSV. Parallel analyses should also retain their checkpoint metadata and record the number of successfully processed gene trees. Re-running with different trees, mappings, costs, or internal ILS timeout settings may require a new checkpoint directory.
+
+## Experiments
+for experiments related to paper:  https://github.com/smishra677/reconcILS/tree/Experiments
 
 ## License
 
