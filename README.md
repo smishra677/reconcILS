@@ -1,5 +1,5 @@
 # reconcILS (for old reconcILS main/reconcILS-old)
-
+for experiments related to paper:  https://github.com/smishra677/reconcILS/tree/Experiments
 **Gene-tree reconciliation with duplication, incomplete lineage sorting, and gene loss**
 
 reconcILS reconciles rooted gene trees against a rooted species tree. It reports inferred duplication, incomplete lineage sorting (ILS/NNI), and loss events, and provides a command-line interface for individual trees and a parallel workflow for larger collections.
