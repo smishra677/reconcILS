@@ -1,9 +1,12 @@
-# reconcILS (for old reconcILS main/reconcILS-old)
+# reconcILS
 
 
 **Gene-tree reconciliation with duplication, incomplete lineage sorting, and gene loss**
 
 reconcILS reconciles rooted gene trees against a rooted species tree. It reports inferred duplication, incomplete lineage sorting (ILS/NNI), and loss events, and provides a command-line interface for individual trees and a parallel workflow for larger collections.
+
+## dupcoal
+  To simulate gene trees under the MSC-DL model, please visit: [dupcoal](https://github.com/meganlsmith/dupcoal).
 
 ## Contents
 
