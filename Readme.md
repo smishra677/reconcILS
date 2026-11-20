@@ -1,4 +1,4 @@
-# reconcILS: Simulation and Reconciliation Analyses ( rearranged by AI)
+# reconcILS Experiments
 Please find Experiment_V6 in Zenodo:  https://zenodo.org/records/24383395
 
 
