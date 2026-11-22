@@ -62,7 +62,7 @@ The script selects SCO mode from the input filename. Results are written to `par
 
 All experiment-generation and analysis commands are listed in [generate.sh](generate.sh), including simulations, cost settings, method comparisons, gene-tree error tests, and primate analyses.
 
-- [generate.r](generate.r): Generates ten random 40-species trees and scaled versions for SimPhy.
+- [generate.r](Experiment_V6/generate.r): Generates ten random 40-species trees and scaled versions for SimPhy.
 - [scale.py](scale.py): Scales species-tree branch lengths for the long-branch experiments.
 - [genrate_simphy.sh](genrate_simphy.sh): Generates SimPhy datasets.
 - [test_reconcILS_default_40.py](test_reconcILS_default_40.py): Runs reconcILS and ETE3 on simulated gene trees.
