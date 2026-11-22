@@ -86,4 +86,6 @@ All experiment-generation and analysis commands are listed in [generate.sh](gene
 | Figure S9; Table S1 | [40-species trees](all_species%20tree/), [error script](simulate_noise.py), Table S1 |
 | Table S2 | [Ten species trees](all_species%20tree/species_40_scaled_10.tre), [SimPhy-scaled trees](all_species%20tree/species_40_scaled_10_simphy.tre), Table S2 |
 
-The final ten-tree SimPhy commands in [generate.sh](generate.sh) use `species_40_scaled_10_simphy.tre`. The bundled paper trees are in [all_species tree/](all_species%20tree/); running `generate.r` creates new trees, not the exact paper inputs. The notebooks also contain original computing-environment paths.
+- The final ten-tree SimPhy commands in [generate.sh](generate.sh) use `species_40_scaled_10_simphy.tre`. 
+- The bundled paper trees are in [all_species tree/](all_species%20tree/) 
+- Running `generate.r` creates new trees, not the exact paper inputs. The notebooks also contain original computing-environment paths.
