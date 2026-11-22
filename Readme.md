@@ -1,6 +1,6 @@
 # Experiments V6
 
-Scripts, species trees, and results for the [reconcILS paper](https://doi.org/10.1101/2023.11.03.565544). Source code: [reconcILS](https://github.com/smishra677/reconcILS); simulator: [dupcoal](https://github.com/meganlsmith/dupcoal).
+Scripts, species trees, and results for the reconcILS paper. Source code: [reconcILS](https://github.com/smishra677/reconcILS); simulator: [dupcoal](https://github.com/meganlsmith/dupcoal).
 
 ## Dataset
 
@@ -8,11 +8,11 @@ Scripts, species trees, and results for the [reconcILS paper](https://doi.org/10
 
 1. Clone `reconcILS` and extract this folder directly into the repository as `reconcILS/Experiments_V6/`, alongside `reconcILS.py` and `utils_reconcILS/`.
 2. [all_species tree/](all_species%20tree/) contains the three- and 40-species trees, the ten trees used for Table S2, and the pruned primate species tree.
-3. [smith_et_al_2022_primates/](smith_et_al_2022_primates/) contains the single-copy ortholog (SCO) and all-paralogy gene trees and their reconciliation results.
+3. [smith_et_al_2022_primates.tar.gz](smith_et_al_2022_primates.tar.gz) contains the single-copy ortholog (SCO) and all-paralogy gene trees and their reconciliation results.
 
 Run the commands below from `reconcILS/Experiments_V6/`. The Python scripts import reconcILS from the parent directory; keep generated data folders inside `Experiments_V6/`.
 
-The original simulated gene-tree datasets are not included but can be provided upon request.. Generate them with dupcoal or SimPhy before running the simulation analyses.
+The original simulated gene-tree datasets are not included. Generate them with dupcoal or SimPhy before running the simulation analyses.
 
 ## Experiments
 
@@ -74,7 +74,7 @@ All experiment-generation and analysis commands are listed in [generate.sh](gene
 ## Outputs
 
 - Simulations: `reconcILS_result_*.csv` contains the true event counts and reconcILS/ETE3 estimates. `reconcILS_time_result_*.csv`, `reconcILS_memory_result_with_dups_loss_*.csv`, and `reconcILS_labeled_sp_*.csv` contain timing, memory, and species-tree event labels.
-- Primates: `bio_result_*_pruned67.csv` contains per-gene event counts; `labeled_L_*_pruned67.csv` contains species-tree event labels; `*_pruned_Gene_trees67.csv` contains the processed gene trees. Timing, memory, and status files are also saved. Existing outputs are in [smith_et_al_2022_primates/](smith_et_al_2022_primates/).
+- Primates: `bio_result_*_pruned67.csv` contains per-gene event counts; `labeled_L_*_pruned67.csv` contains species-tree event labels; `*_pruned_Gene_trees67.csv` contains the processed gene trees. Timing, memory, and status files are also saved. Existing outputs are in [smith_et_al_2022_primates.tar.gz](smith_et_al_2022_primates.tar.gz).
 
 ## Figures and other files
 
@@ -82,8 +82,8 @@ All experiment-generation and analysis commands are listed in [generate.sh](gene
 | --- | --- |
 | Figure 3; Figure S11 | [40-species script](test_reconcILS_default_40.py), [notebook](Produce_results-40_species_V_6.ipynb) |
 | Figure S10 | [3-species tree](all_species%20tree/3sp.tre), [historical simulation commands](generate.sh) |
-| Figure 4; Figure S12 | [Primate results](smith_et_al_2022_primates/), [analysis script](run_all_paralogy.py) |
-| Figure S9; Table S1 | [40-species trees](all_species%20tree/), [error script](simulate_noise.py), [Table S1](paper/supplementary_table_S1.pdf) |
-| Table S2 | [Ten species trees](all_species%20tree/species_40_scaled_10.tre), [SimPhy-scaled trees](all_species%20tree/species_40_scaled_10_simphy.tre), [Table S2](paper/supplementary_table_S2.pdf) |
+| Figure 4; Figure S12 | [Primate results](smith_et_al_2022_primates.tar.gz), [analysis script](run_all_paralogy.py) |
+| Figure S9; Table S1 | [40-species trees](all_species%20tree/), [error script](simulate_noise.py), Table S1 |
+| Table S2 | [Ten species trees](all_species%20tree/species_40_scaled_10.tre), [SimPhy-scaled trees](all_species%20tree/species_40_scaled_10_simphy.tre), Table S2 |
 
-The final ten-tree SimPhy commands in [generate.sh](generate.sh) use `species_40_scaled_10_simphy.tre`. The bundled paper trees are in [all_species tree/](all_species%20tree/); running `generate.r` creates new trees, not the exact paper inputs. The notebooks also contain original computing-environment paths. See the [paper PDF](paper/reconcILS_preprint_v6.pdf) for details.
+The final ten-tree SimPhy commands in [generate.sh](generate.sh) use `species_40_scaled_10_simphy.tre`. The bundled paper trees are in [all_species tree/](all_species%20tree/); running `generate.r` creates new trees, not the exact paper inputs. The notebooks also contain original computing-environment paths.
